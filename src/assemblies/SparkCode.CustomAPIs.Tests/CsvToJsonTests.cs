@@ -1,7 +1,7 @@
-﻿using SparkTools.CustomAPIs;
+﻿using SparkCode.CustomAPIs;
 using Xunit;
 
-namespace SparkTools.CustomAPIs.Tests
+namespace SparkCode.CustomAPIs.Tests
 {
     public class CsvToJsonTests
     {

@@ -1,4 +1,4 @@
-﻿using SparkTools.CustomAPIs;
+﻿using SparkCode.CustomAPIs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SparkTools.CustomAPIs.Tests
+namespace SparkCode.CustomAPIs.Tests
 {
     public class XmlToJsonTests
     {

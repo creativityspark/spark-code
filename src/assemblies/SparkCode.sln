@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.CustomAPIs", "SparkCode.CustomAPIs\SparkCode.CustomAPIs.csproj", "{921260EC-82C7-426F-8E23-FA96AB62323A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.CustomAPIs.Tests", "SparkCode.CustomAPIs.Tests\SparkCode.CustomAPIs.Tests.csproj", "{4A12B1DF-9C2F-4965-9299-E503F320E5BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{921260EC-82C7-426F-8E23-FA96AB62323A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{921260EC-82C7-426F-8E23-FA96AB62323A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{921260EC-82C7-426F-8E23-FA96AB62323A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A12B1DF-9C2F-4965-9299-E503F320E5BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A12B1DF-9C2F-4965-9299-E503F320E5BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A12B1DF-9C2F-4965-9299-E503F320E5BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A12B1DF-9C2F-4965-9299-E503F320E5BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

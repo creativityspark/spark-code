@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SparkTools.CustomAPIs\SparkTools.CustomAPIs.csproj" />
+    <ProjectReference Include="..\SparkCode.CustomAPIs\SparkCode.CustomAPIs.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,10 @@
-﻿using SparkTools.CustomAPIs;
+﻿using SparkCode.CustomAPIs;
 using System;
 using System.Runtime.Remoting.Contexts;
 using Xunit;
-using Context = SparkTools.CustomAPIs.Context;
+using Context = SparkCode.CustomAPIs.Context;
 
-namespace SparkTools.CustomAPIs.Tests
+namespace SparkCode.CustomAPIs.Tests
 {
     public class ParseURLTests
     {

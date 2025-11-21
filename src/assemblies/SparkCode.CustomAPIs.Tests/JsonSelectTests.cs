@@ -1,8 +1,8 @@
 using System;
 using Xunit;
-using SparkTools.CustomAPIs;
+using SparkCode.CustomAPIs;
 
-namespace SparkTools.CustomAPIs.Tests
+namespace SparkCode.CustomAPIs.Tests
 {
     public class JsonSelectTests
     {
