@@ -32,7 +32,7 @@ namespace SparkTools.CustomAPIs
             string environmentUrl = orgResponse.Detail.Endpoints.Where(e => e.Key == EndpointType.WebApplication).FirstOrDefault().Value;
             tracingService.Trace("Dataverse Environment URL: " + environmentUrl);
             string sqlQuery = context.InputParameters["sqlquery"].ToString();
-            string tok = GetToken(environmentUrl);
+            string tok = GetToken();
             context.OutputParameters["sqlresults"] = QuerySqlServer(environmentUrl, tok, sqlQuery, tracingService);
 
         }
@@ -50,7 +50,7 @@ namespace SparkTools.CustomAPIs
 
             string[] scopes = new[] { $"{sqlDatabaseUrl}/.default" };
             var authResult = confidentialClient.AcquireTokenForClient(scopes);
-            return authResult.AccessToken;
+            return authResult.ExecuteAsync().Result.AccessToken;
         }
 
         private string QuerySqlServer(string environmentUrl, string accessToken, string query, ITracingService tracingService)
