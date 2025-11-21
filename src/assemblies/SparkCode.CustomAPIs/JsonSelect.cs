@@ -7,7 +7,7 @@ namespace SparkCode.CustomAPIs
 {
     // Based on: https://www.rfc-editor.org/rfc/rfc9535.html
     // Library used: https://www.newtonsoft.com/json/help/html/QueryJsonSelectToken.htm
-    public class JSonSelect : IPlugin
+    public class JsonSelect : IPlugin
     {
         Context ctx = new Context();
 
