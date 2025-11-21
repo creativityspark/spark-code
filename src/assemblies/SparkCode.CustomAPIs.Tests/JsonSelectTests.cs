@@ -60,7 +60,7 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void SimpleSingleQuery()
         {
-            JSonSelect jsonSelect = new JSonSelect();
+            JsonSelect jsonSelect = new JsonSelect();
             var ctx = new Context();
             var output = jsonSelect.Select(ctx, "{\"name\":\"John\", \"age\":30}", "$.name");
             Assert.Equal("John", output);
@@ -69,7 +69,7 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void SingleQueryReturningObject()
         {
-            JSonSelect jsonSelect = new JSonSelect();
+            JsonSelect jsonSelect = new JsonSelect();
             var ctx = new Context();
             var output = jsonSelect.Select(ctx, TestInput2, "$..book[0]");
             var expected = @"{
@@ -84,7 +84,7 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void SingleQueryReturningNothing() 
         { 
-            JSonSelect jsonSelect = new JSonSelect();
+            JsonSelect jsonSelect = new JsonSelect();
             var ctx = new Context();
             var output = jsonSelect.Select(ctx, TestInput2, "$.store.book[5]");
             Assert.Null(output); // Should return null if no match found
@@ -94,7 +94,7 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void MultipleQueryReturningNothing()
         {
-            JSonSelect jsonSelect = new JSonSelect();
+            JsonSelect jsonSelect = new JsonSelect();
             var ctx = new Context();
             var output = jsonSelect.Select(ctx, TestInput1, "$..abc");
             Assert.Null(output); // Should return null if no match found
@@ -104,7 +104,7 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void MultipleQuery()
         {
-            JSonSelect jsonSelect = new JSonSelect();
+            JsonSelect jsonSelect = new JsonSelect();
             var ctx = new Context();
             var output = jsonSelect.Select(ctx, TestInput1, "$..Products[?(@.Price >= 50)].Name");
             Assert.Equal("Anvil,Elbow Grease", output);
@@ -113,7 +113,7 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void MultipleQueryReturningTwoLargeDifferentObjects()
         {
-            JSonSelect jsonSelect = new JSonSelect();
+            JsonSelect jsonSelect = new JsonSelect();
             var ctx = new Context();
             var output = jsonSelect.Select(ctx, TestInput2, "$.store.*");
             var expected = @"[
