@@ -14,10 +14,15 @@ namespace SparkCode.CustomAPIs
             ctx = new Context(serviceProvider);
 
             string input = context.InputParameters["Input"] as string;
+            ctx.Trace($"Input: {input}");
 
-            // TBC
+            // Convert the input string to a byte array
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(input);
+            // Convert the byte array to a Base64 encoded string
+            string output = Convert.ToBase64String(data);
 
-            context.OutputParameters["Output"] = "";
+            ctx.Trace($"Output: {output}");
+            context.OutputParameters["Output"] = output;
         }
     }
 }
