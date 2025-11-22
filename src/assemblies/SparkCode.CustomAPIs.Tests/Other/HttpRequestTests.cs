@@ -1,7 +1,7 @@
-﻿using SparkCode.CustomAPIs;
+﻿using SparkCode.CustomAPIs.Other;
 using Xunit;
 
-namespace SparkCode.CustomAPIs.Tests
+namespace SparkCode.CustomAPIs.Tests.Other
 {
     public class HttpRequestTests
     {

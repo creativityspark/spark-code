@@ -3,21 +3,27 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Data
 {
     /// <summary>
     /// Performs a JSONQuery select on the specified data and returns the results
     /// Based on: https://www.rfc-editor.org/rfc/rfc9535.html
     /// Library used: https://www.newtonsoft.com/json/help/html/QueryJsonSelectToken.htm
     /// Input Parameters:
-    /// Data: Data in JSON format.
-    /// Query: JSON Queuery select string.
+    /// Data: Type string. Data in JSON format.
+    /// Query: Type string. JSON Queuery select string.
     /// Outoput Parameters:
-    /// Data: Data returned by the query.
+    /// Data: Type string. Data returned by the query in JSON format.
     /// </summary>
     public class Select : IPlugin
     {
         Context ctx = new Context();
+
+        public Select() { }
+
+        public Select(Context ctx) {
+            this.ctx = ctx;
+        }
 
         public void Execute(IServiceProvider serviceProvider)
         {

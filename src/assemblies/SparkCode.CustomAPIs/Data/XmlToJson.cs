@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Xml;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Data
 {
     /// <summary>
     /// Converts XML string to JSON string

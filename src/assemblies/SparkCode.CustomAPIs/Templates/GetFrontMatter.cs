@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Templates
 {
     /// <summary>
     /// Extracts YAML front matter from a given text input and returns it as a JSON object along with the remaining body of the text.

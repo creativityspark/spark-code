@@ -1,7 +1,7 @@
-﻿using SparkCode.CustomAPIs;
+﻿using SparkCode.CustomAPIs.Data;
 using Xunit;
 
-namespace SparkCode.CustomAPIs.Tests
+namespace SparkCode.CustomAPIs.Tests.Data
 {
     public class CsvToJsonTests
     {
@@ -20,7 +20,7 @@ namespace SparkCode.CustomAPIs.Tests
     ""age"": 25
   }
 ]";
-            string json = csvToJson.Convert(csv,",",false);
+            string json = csvToJson.Convert(csv, ",", false);
             Assert.Equal(expectedJson, json);
         }
     }

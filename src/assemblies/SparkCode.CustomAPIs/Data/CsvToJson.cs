@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Data
 {
     /// <summary>
     /// Converts CSV data to JSON format.

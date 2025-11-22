@@ -1,12 +1,7 @@
-﻿using SparkCode.CustomAPIs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SparkCode.CustomAPIs.Data;
 using Xunit;
 
-namespace SparkCode.CustomAPIs.Tests
+namespace SparkCode.CustomAPIs.Tests.Data
 {
     public class XmlToJsonTests
     {

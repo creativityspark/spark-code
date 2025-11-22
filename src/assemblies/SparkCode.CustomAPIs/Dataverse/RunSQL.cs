@@ -11,7 +11,7 @@ using System.Text.Json;
 using Microsoft.Xrm.Sdk.Organization;
 using Microsoft.Identity.Client;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Dataverse
 {
     // https://joegill.com/custom-api-dataverse-sql/
     // https://learn.microsoft.com/en-us/power-platform/admin/set-up-managed-identity

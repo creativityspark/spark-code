@@ -1,10 +1,8 @@
-﻿using SparkCode.CustomAPIs;
+﻿using SparkCode.CustomAPIs.Other;
 using System;
-using System.Runtime.Remoting.Contexts;
 using Xunit;
-using Context = SparkCode.CustomAPIs.Context;
 
-namespace SparkCode.CustomAPIs.Tests
+namespace SparkCode.CustomAPIs.Tests.Other
 {
     public class ParseURLTests
     {
@@ -15,7 +13,7 @@ namespace SparkCode.CustomAPIs.Tests
             var parseUrl = new ParseURL();
             var expectedId = Guid.NewGuid();
             string url = $"http://www.example.com/path?id={expectedId}&etc=123#fragment";
-            var result = parseUrl.TryParse(url,out int etc, out Guid id);
+            var result = parseUrl.TryParse(url, out int etc, out Guid id);
             Assert.True(result);
             Assert.Equal(expectedId, id);
             Assert.Equal(123, etc);

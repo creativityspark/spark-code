@@ -3,7 +3,7 @@ using Microsoft.Xrm.Sdk.Extensions;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Dataverse
 {
     public class GetViewData : IPlugin
     {

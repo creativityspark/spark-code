@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Other
 {
     /// <summary>
     /// Performs an HTTP Request with the specified Url, Method, RequestBody and Parameters and returns the Response.

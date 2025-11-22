@@ -113,27 +113,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base64Encode.cs" />
-    <Compile Include="CaptureInfo.cs" />
+    <Compile Include="Text\Base64Encode.cs" />
+    <Compile Include="Text\RegexCapture.cs" />
     <Compile Include="Context.cs" />
-    <Compile Include="CsvToJson.cs" />
-    <Compile Include="GetFrontMatter.cs" />
-    <Compile Include="GetViewData.cs" />
-    <Compile Include="HttpRequest.cs" />
-    <Compile Include="JsonJoin.cs" />
-    <Compile Include="Base64Decode.cs" />
-    <Compile Include="RunFetchXml.cs" />
-    <Compile Include="RunSQL.cs" />
-    <Compile Include="UpdateRollupField.cs" />
-    <Compile Include="ParseURL.cs" />
-    <Compile Include="ServiceExtensions.cs" />
-    <Compile Include="XmlToJson.cs" />
-    <Compile Include="RegexMatches.cs" />
-    <Compile Include="RegexMatch.cs" />
-    <Compile Include="RegexReplace.cs" />
+    <Compile Include="Data\CsvToJson.cs" />
+    <Compile Include="Templates\GetFrontMatter.cs" />
+    <Compile Include="Dataverse\GetViewData.cs" />
+    <Compile Include="Other\HttpRequest.cs" />
+    <Compile Include="Data\JsonJoin.cs" />
+    <Compile Include="Text\Base64Decode.cs" />
+    <Compile Include="Dataverse\RunFetchXml.cs" />
+    <Compile Include="Dataverse\RunSQL.cs" />
+    <Compile Include="Dataverse\CalculateRollupField.cs" />
+    <Compile Include="Other\ParseURL.cs" />
+    <Compile Include="Dataverse\ServiceExtensions.cs" />
+    <Compile Include="Data\XmlToJson.cs" />
+    <Compile Include="Text\RegexMatches.cs" />
+    <Compile Include="Text\RegexMatch.cs" />
+    <Compile Include="Text\RegexReplace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Select.cs" />
-    <Compile Include="RunCSharp.cs" />
+    <Compile Include="Data\Select.cs" />
+    <Compile Include="Other\RunCSharp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

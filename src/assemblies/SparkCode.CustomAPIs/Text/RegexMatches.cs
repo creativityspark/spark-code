@@ -2,9 +2,10 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Text
 {
     public class RegexMatches : IPlugin
     {
@@ -19,7 +20,12 @@ namespace SparkCode.CustomAPIs
             var opt = context.InputParameters["Options"];
             int options = opt != null ? (int)opt : 0;
 
-            List<CaptureInfo> capturesList = new List<CaptureInfo>();
+            // Input trace
+            ctx.Trace($"Input: {input}");
+            ctx.Trace($"Pattern: {pattern}");
+            ctx.Trace($"Options: {options}");
+
+            List<RegexCapture> capturesList = new List<RegexCapture>();
             string captures = string.Empty;
 
             var regex = new Regex(pattern, (RegexOptions)options);
@@ -27,11 +33,13 @@ namespace SparkCode.CustomAPIs
 
             foreach (Match match in matches)
             {
-                capturesList.Add(new CaptureInfo { Value = match.Value, Index = match.Index, Length= match.Length });
+                capturesList.Add(new RegexCapture { Value = match.Value, Index = match.Index, Length= match.Length });
             }
 
-            captures= JsonConvert.SerializeObject(capturesList, Formatting.Indented);
+            captures = JsonConvert.SerializeObject(capturesList, Formatting.Indented);
 
+            // Output trace
+            ctx.Trace($"Captures: {captures}");
             context.OutputParameters["Captures"] = captures;
         }
     }

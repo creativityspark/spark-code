@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Dataverse
 {
     public class RunFetchXml : IPlugin
     {

@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xrm.Sdk;
+using SparkCode.CustomAPIs.Dataverse;
 using System;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Other
 {
     public class ParseURL : IPlugin
     {

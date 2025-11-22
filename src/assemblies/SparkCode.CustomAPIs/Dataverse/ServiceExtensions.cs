@@ -9,7 +9,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Dataverse
 {
     /// <summary>
     /// Extensions for the IOrganizationService to work with Dataverse metadata and data retrieval.

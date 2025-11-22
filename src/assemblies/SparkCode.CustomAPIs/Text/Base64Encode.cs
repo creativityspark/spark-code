@@ -2,15 +2,12 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Text
 {
-    public class Base64Decode : IPlugin
+    public class Base64Encode : IPlugin
     {
         Context ctx = new Context();
 
-        /// <summary>
-        /// Converts a base 64 encoded string to a normal string
-        /// </summary>
         public void Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -19,8 +16,10 @@ namespace SparkCode.CustomAPIs
             string input = context.InputParameters["Input"] as string;
             ctx.Trace($"Input: {input}");
 
-            byte[] data = Convert.FromBase64String(input);
-            string output = System.Text.Encoding.UTF8.GetString(data);
+            // Convert the input string to a byte array
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(input);
+            // Convert the byte array to a Base64 encoded string
+            string output = Convert.ToBase64String(data);
 
             ctx.Trace($"Output: {output}");
             context.OutputParameters["Output"] = output;

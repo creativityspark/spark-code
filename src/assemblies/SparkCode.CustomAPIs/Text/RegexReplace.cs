@@ -2,7 +2,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Text
 {
     public class RegexReplace : IPlugin
     {

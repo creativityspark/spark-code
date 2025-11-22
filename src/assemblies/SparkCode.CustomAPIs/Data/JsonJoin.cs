@@ -6,7 +6,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Data
 {
     // based on
     // https://learn.microsoft.com/en-us/dotnet/csharp/linq/how-to-build-dynamic-queries

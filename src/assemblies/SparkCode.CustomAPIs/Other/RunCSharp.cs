@@ -5,7 +5,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Other
 {
     // Based on: https://github.com/GuidoPreite/AutomateSharp/blob/main/AutomateSharp/RunCSharpCode.cs
     // Only Supports c# 4.0 syntax https://stackoverflow.com/questions/60247122/changing-the-c-sharp-version-in-visual-studio-2019

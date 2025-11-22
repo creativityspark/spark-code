@@ -2,12 +2,12 @@
 using Microsoft.Xrm.Sdk;
 using System;
 
-namespace SparkCode.CustomAPIs
+namespace SparkCode.CustomAPIs.Dataverse
 {
     /// <summary>
     /// Updates a rollup field on a specified record by triggering the calculation of the rollup field.
     /// </summary>
-    public class UpdateRollupField : IPlugin
+    public class CalculateRollupField : IPlugin
     {
         Context ctx = new Context();
 
@@ -17,22 +17,22 @@ namespace SparkCode.CustomAPIs
             ctx = new Context(serviceProvider);
 
             // Extract input parameters
-            string ColumnName = context.InputParameters["ColumnName"] as string ?? throw new ArgumentNullException("ColumnName");
-            string TargetRecordId = context.InputParameters["TargetRecordId"] as string ?? throw new ArgumentNullException("TargetRecordId");
-            string TargetRecordType = context.InputParameters["TargetRecordType"] as string ?? throw new ArgumentNullException("TargetRecordType");
+            string fieldName = context.InputParameters["fieldName"] as string ?? throw new ArgumentNullException("fieldName");
+            string targetId = context.InputParameters["targetId"] as string ?? throw new ArgumentNullException("targetId");
+            string targetLogicalName = context.InputParameters["targetLogicalName"] as string ?? throw new ArgumentNullException("targetLogicalName");
 
-            ctx.Trace($"FieldName: {ColumnName}");
-            ctx.Trace($"TargetRecordId: {TargetRecordId}");
-            ctx.Trace($"TargetRecordType: {TargetRecordType}");
+            ctx.Trace($"FieldName: {fieldName}");
+            ctx.Trace($"TargetRecordId: {targetId}");
+            ctx.Trace($"TargetRecordType: {targetLogicalName}");
 
             // Create and execute the rollup field calculation request
             var calculateRequest = new CalculateRollupFieldRequest
             {
-                FieldName = ColumnName,
+                FieldName = fieldName,
                 Target = new EntityReference
                 {
-                    LogicalName = TargetRecordType,
-                    Id = Guid.Parse(TargetRecordId)
+                    LogicalName = targetLogicalName,
+                    Id = Guid.Parse(targetId)
                 }
             };
 
