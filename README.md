@@ -26,23 +26,33 @@ Classic workflow designer can call registered Actions via the "Perform Action" s
 
 This repository includes several Dataverse Custom APIs. Each entry below shows the class name and a short description.
 
-- **Base64Encode**: Encodes an input string to Base64.
-- **Base64Decode**: Decodes a Base64-encoded input string.
+
+### Dataverse
+- **GetViewData**: Retrieves data for a Saved View and returns it as JSON (option for friendly column names).
+- **RunFetchXml**: Executes a FetchXML query in Dataverse and returns results as JSON.
+- **RunSQL**: Executes SQL queries against an external SQL endpoint using token acquisition (managed identity) and returns JSON results.
+- **UpdateRollupField**: Triggers calculation of a rollup field on a specified record.
+
+### Data
 - **CsvToJson**: Converts CSV text into a JSON array (supports delimiter and quoted fields).
-- **XmlToJson**: Converts an XML string into JSON.
 - **JsonJoin**: Joins two JSON arrays on specified keys and returns the joined result.
 - **Select**: Selects token(s) from JSON using JSONPath-like queries.
+- **XmlToJson**: Converts an XML string into JSON.
+
+### Other
+- **HttpRequest**: Performs HTTP requests with optional parameter substitution and returns the response body.
 - **ParseURL**: Parses a URL to extract `etc` (object type code) and `id`, and resolves the logical type name.
+- **RunCSharp**: Compiles and runs supplied C# code and returns execution output.
+
+### Templates
+- **GetFrontMatter**: Extracts YAML front matter from text and returns it as JSON plus the remaining body.
+
+### Text
+- **Base64Decode**: Decodes a Base64-encoded input string.
+- **Base64Encode**: Encodes an input string to Base64.
 - **RegexMatch**: Runs a regex match and returns success, index and matched value.
 - **RegexMatches**: Finds all regex matches and returns capture info as JSON.
 - **RegexReplace**: Performs regex replacements on a string.
-- **HttpRequest**: Performs HTTP requests with optional parameter substitution and returns the response body.
-- **RunCSharp**: Compiles and runs supplied C# code (CodeDom) and returns execution output.
-- **RunSQL**: Executes SQL queries against an external SQL endpoint using token acquisition (managed identity) and returns JSON results.
-- **RunFetchXml**: Executes a FetchXML query in Dataverse and returns results as JSON.
-- **GetFrontMatter**: Extracts YAML front matter from text and returns it as JSON plus the remaining body.
-- **GetViewData**: Retrieves data for a Saved View and returns it as JSON (option for friendly column names).
-- **UpdateRollupField**: Triggers calculation of a rollup field on a specified record.
 
 # Copyright
 Some of the code included in these libraries is taken from [Guido Preite's github repo](https://github.com/GuidoPreite/).
