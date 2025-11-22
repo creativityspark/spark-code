@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace SparkCode.CustomAPIs
 {
-    public class RunFetchXmlQuery : IPlugin
+    public class RunFetchXml : IPlugin
     {
         Context ctx = new Context();
         public void Execute(IServiceProvider serviceProvider)
@@ -14,25 +14,25 @@ namespace SparkCode.CustomAPIs
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             ctx = new Context(serviceProvider);
 
-            // Custom API Inputs
-            string fetchXml = context.InputParameters["FetchXml"] as string;
+            // API Inputs
+            string fetchXml = context.InputParameters["FetchXml"] as string ?? throw new ArgumentNullException($"FetchXml is required");
 
-            // Trace input parameters
+            // Trace Inputs
             ctx.Trace($"FetchXml: {fetchXml}");
 
-            // Custom API Outputs
-            string FetchResults = string.Empty;
+            // API Outputs
+            string results = string.Empty;
 
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = serviceFactory.CreateOrganizationService(context.UserId);
 
             // Execute FetchXml
             var fetchExpression = new FetchExpression(fetchXml);
-            var results = service.RetrieveMultiple(fetchExpression);
+            var retrievedRecords = service.RetrieveMultiple(fetchExpression);
 
             // Convert results into serializable format
             var formattedResults = new List<Dictionary<string, object>>();
-            foreach (var entity in results.Entities)
+            foreach (var entity in retrievedRecords.Entities)
             {
                 var record = new Dictionary<string, object>();
                 foreach (var attr in entity.Attributes)
@@ -43,10 +43,13 @@ namespace SparkCode.CustomAPIs
             }
 
             // Serialize results into JSON
-            FetchResults = JsonSerializer.Serialize(formattedResults);
+            results = JsonSerializer.Serialize(formattedResults);
 
-            // Set OutputParameters values
-            context.OutputParameters["FetchResults"] = FetchResults;
+            // Trace Outputs
+            ctx.Trace($"results: {results}");
+
+            // API Outputs
+            context.OutputParameters["Results"] = results;
         }
     }
 }
