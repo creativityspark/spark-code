@@ -5,7 +5,7 @@ Code components for the Power Platform and Dynamics 365.
 To install these libraries on you environment, install the managed solution available on the releases section of this repo.
 
 # Custom APIs
-Dataverse Custom APIs are server-side actions (bound or unbound) exposed through the Dataverse Web API and SDK. They accept named parameters, run server logic, and return JSON responses.
+Dataverse Custom APIs are server-side actions exposed through the Dataverse Web API and SDK. They accept named parameters, run server logic, and return JSON responses.
 
 They require appropriate solution registration and user privileges.
 
@@ -28,13 +28,13 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 
 
 ### Dataverse
-- **GetViewData**: Retrieves data for a Saved View and returns it as JSON (option for friendly column names).
+- **GetViewData**: Retrieves data for a Saved View and returns it as JSON.
 - **RunFetchXml**: Executes a FetchXML query in Dataverse and returns results as JSON.
-- **RunSQL**: Executes SQL queries against an external SQL endpoint using token acquisition (managed identity) and returns JSON results.
+- **RunSQL**: Executes SQL queries against an external SQL endpoint and returns JSON results.
 - **UpdateRollupField**: Triggers calculation of a rollup field on a specified record.
 
 ### Data
-- **CsvToJson**: Converts CSV text into a JSON array (supports delimiter and quoted fields).
+- **CsvToJson**: Converts CSV text into a JSON array.
 - **JsonJoin**: Joins two JSON arrays on specified keys and returns the joined result.
 - **Select**: Selects token(s) from JSON using JSONPath-like queries.
 - **XmlToJson**: Converts an XML string into JSON.
