@@ -60,18 +60,18 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void SimpleSingleQuery()
         {
-            JsonSelect jsonSelect = new JsonSelect();
+            Select jsonSelect = new Select();
             var ctx = new Context();
-            var output = jsonSelect.Select(ctx, "{\"name\":\"John\", \"age\":30}", "$.name");
+            var output = jsonSelect.RunQuery(ctx, "{\"name\":\"John\", \"age\":30}", "$.name");
             Assert.Equal("John", output);
         }
 
         [Fact]
         public void SingleQueryReturningObject()
         {
-            JsonSelect jsonSelect = new JsonSelect();
+            Select jsonSelect = new Select();
             var ctx = new Context();
-            var output = jsonSelect.Select(ctx, TestInput2, "$..book[0]");
+            var output = jsonSelect.RunQuery(ctx, TestInput2, "$..book[0]");
             var expected = @"{
   ""category"": ""reference"",
   ""author"": ""Nigel Rees"",
@@ -84,9 +84,9 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void SingleQueryReturningNothing() 
         { 
-            JsonSelect jsonSelect = new JsonSelect();
+            Select jsonSelect = new Select();
             var ctx = new Context();
-            var output = jsonSelect.Select(ctx, TestInput2, "$.store.book[5]");
+            var output = jsonSelect.RunQuery(ctx, TestInput2, "$.store.book[5]");
             Assert.Null(output); // Should return null if no match found
         }
 
@@ -94,9 +94,9 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void MultipleQueryReturningNothing()
         {
-            JsonSelect jsonSelect = new JsonSelect();
+            Select jsonSelect = new Select();
             var ctx = new Context();
-            var output = jsonSelect.Select(ctx, TestInput1, "$..abc");
+            var output = jsonSelect.RunQuery(ctx, TestInput1, "$..abc");
             Assert.Null(output); // Should return null if no match found
         }
 
@@ -104,18 +104,18 @@ namespace SparkCode.CustomAPIs.Tests
         [Fact]
         public void MultipleQuery()
         {
-            JsonSelect jsonSelect = new JsonSelect();
+            Select jsonSelect = new Select();
             var ctx = new Context();
-            var output = jsonSelect.Select(ctx, TestInput1, "$..Products[?(@.Price >= 50)].Name");
+            var output = jsonSelect.RunQuery(ctx, TestInput1, "$..Products[?(@.Price >= 50)].Name");
             Assert.Equal("Anvil,Elbow Grease", output);
         }
 
         [Fact]
         public void MultipleQueryReturningTwoLargeDifferentObjects()
         {
-            JsonSelect jsonSelect = new JsonSelect();
+            Select jsonSelect = new Select();
             var ctx = new Context();
-            var output = jsonSelect.Select(ctx, TestInput2, "$.store.*");
+            var output = jsonSelect.RunQuery(ctx, TestInput2, "$.store.*");
             var expected = @"[
   {
     ""category"": ""reference"",
