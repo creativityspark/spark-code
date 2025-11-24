@@ -1,20 +1,22 @@
 ﻿using Microsoft.Xrm.Sdk;
-using SparkCode.CustomAPIs.Other;
 using System;
 using Xunit;
 
-namespace SparkCode.CustomAPIs.Tests.Other
+namespace SparkCode.Tests.Other
 {
     public class ParseURLTests
     {
         [Fact]
         public void ParseURL_ValidUrl_Returns_Parsed_Components()
         {
-            var parseUrl = new ParseURL(new Context());
+            var ctx = new SparkCode.Context();
             var expectedId = Guid.NewGuid();
+
             string url = $"http://www.example.com/path?id={expectedId}&etc=123#fragment";
-            var results = parseUrl.Parse(url);
+            var results = SparkCode.Other.ParseURL.Parse(ctx, url);
+
             var query = (Entity)results["query"];
+            
             Assert.Equal("http", (string)results["scheme"]);
             Assert.Equal("www.example.com", (string)results["host"]);
             Assert.Equal(80, (int)results["port"]);
@@ -27,10 +29,11 @@ namespace SparkCode.CustomAPIs.Tests.Other
         [Fact]
         public void ParseURL_InvalidURL_Throws_Exception()
         {
-            var parseUrl = new ParseURL(new Context());
+            var ctx = new SparkCode.Context();
             string url = "abc123";
             Assert.Throws<UriFormatException>(() =>
-            parseUrl.Parse(url));
+                SparkCode.Other.ParseURL.Parse(ctx, url)
+            );
         }
     }
 }
