@@ -1,4 +1,5 @@
-﻿using SparkCode.CustomAPIs.Other;
+﻿using Microsoft.Xrm.Sdk;
+using SparkCode.CustomAPIs.Other;
 using System;
 using Xunit;
 
@@ -9,26 +10,27 @@ namespace SparkCode.CustomAPIs.Tests.Other
         [Fact]
         public void ParseURL_ValidUrl_Returns_Parsed_Components()
         {
-            var ctx = new Context();
-            var parseUrl = new ParseURL();
+            var parseUrl = new ParseURL(new Context());
             var expectedId = Guid.NewGuid();
             string url = $"http://www.example.com/path?id={expectedId}&etc=123#fragment";
-            var result = parseUrl.TryParse(url, out int etc, out Guid id);
-            Assert.True(result);
-            Assert.Equal(expectedId, id);
-            Assert.Equal(123, etc);
+            var results = parseUrl.Parse(url);
+            var query = (Entity)results["query"];
+            Assert.Equal("http", (string)results["scheme"]);
+            Assert.Equal("www.example.com", (string)results["host"]);
+            Assert.Equal(80, (int)results["port"]);
+            Assert.Equal("/path", (string)results["absolutePath"]);
+            Assert.Equal("fragment", (string)results["fragment"]);
+            Assert.Equal(expectedId, Guid.Parse((string)query["id"]));
+            Assert.Equal(123, int.Parse((string)query["etc"]));
         }
 
         [Fact]
-        public void ParseURL_ValidUrl_Invalid_Values()
+        public void ParseURL_InvalidURL_Throws_Exception()
         {
-            var ctx = new Context();
-            var parseUrl = new ParseURL();
-            string url = $"http://www.example.com/path?id=def&etc=abc#fragment";
-            var result = parseUrl.TryParse(url, out int etc, out Guid id);
-            Assert.False(result);
-            Assert.Equal(Guid.Empty, id);
-            Assert.Equal(0, etc);
+            var parseUrl = new ParseURL(new Context());
+            string url = "abc123";
+            Assert.Throws<UriFormatException>(() =>
+            parseUrl.Parse(url));
         }
     }
 }

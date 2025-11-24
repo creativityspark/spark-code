@@ -8,6 +8,12 @@ namespace SparkCode.CustomAPIs.Other
     {
         Context ctx = new Context();
 
+        public ParseURL() {}
+        public ParseURL(Context context)
+        {
+            ctx = context;
+        }
+
         public void Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -15,76 +21,42 @@ namespace SparkCode.CustomAPIs.Other
 
             // Custom API Inputs
             string url = context.InputParameters["Url"] as string ?? throw new ArgumentNullException($"Url is required");
-            string typeName = null;
 
-            if(TryParse(url, out int etc, out Guid id))
-            {
-                ctx.Trace("Getting type name...");
-                typeName = ctx.Service.GetTableLogicalName(etc);
-                ctx.Trace($"Type name: {typeName}");
-            }
-            else
-            {
-                throw new InvalidPluginExecutionException($"Couldn't find correct parameters in URL {url}");
-            }
-
+            var results = Parse(url);
 
             // Set OutputParameters values
-            context.OutputParameters["etc"] = etc;
-            context.OutputParameters["id"] = id;
-            context.OutputParameters["typeName"] = typeName;
+            context.OutputParameters["Results"] = results;
         }
 
-        public bool TryParse(string url, out int etc, out Guid id)
+        public Entity Parse(string url)
         {
-            // Trace input parameters
-            ctx.Trace($"Url: {url}");
+            // trace input values
+            ctx.Trace($"Input Parameters: Url: {url}");
 
-            var uri = new Uri(url);
-            int foundCount = 0;
-            etc = 0;
-            id = Guid.Empty;
-            bool found = false;
+            var results = new Entity();
+            Uri uri = new Uri(url);
 
-            string[] parameters = uri.Query.TrimStart('?').Split('&');
-            foreach (string param in parameters)
+            results = new Entity();
+            var query = new Entity();
+            results["scheme"] = uri.Scheme;
+            results["host"] = uri.Host;
+            results["port"] = uri.Port;
+            results["absolutePath"] = uri.AbsolutePath;
+            results["fragment"] = uri.Fragment.Length > 0 ? uri.Fragment.Substring(1) : string.Empty;
+
+            // parse query parameters
+            var queryParameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            foreach (string key in queryParameters)
             {
-                var nameValue = param.Split('=');
-                switch (nameValue[0])
-                {
-                    case "etc":
-                        if(int.TryParse(nameValue[1], out etc))
-                        {
-                            foundCount++;
-                        }
-                        else
-                        {
-                            ctx.Trace($"Failed to parse etc: {nameValue[1]}");
-                        }
-                        break;
-                    case "id":
-
-                        if(Guid.TryParse(nameValue[1], out id))
-                        {
-                            foundCount++;
-                        }
-                        else
-                        {
-                            ctx.Trace($"Failed to parse id: {nameValue[1]}");
-                        }
-                        break;
-                }
-                if (foundCount > 1) { 
-                    found = true;
-                    break; 
-                }
+                query[key] = queryParameters[key];
             }
 
-            ctx.Trace($"Found: {found}");
-            ctx.Trace($"etc: {etc}");
-            ctx.Trace($"id: {id}");
+            results["query"] = query;
 
-            return found;
+            // trace output values
+            ctx.Trace($"Results: {results}");
+
+            return results;
         }
     }
 }
