@@ -1,32 +1,52 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
-using System.Runtime.CompilerServices;
+using XrmEntitySerializer;
 
-namespace SparkCode.Other
+namespace SparkCode.API.Other
 {
-    public static class ParseURL
+    public class ParseURL : IPlugin
     {
-        public static Entity Parse(Context ctx, string url)
+        public void Execute(IServiceProvider serviceProvider)
+        {
+            var ctx = new SparkCode.Context(serviceProvider);
+
+            // API Inputs
+            string url = ctx.GetInputParameter<string>("Url",true);
+
+            // Run Logic
+            var results = Parse(ctx, url);
+
+            // API Outputs
+            ctx.SetOutputParameter("Results", results);
+            ctx.SetOutputParameter("ResultsJson", results.ToJson());
+        }
+
+        public Entity Parse(Context ctx, string url)
         {
             var results = new Entity();
             Uri uri = new Uri(url);
 
             results = new Entity();
-            var query = new Entity();
             results["scheme"] = uri.Scheme;
             results["host"] = uri.Host;
             results["port"] = uri.Port;
             results["absolutePath"] = uri.AbsolutePath;
-            results["fragment"] = uri.Fragment.Length > 0 ? uri.Fragment.Substring(1) : string.Empty;
+            if(uri.Fragment.Length > 0)
+            {
+                results["fragment"] = uri.Fragment.Substring(1);
+            }
 
             // parse query parameters
             var queryParameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
-            foreach (string key in queryParameters)
+            if(queryParameters.Count > 0)
             {
-                query[key] = queryParameters[key];
+                var query = new Entity();
+                foreach (string key in queryParameters)
+                {
+                    query[key] = queryParameters[key];
+                }
+                results["query"] = query;
             }
-
-            results["query"] = query;
 
             return results;
         }
