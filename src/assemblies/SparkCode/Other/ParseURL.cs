@@ -8,9 +8,6 @@ namespace SparkCode.Other
     {
         public static Entity Parse(Context ctx, string url)
         {
-            // trace input values
-            ctx.Trace($"Input Parameters: Url: {url}");
-
             var results = new Entity();
             Uri uri = new Uri(url);
 
@@ -30,9 +27,6 @@ namespace SparkCode.Other
             }
 
             results["query"] = query;
-
-            // trace output values
-            ctx.Trace($"Results: {results}");
 
             return results;
         }

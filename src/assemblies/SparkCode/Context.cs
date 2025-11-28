@@ -46,11 +46,14 @@ namespace SparkCode
             {
                 throw new ArgumentNullException($"{parameterName} is required");
             }
-            return (T)PluginContext.InputParameters[parameterName];
+            var value = (T)PluginContext.InputParameters[parameterName];
+            Trace($"{parameterName}:{value}");
+            return value;
         }
 
         public void SetOutputParameter<T>(string parameterName, T value)
         {
+            Trace($"{parameterName}:{value}");
             PluginContext.OutputParameters[parameterName] = value;
         }
 
