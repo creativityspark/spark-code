@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 
-namespace SparkCode.CustomAPIs.Data
+namespace SparkCode.API.Data
 {
     /// <summary>
     /// Performs a JSONQuery select on the specified data and returns the results
@@ -17,50 +17,36 @@ namespace SparkCode.CustomAPIs.Data
     /// </summary>
     public class Select : IPlugin
     {
-        Context ctx = new Context();
-
-        public Select() { }
-
-        public Select(Context ctx) {
-            this.ctx = ctx;
-        }
 
         public void Execute(IServiceProvider serviceProvider)
         {
-            IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-            ctx = new Context(serviceProvider);
+            Context ctx = new Context(serviceProvider);
 
             // API Inputs
-            string data = context.InputParameters["Data"] as string ?? throw new ArgumentNullException($"Data is required");
-            string query = context.InputParameters["Query"] as string ?? throw new ArgumentNullException($"Query is required");
+            string data = ctx.GetInputParameter<string>("Data", true);
+            string query = ctx.GetInputParameter<string>("Query", true);
 
-            string results = RunQuery(data, query);
+            // Run Logic
+            string results = RunQuery(ctx, data, query);
 
             // API Outputs
-            context.OutputParameters["Results"] = results;
+            ctx.SetOutputParameter("Results", results);
         }
 
-        public string RunQuery(string data, string query)
+        public string RunQuery(Context ctx, string data, string query)
         {
-            // Trace input parameters
-            ctx.Trace($"Data: {data}");
-            ctx.Trace($"Query: {query}");
-
-            // API Outputs
             string results = null;
             try
             {
-                results = JObject.Parse(data).SelectToken(query)?.ToString();
+                results = JToken.Parse(data).SelectToken(query)?.ToString();
             }
             catch (Newtonsoft.Json.JsonException)
             {
                 // This exception is thrown if the query does not match a single token.
                 ctx.Trace($"Query did not match a single token, trying to select multiple tokens.");
-                var outputList = JObject.Parse(data).SelectTokens(query)?.Select(x=>x.ToString());
+                var outputList = JToken.Parse(data).SelectTokens(query)?.Select(x=>x.ToString());
                 results = String.Join(",",outputList);
             }
-
-            ctx.Trace($"Results: {results}");
             return results;
         }
     }
