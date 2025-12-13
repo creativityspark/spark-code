@@ -24,6 +24,7 @@
     <AssemblyOriginatorKeyFile>C:\src\spark-code\src\assemblies\Key.snk</AssemblyOriginatorKeyFile>
     <Copyright>2025 Creativity Spark Consulting SL</Copyright>
     <Title>SparkCode.API</Title>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
