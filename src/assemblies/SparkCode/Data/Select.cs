@@ -5,8 +5,11 @@ using System.Linq;
 
 namespace SparkCode.API.Data
 {
+    /// <displayName>Select</displayName>
     /// <summary>
     /// Performs a JSONQuery select on the specified data and returns the results
+    /// </summary>
+    /// <remarks>
     /// Based on: https://www.rfc-editor.org/rfc/rfc9535.html
     /// Library used: https://www.newtonsoft.com/json/help/html/QueryJsonSelectToken.htm
     /// Input Parameters:
@@ -14,7 +17,7 @@ namespace SparkCode.API.Data
     /// Query: Type string. JSON Queuery select string.
     /// Outoput Parameters:
     /// Data: Type string. Data returned by the query in JSON format.
-    /// </summary>
+    /// </remarks>
     public class Select : IPlugin
     {
 
