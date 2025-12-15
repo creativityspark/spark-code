@@ -2,18 +2,18 @@
 using System;
 using Xunit;
 
-namespace SparkCode.Tests.Other
+namespace SparkCode.Tests.Text
 {
     public class ParseURLTests
     {
         [Fact]
         public void ParseURL_ValidUrl_Returns_Parsed_Components()
         {
-            var ctx = new SparkCode.Context();
+            var ctx = new Context();
             var expectedId = Guid.NewGuid();
 
             string url = $"http://www.example.com/path?id={expectedId}&etc=123#fragment";
-            var results = SparkCode.Other.ParseURL.Parse(ctx, url);
+            var results = SparkCode.Text.ParseURL.Parse(ctx, url);
 
             var query = (Entity)results["query"];
             
@@ -29,10 +29,10 @@ namespace SparkCode.Tests.Other
         [Fact]
         public void ParseURL_InvalidURL_Throws_Exception()
         {
-            var ctx = new SparkCode.Context();
+            var ctx = new Context();
             string url = "abc123";
             Assert.Throws<UriFormatException>(() =>
-                SparkCode.Other.ParseURL.Parse(ctx, url)
+                SparkCode.Text.ParseURL.Parse(ctx, url)
             );
         }
     }
