@@ -125,7 +125,6 @@
     <Compile Include="Dataverse\RunFetchXml.cs" />
     <Compile Include="Dataverse\RunSQL.cs" />
     <Compile Include="Dataverse\CalculateRollupField.cs" />
-    <Compile Include="Other\ParseURL.cs" />
     <Compile Include="Dataverse\ServiceExtensions.cs" />
     <Compile Include="Data\XmlToJson.cs" />
     <Compile Include="Text\RegexMatches.cs" />
@@ -138,12 +137,6 @@
     <None Include="app.config" />
     <None Include="Key.snk" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SparkCode\SparkCode.API.csproj">
-      <Project>{506d4687-4c75-4357-8073-4e7b29e7087e}</Project>
-      <Name>SparkCode.API</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

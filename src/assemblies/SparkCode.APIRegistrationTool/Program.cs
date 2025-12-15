@@ -1,5 +1,4 @@
-﻿// Connection string
-using Microsoft.Crm.Sdk.Messages;
+﻿using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using SparkCode.APIRegistrationTool;
@@ -22,7 +21,7 @@ using (var serviceClient = new ServiceClient(connectionString))
 {
     if (serviceClient.IsReady)
     {
-        Console.WriteLine("Successfully connected to Dataverse!");
+        Console.WriteLine("Connected to Dataverse!");
         Console.WriteLine($"Organization: {serviceClient.ConnectedOrgFriendlyName}");
         RegisterCustomAPIs(serviceClient);
     }
@@ -37,7 +36,7 @@ void RegisterCustomAPIs(ServiceClient client)
 {
     string packageName = "csp_SparkCode.API";
     var solutionName = "SparkCode";
-    var documentationFile = "..\\..\\..\\..\\SparkCode\\bin\\Debug\\net462\\SparkCode.API.xml";
+    var documentationFile = "..\\..\\..\\..\\SparkCode.API\\bin\\Debug\\net462\\SparkCode.API.xml";
 
     var apiSpec = LoadSpecification(documentationFile);
     var pluginPackage = GetPluginPackage(client, packageName);
@@ -202,6 +201,11 @@ void UpsertParameters(ServiceClient client, Member api)
             Console.WriteLine($"  Parameter already exists: {parameter.Name}");
         }
     }
+}
+
+void CreateParameter(ServiceClient client, Member api, Parameter parameter)
+{
+    throw new NotImplementedException();
 }
 
 object GetParameter(ServiceClient client, string uniqueName, string name)

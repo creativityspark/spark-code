@@ -13,7 +13,7 @@ namespace SparkCode.API.Text
     /// <example>
     /// To convert a number in text format to an integer, add the Text input parameter with the text value "12345". 
     /// The Results output parameter will return the integer value 12345.
-    /// ![How to use this custom API](assets/image1.png "How to use this custom API")
+    /// ![How to use this custom API](docs/img/TextToInteger01.png "How to use this custom API")
     /// </example>
     public class ToInteger : IPlugin
     {

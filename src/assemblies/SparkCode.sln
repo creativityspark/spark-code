@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.API", "SparkCode\SparkCode.API.csproj", "{506D4687-4C75-4357-8073-4E7B29E7087E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E3903470-7743-43A6-A94F-2612AED1EDF6}"
 	ProjectSection(SolutionItems) = preProject
 		Key.snk = Key.snk
@@ -14,16 +12,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.CustomAPIs", "Spa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.APIRegistrationTool", "SparkCode.APIRegistrationTool\SparkCode.APIRegistrationTool.csproj", "{717B40BA-12D6-4273-A684-F1D37096FC10}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.API", "SparkCode.API\SparkCode.API.csproj", "{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{506D4687-4C75-4357-8073-4E7B29E7087E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{506D4687-4C75-4357-8073-4E7B29E7087E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{506D4687-4C75-4357-8073-4E7B29E7087E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{506D4687-4C75-4357-8073-4E7B29E7087E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{921260EC-82C7-426F-8E23-FA96AB62323A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{921260EC-82C7-426F-8E23-FA96AB62323A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{921260EC-82C7-426F-8E23-FA96AB62323A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -32,6 +28,10 @@ Global
 		{717B40BA-12D6-4273-A684-F1D37096FC10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{717B40BA-12D6-4273-A684-F1D37096FC10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{717B40BA-12D6-4273-A684-F1D37096FC10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
