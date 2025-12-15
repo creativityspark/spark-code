@@ -32,13 +32,22 @@ Classic workflow designer can call registered Actions via the "Perform Action" s
 
 The main goal of the architecture used in this solution is to maximize simplicity and reusability, allowing every custom API to be used in as many places as possible.
 
-Another goal is to included tests, and for this purpose, to separate logic from Custom API plumbing code.
+We are including also unit tests, and to facilitate testing, we separate the core logic from the custom API plumbing code.
 
 All of the above, minimizing duplicated code.
 
-Custom APIs allow returning [Expando](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/reference/expando?view=dataverse-latest) objects as return values. The main advantage of this data type over plain JSON values is that when used in a Power Automate flow, it doesn't require a extra parsing operation; the structure of the returned data is understood by the Power Automate editor, and immediately available.
+Solution structure:
+```
+SparkCode:              Core logic of every custom API.
+SparkCode.Tests:        Unit tests of the core logic.
+SparkCode.API:          API Plumbing code. This library exposes the Core logic to dataverse.
+SparkCode.API.Tests:    Integration Tests. Perform testing calls to a Dataverse environment where the custom APIs are installed.
+```
+This library is compiled as a [plugin package](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/build-and-package#all-projects-must-be-in-the-sdk-style) to allow including additional dependencies when needed.
 
-However, when an Expando object is returned, the API can't be made available to Classic Workflows. That's why in some cases we have the same API registered twice, one that will make use of the Expando object output, and another, with a "_Json" suffix that will return the same values as JSON format instead, to keep the compatibility with classic Workflows.  
+Custom APIs allow [Expando](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/reference/expando?view=dataverse-latest) objects as returning values. The advantage of using this data type over plain JSON is that when used in a Power Automate flow, extra parsing operation is not needed; the structure of the returned values are understood by the Power Automate editor and are immediately available to be used within the editor.
+
+However, when an Expando object is used, the API can't be made available to Classic Workflows. That's why in some cases we have the same API registered twice, one that will make use of the Expando object output, and another, with a "Json" suffix that will return the same values in JSON format instead, to keep the compatibility with classic Workflows.  
 
 ## Included Custom APIs
 
