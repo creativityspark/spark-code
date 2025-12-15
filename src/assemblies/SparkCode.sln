@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.APIRegistrationTo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.API", "SparkCode.API\SparkCode.API.csproj", "{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode", "SparkCode\SparkCode.csproj", "{5FCD491F-5873-4D7E-8E58-7F561FCE9EC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AE36D9B-94F6-4DFC-9192-4C9AA06ECF77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FCD491F-5873-4D7E-8E58-7F561FCE9EC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FCD491F-5873-4D7E-8E58-7F561FCE9EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FCD491F-5873-4D7E-8E58-7F561FCE9EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FCD491F-5873-4D7E-8E58-7F561FCE9EC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

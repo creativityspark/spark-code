@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
-using XrmEntitySerializer;
 
 namespace SparkCode.API.Text
 {
