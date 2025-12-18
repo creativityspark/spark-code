@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode", "SparkCode\Spar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.Tests", "SparkCode.Tests\SparkCode.Tests.csproj", "{7A429C0C-F9E0-469E-9493-B7AC2CC24EB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.CustomAPIs.Tests", "SparkCode.CustomAPIs.Tests\SparkCode.CustomAPIs.Tests.csproj", "{82715DBC-671C-41A5-AA86-AA2D14D5359E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkCode.API.Tests", "SparkCode.API.Tests\SparkCode.API.Tests.csproj", "{8D00A7F6-213F-4093-9992-215554691ECE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +48,14 @@ Global
 		{7A429C0C-F9E0-469E-9493-B7AC2CC24EB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A429C0C-F9E0-469E-9493-B7AC2CC24EB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A429C0C-F9E0-469E-9493-B7AC2CC24EB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82715DBC-671C-41A5-AA86-AA2D14D5359E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82715DBC-671C-41A5-AA86-AA2D14D5359E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82715DBC-671C-41A5-AA86-AA2D14D5359E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82715DBC-671C-41A5-AA86-AA2D14D5359E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D00A7F6-213F-4093-9992-215554691ECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D00A7F6-213F-4093-9992-215554691ECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D00A7F6-213F-4093-9992-215554691ECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D00A7F6-213F-4093-9992-215554691ECE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
