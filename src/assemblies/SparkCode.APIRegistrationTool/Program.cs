@@ -124,6 +124,8 @@ void NormalizeSpecification(APISpecification spec)
                     if (param.Type != null && param.Type.Contains("expando"))
                     {
                         newParam.Name = param.Name + "Json";
+                        newParam.UniqueName = param.UniqueName + "Json";
+                        newParam.DisplayName = param.DisplayName + " (JSON)";
                         newParam.Type = "string";
                         newParam.TypeValue = GetParameterType("string");
                     }
@@ -258,8 +260,33 @@ void UpsertParameters(ServiceClient client, Member api, Entity apiRecord)
         }
         else
         {
+            var outputParameter = GetOutputParameter(client, apiRecord.Id, parameter.UniqueName);
+            if (outputParameter == null)
+            {
+                outputParameter = CreateOutputParameter(client, api, parameter, apiRecord.Id);
+                Console.WriteLine($"Created Output Parameter: {parameter.Name}");
+            }
+            else
+            {
+                Console.WriteLine($"Output Parameter already exists: {parameter.Name}");
+            }
         }
     }
+}
+
+Entity CreateOutputParameter(ServiceClient client, Member api, Parameter parameter, Guid apiId)
+{
+    // create a customapiresponseproperty record
+    var newParam = new Entity("customapiresponseproperty");
+    newParam["uniquename"] = parameter.UniqueName;
+    newParam["name"] = parameter.Name;
+    newParam["displayname"] = parameter.DisplayName;
+    newParam["description"] = parameter.Description?.Trim();
+    newParam["customapiid"] = new EntityReference("customapi", apiId);
+    newParam["type"] = parameter.TypeValue;
+    newParam["iscustomizable"] = true;
+    var newParamId = client.Create(newParam);
+    return client.Retrieve("customapiresponseproperty", newParamId, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
 }
 
 Entity CreateInputParameter(ServiceClient client, Member api, Parameter parameter, Guid apiId)
@@ -276,6 +303,25 @@ Entity CreateInputParameter(ServiceClient client, Member api, Parameter paramete
     newParam["iscustomizable"] = true;
     var newParamId = client.Create(newParam);
     return client.Retrieve("customapirequestparameter", newParamId, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+}
+
+Entity GetOutputParameter(ServiceClient client, Guid apiId, string uniqueName)
+{
+    // Searches for an existing Custom API Output Parameter by uniquename and customapiid on the customapiresponseproperty table
+    var query = new Microsoft.Xrm.Sdk.Query.QueryExpression("customapiresponseproperty")
+    {
+        ColumnSet = new Microsoft.Xrm.Sdk.Query.ColumnSet("customapiresponsepropertyid"),
+        Criteria =
+        {
+            Conditions =
+            {
+                new Microsoft.Xrm.Sdk.Query.ConditionExpression("uniquename", Microsoft.Xrm.Sdk.Query.ConditionOperator.Equal, uniqueName),
+                new Microsoft.Xrm.Sdk.Query.ConditionExpression("customapiid", Microsoft.Xrm.Sdk.Query.ConditionOperator.Equal, apiId)
+            }
+        }
+    };
+    var results = client.RetrieveMultiple(query);
+    return results.Entities.FirstOrDefault();
 }
 
 Entity GetInputParameter(ServiceClient client, Guid apiId, string uniqueName)
