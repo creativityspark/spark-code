@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Number\" />
     <Folder Include="Other\" />
   </ItemGroup>
 
