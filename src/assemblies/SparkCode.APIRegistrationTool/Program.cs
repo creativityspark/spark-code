@@ -14,6 +14,7 @@ string connectionString =
       Url={url};
       AppId=51f81489-12ee-4a9e-aaae-a2591f45987d;
       RedirectUri=http://localhost;
+      TokenCacheStorePath=%userprofile%\.cache;
       LoginPrompt=Auto";
 
 // Initialize the service client
@@ -152,6 +153,7 @@ OptionSetValue GetParameterType(string? type)
             return new OptionSetValue(1);
         case "decimal":
             return new OptionSetValue(2);
+        case "expando":
         case "entity":
             return new OptionSetValue(3);
         case "entitycollection":
