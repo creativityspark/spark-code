@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Xrm.Sdk;
 using System.Xml.Serialization;
 
 namespace SparkCode.APIRegistrationTool
@@ -47,13 +46,20 @@ namespace SparkCode.APIRegistrationTool
         [XmlAttribute("name")]
         public string Name { get; set; }
 
+        public string UniqueName { get; set; }
+
+        public string DisplayName { get; set; }
+
         [XmlAttribute("type")]
         public string Type { get; set; }
+
+        public OptionSetValue TypeValue { get; set; }
 
         [XmlAttribute("direction")]
         public string Direction { get; set; }
 
         [XmlText]
         public string Description { get; set; }
+        public bool IsOptional { get; set; }
     }
 }
