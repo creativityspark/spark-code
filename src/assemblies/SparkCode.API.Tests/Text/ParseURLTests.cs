@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
+using System;
 using Xunit;
 
 namespace SparkCode.API.Tests.Text
@@ -45,6 +46,40 @@ namespace SparkCode.API.Tests.Text
             Assert.Equal("fragment", parsedJson.RootElement.GetProperty("fragment").GetString());
             var query = parsedJson.RootElement.GetProperty("query");
             Assert.Equal("param", query.GetProperty("query").GetString());
+        }
+
+        [Fact]
+        public void ParseURL_InvalidUrl_Throws_Exception()
+        {
+            var service = Context.GetService();
+            var invalidUrl = "not_a_valid_url";
+            Assert.ThrowsAny<Exception>(() =>
+            {
+                service.Execute(new OrganizationRequest("csp_Text.ParseURL")
+                {
+                    Parameters = new ParameterCollection
+                    {
+                        { "Url", invalidUrl }
+                    }
+                });
+            });
+        }
+
+        [Fact]
+        public void ParseURLJson_InvalidUrl_Throws_Exception()
+        {
+            var service = Context.GetService();
+            var invalidUrl = "not_a_valid_url";
+            Assert.ThrowsAny<Exception>(() =>
+            {
+                service.Execute(new OrganizationRequest("csp_Text.ParseURLJson")
+                {
+                    Parameters = new ParameterCollection
+                    {
+                        { "Url", invalidUrl }
+                    }
+                });
+            });
         }
     }
 }
