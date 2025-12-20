@@ -24,7 +24,6 @@ namespace SparkCode.API.Tests.Text
             Assert.NotNull(query);
         }
 
-
         [Fact]
         public void ParseURL_ValidUrl_Returns_Parsed_Components_Json()
         {
@@ -37,9 +36,15 @@ namespace SparkCode.API.Tests.Text
                     { "Url", url }
                 }
             });
-            // Test only that there are values returned, not the actual values
             var results = (string)output["ResultsJson"];
-            Assert.NotNull(results);
+            var parsedJson = System.Text.Json.JsonDocument.Parse(results);
+            Assert.Equal("https", parsedJson.RootElement.GetProperty("scheme").GetString());
+            Assert.Equal("example.com", parsedJson.RootElement.GetProperty("host").GetString());
+            Assert.Equal(8080, parsedJson.RootElement.GetProperty("port").GetInt32());
+            Assert.Equal("/path/to/resource", parsedJson.RootElement.GetProperty("absolutePath").GetString());
+            Assert.Equal("fragment", parsedJson.RootElement.GetProperty("fragment").GetString());
+            var query = parsedJson.RootElement.GetProperty("query");
+            Assert.Equal("param", query.GetProperty("query").GetString());
         }
     }
 }
