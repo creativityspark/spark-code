@@ -124,6 +124,7 @@
   <ItemGroup>
     <Compile Include="Text\ParseURLTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\ReplaceParamsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SparkCode\SparkCode.csproj">

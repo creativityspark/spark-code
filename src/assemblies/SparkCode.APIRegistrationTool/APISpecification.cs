@@ -48,6 +48,7 @@ namespace SparkCode.APIRegistrationTool
 
         public string UniqueName { get; set; }
 
+        [XmlAttribute("displayName")]
         public string DisplayName { get; set; }
 
         [XmlAttribute("type")]
@@ -60,6 +61,8 @@ namespace SparkCode.APIRegistrationTool
 
         [XmlText]
         public string Description { get; set; }
+
+        [XmlAttribute("optional")]
         public bool IsOptional { get; set; }
     }
 }
