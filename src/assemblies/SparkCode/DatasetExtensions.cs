@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
+using System;
 using System.Data;
 
 namespace SparkCode
@@ -20,13 +21,29 @@ namespace SparkCode
                     Entity entity = new Entity();
                     foreach (DataColumn column in table.Columns)
                     {
-                        entity.Attributes.Add(column.ColumnName, row[column]);
+                        entity.Attributes.Add(column.ColumnName, GetValue(row[column]));
                     }
                     collection.Entities.Add(entity);
                 }
                 result.Attributes.Add(table.TableName, collection);
             }
             return result;
+        }
+
+        private static object GetValue(object value)
+        {
+            if (value == null || value is DBNull)
+            {
+                return null;
+            }
+            else if (value is byte || value is byte[])
+            {
+                return Convert.ToString(value);
+            }
+            else
+            {
+                return value;
+            }
         }
     }
 }
