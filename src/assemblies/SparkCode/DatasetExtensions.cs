@@ -38,7 +38,7 @@ namespace SparkCode
             }
             else if (value is byte || value is byte[])
             {
-                return Convert.ToString(value);
+                return Convert.ToBase64String((byte[])value);
             }
             else
             {
