@@ -11,7 +11,7 @@ namespace SparkCode.API.Tests.Text
         {
             var service = Context.GetService();
             var text = "12345";
-            var output = service.Execute(new OrganizationRequest("csp_Text.Parse")
+            var output = service.Execute(new OrganizationRequest("csp_Text_Parse")
             {
                 Parameters = new ParameterCollection
                 {
@@ -29,7 +29,7 @@ namespace SparkCode.API.Tests.Text
             var text = "abc";
             Assert.ThrowsAny<Exception>(() =>
             {
-                service.Execute(new OrganizationRequest("csp_Text.Parse")
+                service.Execute(new OrganizationRequest("csp_Text_Parse")
                 {
                     Parameters = new ParameterCollection
                     {

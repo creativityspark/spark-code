@@ -11,7 +11,7 @@ namespace SparkCode.API.Tests.Text
         {
             var service = Context.GetService();
             var url = "https://example.com:8080/path/to/resource?query=param#fragment";
-            var output = service.Execute(new OrganizationRequest("csp_Text.ParseURL")
+            var output = service.Execute(new OrganizationRequest("csp_Text_ParseURL")
             {
                 Parameters = new ParameterCollection
                 {
@@ -30,7 +30,7 @@ namespace SparkCode.API.Tests.Text
         {
             var service = Context.GetService();
             var url = "https://example.com:8080/path/to/resource?query=param#fragment";
-            var output = service.Execute(new OrganizationRequest("csp_Text.ParseURLJson")
+            var output = service.Execute(new OrganizationRequest("csp_Text_ParseURLJson")
             {
                 Parameters = new ParameterCollection
                 {
@@ -55,7 +55,7 @@ namespace SparkCode.API.Tests.Text
             var invalidUrl = "not_a_valid_url";
             Assert.ThrowsAny<Exception>(() =>
             {
-                service.Execute(new OrganizationRequest("csp_Text.ParseURL")
+                service.Execute(new OrganizationRequest("csp_Text_ParseURL")
                 {
                     Parameters = new ParameterCollection
                     {
@@ -72,7 +72,7 @@ namespace SparkCode.API.Tests.Text
             var invalidUrl = "not_a_valid_url";
             Assert.ThrowsAny<Exception>(() =>
             {
-                service.Execute(new OrganizationRequest("csp_Text.ParseURLJson")
+                service.Execute(new OrganizationRequest("csp_Text_ParseURLJson")
                 {
                     Parameters = new ParameterCollection
                     {

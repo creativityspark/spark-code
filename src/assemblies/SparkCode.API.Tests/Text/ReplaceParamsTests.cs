@@ -10,7 +10,7 @@ namespace SparkCode.API.Tests.Text
         {
             var service = Context.GetService();
             var text = "{{param1}}-{{param2}}-{{param3}}-{{param4}}-{{param5}}-{{param6}}-{{param7}}-{{param8}}-{{param9}}";
-            var output = service.Execute(new OrganizationRequest("csp_Text.ReplaceParams")
+            var output = service.Execute(new OrganizationRequest("csp_Text_ReplaceParams")
             {
                 Parameters = new ParameterCollection
                 {

@@ -12,7 +12,7 @@ namespace SparkCode.API.Tests.Dataverse
         {
             var service = Context.GetService();
             var sql = "SELECT TOP 10 * FROM account";
-            var output = service.Execute(new OrganizationRequest("csp_Dataverse.RunSQL")
+            var output = service.Execute(new OrganizationRequest("csp_Dataverse_RunSQL")
             {
                 Parameters = new ParameterCollection
                 {
@@ -28,7 +28,7 @@ namespace SparkCode.API.Tests.Dataverse
         {
             var service = Context.GetService();
             var sql = "SELECT TOP 10 * FROM account";
-            var output = service.Execute(new OrganizationRequest("csp_Dataverse.RunSQLJson")
+            var output = service.Execute(new OrganizationRequest("csp_Dataverse_RunSQLJson")
             {
                 Parameters = new ParameterCollection
                 {
@@ -46,7 +46,7 @@ namespace SparkCode.API.Tests.Dataverse
             var sql = "SELECT * FROM non_existing_table";
             Assert.ThrowsAny<Exception>(() =>
             {
-                service.Execute(new OrganizationRequest("csp_Dataverse.RunSQL")
+                service.Execute(new OrganizationRequest("csp_Dataverse_RunSQL")
                 {
                     Parameters = new ParameterCollection
                     {

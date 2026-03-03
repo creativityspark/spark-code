@@ -12,7 +12,7 @@ namespace SparkCode.API.Tests.Data
 			var service = Context.GetService();
 			var data = "{ \"items\": [{ \"id\": 1 }, { \"id\": 2 }] }";
 			var query = "items[0].id";
-			var output = service.Execute(new OrganizationRequest("csp_Data.Select")
+			var output = service.Execute(new OrganizationRequest("csp_Data_Select")
 			{
 				Parameters = new ParameterCollection
 				{
@@ -30,7 +30,7 @@ namespace SparkCode.API.Tests.Data
 			var service = Context.GetService();
 			var data = "{ \"items\": [{ \"id\": 1 }, { \"id\": 2 }] }";
 			var query = "items[*].id";
-			var output = service.Execute(new OrganizationRequest("csp_Data.Select")
+			var output = service.Execute(new OrganizationRequest("csp_Data_Select")
 			{
 				Parameters = new ParameterCollection
 				{
@@ -48,7 +48,7 @@ namespace SparkCode.API.Tests.Data
 			var service = Context.GetService();
 			var data = "{ \"items\": [{ \"id\": 1 }] }";
 			var query = "not_a_valid_query";
-            var output = service.Execute(new OrganizationRequest("csp_Data.Select")
+            var output = service.Execute(new OrganizationRequest("csp_Data_Select")
             {
                 Parameters = new ParameterCollection
                 {
@@ -68,7 +68,7 @@ namespace SparkCode.API.Tests.Data
 			var query = "items[0].id";
 			Assert.ThrowsAny<Exception>(() =>
 			{
-				service.Execute(new OrganizationRequest("csp_Data.Select")
+				service.Execute(new OrganizationRequest("csp_Data_Select")
 				{
 					Parameters = new ParameterCollection
 					{
