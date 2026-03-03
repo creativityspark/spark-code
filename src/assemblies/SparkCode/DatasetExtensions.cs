@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System.Data;
 
-namespace SparkCode.API
+namespace SparkCode
 {
     public static class DatasetExtensions
     {

@@ -99,7 +99,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context.cs" />
+    <Compile Include="DatasetExtensions.cs" />
     <Compile Include="Data\Select.cs" />
+    <Compile Include="EntityExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Text\ParseURL.cs" />
     <Compile Include="Text\ReplaceParams.cs" />
