@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace SparkCode
 {
@@ -47,6 +46,17 @@ namespace SparkCode
                     writer.WriteStartObject();
                     WriteEntity(writer, sw, (Entity)entity.Attributes[key]);
                     writer.WriteEndObject();
+                }
+                else if (entity.Attributes[key] is EntityCollection)
+                {
+                    writer.WriteStartArray();
+                    foreach (var childEntity in ((EntityCollection)entity.Attributes[key]).Entities)
+                    {
+                        writer.WriteStartObject();
+                        WriteEntity(writer, sw, childEntity);
+                        writer.WriteEndObject();
+                    }
+                    writer.WriteEndArray();
                 }
                 else if (entity.Attributes[key] is AliasedValue)
                 {
