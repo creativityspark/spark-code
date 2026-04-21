@@ -67,7 +67,7 @@ void NormalizeSpecification(APISpecification spec)
     {
         member.TypeName = member.TypeName.Replace(assemblyPrefix, "");
         member.Name = member.TypeName.Replace(memberPrefix, "");
-        member.UniqueName = apiPrefix + member.TypeName.Replace(memberPrefix, "");
+        member.UniqueName = apiPrefix + member.TypeName.Replace(memberPrefix, "").Replace(".","_");
         member.EnabledForWorkflow = true;
 
         var hasEpando = false;
