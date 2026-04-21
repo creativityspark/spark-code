@@ -194,6 +194,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Text\Base64DecodeTests.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Dataverse\RunSQLTests.cs" />
     <Compile Include="Data\SelectTests.cs" />
