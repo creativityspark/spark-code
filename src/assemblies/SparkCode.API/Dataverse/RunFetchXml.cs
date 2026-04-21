@@ -4,6 +4,25 @@ using System;
 
 namespace SparkCode.API.Dataverse
 {
+    /// <summary>
+    /// A plugin that executes a FetchXML query and returns the results.
+    /// </summary>
+    /// <displayName>Run FetchXML</displayName>
+    /// <param name="FetchXml" type="string">The FetchXML query to execute.</param>
+    /// <param name="Results" type="entitycollection" direction="output">The results of the FetchXML query.</param>
+    /// <example>
+    /// To retrieve the primary contact for the current account, pass the FetchXml parameter as
+    /// <fetch top='1'>
+    ///     <entity name='account'>
+    ///         <attribute name='name' />
+    ///         <attribute name='primarycontactid' />
+    ///         <filter>
+    ///             <condition attribute='name' operator='eq' value='Contoso' />
+    ///         </filter>
+    ///     </entity>
+    /// </fetch>
+    /// The Results output parameter will contain the matching account record and selected fields.
+    /// </example>
     public class RunFetchXml : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
@@ -23,10 +42,6 @@ namespace SparkCode.API.Dataverse
 
         private EntityCollection ExecuteFetchXml(Context ctx, string fetchXml)
         {
-            // Replace the record id in the FetchXML if specified
-            var id = ctx.PluginContext.PrimaryEntityId;
-            fetchXml = fetchXml.Replace("{{id}}", id.ToString());
-
             // Execute FetchXml
             var fetchExpression = new FetchExpression(fetchXml);
             var results = ctx.Service.RetrieveMultiple(fetchExpression);
