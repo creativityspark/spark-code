@@ -1,7 +1,5 @@
 using Microsoft.Xrm.Sdk;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SparkCode.API.Templates
@@ -9,11 +7,11 @@ namespace SparkCode.API.Templates
     /// <displayName>Get Front Matter</displayName>
     /// <summary>Extracts YAML front matter from a text input and returns it together with the remaining body.</summary>
     /// <param name="InputText" type="string">Text that may start with YAML front matter delimited by --- markers.</param>
-    /// <param name="FrontMatter" type="string" direction="output">Front matter content serialized as a JSON object.</param>
+    /// <param name="FrontMatter" type="expando" direction="output">Front matter content as an expando object where each YAML key becomes an attribute.</param>
     /// <param name="Body" type="string" direction="output">Input text without the front matter block.</param>
     /// <example>
     /// To extract front matter from a markdown template, pass the InputText parameter as "---\ntitle: Hello\nauthor: Cris\n---\n# Body".
-    /// The FrontMatter output parameter will return "{\"title\":\"Hello\",\"author\":\"Cris\"}" and the Body output parameter will return "# Body".
+    /// The FrontMatter output parameter will contain attributes title="Hello" and author="Cris", and the Body output parameter will return "# Body".
     /// </example>
     public class GetFrontMatter : IPlugin
     {
@@ -26,7 +24,7 @@ namespace SparkCode.API.Templates
 
             // Run Logic
             string frontMatterPattern = @"^---\s*\n(.*?)\n---\s*\n";
-            string frontMatterJson = "{}";
+            var frontMatter = new Entity();
             string body = inputText;
             var regex = new Regex(frontMatterPattern, RegexOptions.Singleline);
             Match match = regex.Match(inputText);
@@ -35,18 +33,18 @@ namespace SparkCode.API.Templates
             {
                 string frontMatterContent = match.Groups[1].Value.Trim();
                 body = regex.Replace(inputText, string.Empty).Trim();
-                Dictionary<string, string> frontMatterDict = ParseYamlFrontMatter(frontMatterContent);
-                frontMatterJson = JsonConvert.SerializeObject(frontMatterDict);
+                frontMatter = ParseYamlFrontMatter(frontMatterContent);
             }
 
             // API Outputs
-            ctx.SetOutputParameter("FrontMatter", frontMatterJson);
+            ctx.SetOutputParameter("FrontMatter", frontMatter);
+            ctx.SetOutputParameter("FrontMatterJson", frontMatter.ToJson());
             ctx.SetOutputParameter("Body", body);
         }
 
-        private Dictionary<string, string> ParseYamlFrontMatter(string yamlContent)
+        private Entity ParseYamlFrontMatter(string yamlContent)
         {
-            var result = new Dictionary<string, string>();
+            var result = new Entity();
             string[] lines = yamlContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string line in lines)

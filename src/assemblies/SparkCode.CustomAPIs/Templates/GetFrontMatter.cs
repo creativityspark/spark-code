@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace SparkCode.CustomAPIs.Templates
 {
@@ -25,6 +23,7 @@ namespace SparkCode.CustomAPIs.Templates
             string frontMatterPattern = @"^---\s*\n(.*?)\n---\s*\n";
             string frontMatterContent = string.Empty;
             string templateWithoutFrontMatter = inputText;
+            var frontMatter = new Entity();
 
             // Create the regex with RegexOptions.Singleline to make . match newlines
             var regex = new Regex(frontMatterPattern, RegexOptions.Singleline);
@@ -39,26 +38,23 @@ namespace SparkCode.CustomAPIs.Templates
                 templateWithoutFrontMatter = regex.Replace(inputText, string.Empty).Trim();
 
                 // Parse YAML front matter into dictionary
-                Dictionary<string, string> frontMatterDict = ParseYamlFrontMatter(frontMatterContent);
-
-                // Convert dictionary to JSON
-                string frontMatterJson = JsonConvert.SerializeObject(frontMatterDict);
+                frontMatter = ParseYamlFrontMatter(frontMatterContent);
 
                 // Set output parameters
-                context.OutputParameters["FrontMatter"] = frontMatterJson;
+                context.OutputParameters["FrontMatter"] = frontMatter;
                 context.OutputParameters["Body"] = templateWithoutFrontMatter;
             }
             else
             {
-                // If no front matter is found, return empty JSON and original template
-                context.OutputParameters["FrontMatter"] = "{}";
+                // If no front matter is found, return empty front matter and original template
+                context.OutputParameters["FrontMatter"] = frontMatter;
                 context.OutputParameters["Body"] = inputText;
             }
         }
 
-        private Dictionary<string, string> ParseYamlFrontMatter(string yamlContent)
+        private Entity ParseYamlFrontMatter(string yamlContent)
         {
-            var result = new Dictionary<string, string>();
+            var result = new Entity();
 
             // Split the YAML content into lines
             string[] lines = yamlContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
