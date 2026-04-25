@@ -122,6 +122,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ParseCsvTests.cs" />
     <Compile Include="Data\SelectTests.cs" />
     <Compile Include="Templates\GetFrontMatterTests.cs" />
     <Compile Include="Text\ParseURLTests.cs" />
