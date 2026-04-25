@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 // Get connection string from environment variable
 var connectionString = Environment.GetEnvironmentVariable("DATAVERSE_CONNECTION_STRING_SPARK_CODE");
 
-Console.WriteLine("Creativity Spark's API Registration Tool. (c) 2026");
+Console.WriteLine("Creativity Spark's API Registration Tool. (c) Creativity Spark Consulting SL 2026. All rights reserved.");
 
 // Initialize the service client
 using (var serviceClient = new ServiceClient(connectionString))
