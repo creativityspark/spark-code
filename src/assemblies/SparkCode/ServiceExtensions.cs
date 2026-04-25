@@ -80,9 +80,13 @@ namespace SparkCode.CustomAPIs.Dataverse
         /// <param name="viewName"></param>
         /// <param name="friendlyNames"></param>
         /// <returns></returns>
-        public static string GetViewData(this IOrganizationService service, Guid? viewId, string tableName, string viewName, bool friendlyNames)
+        public static EntityCollection GetViewData(this IOrganizationService service, Guid? viewId, string tableName, string viewName, bool friendlyNames)
         {
-            var etc = GetEntityTypeCode(service, tableName);
+            var etc = 0;
+            if (viewName != null)
+            {
+                 etc = GetEntityTypeCode(service, tableName);
+            }
 
             // Retrieve the view from SavedQuery
             Entity savedQuery = GetSavedQuery(service, viewId, etc, viewName);
@@ -91,31 +95,7 @@ namespace SparkCode.CustomAPIs.Dataverse
             string fetchXml = savedQuery.GetAttributeValue<string>("fetchxml");
             EntityCollection results = service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            // Get column metadata if friendly names are requested
-            Dictionary<string, string> columnDisplayNames = friendlyNames
-                ? GetQueryDisplayNames(service, fetchXml, tableName)
-                : null;
-
-            // Convert results to a list of dictionaries
-            var jsonResults = new List<Dictionary<string, object>>();
-            foreach (var entity in results.Entities)
-            {
-                var record = new Dictionary<string, object>();
-                foreach (var attribute in entity.Attributes)
-                {
-                    string key = attribute.Key;
-                    // If friendly names are requested, use the display name
-                    if (friendlyNames && columnDisplayNames != null && columnDisplayNames.ContainsKey(key))
-                    {
-                        key = columnDisplayNames[key];
-                    }
-                    record[key] = FormatAttributeValue(attribute.Value);
-                }
-                jsonResults.Add(record);
-            }
-
-            // Serialize to JSON
-            return JsonConvert.SerializeObject(jsonResults, Formatting.Indented);
+            return results;
         }
 
         /// <summary>
@@ -126,7 +106,6 @@ namespace SparkCode.CustomAPIs.Dataverse
         /// <param name="objectTypeCode"></param>
         /// <param name="viewName"></param>
         /// <returns></returns>
-        /// <exception cref="InvalidPluginExecutionException"></exception>
         public static Entity GetSavedQuery(this IOrganizationService service, Guid? viewId, int objectTypeCode, string viewName)
         {
             // If ViewId is provided, retrieve the view directly by ID
@@ -153,10 +132,10 @@ namespace SparkCode.CustomAPIs.Dataverse
 
             if (views.Entities.Count == 0)
             {
-                throw new InvalidPluginExecutionException($"View '{viewName}' not found for etc '{objectTypeCode}'.");
+                throw new Exception($"View '{viewName}' not found for etc '{objectTypeCode}'.");
             }
 
-            return views.Entities[0]; // Return the first matching view
+            return views.Entities[0];
         }
 
         /// <summary>

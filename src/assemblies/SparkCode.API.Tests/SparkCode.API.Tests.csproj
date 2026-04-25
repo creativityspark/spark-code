@@ -196,7 +196,6 @@
   <ItemGroup>
     <Compile Include="Text\Base64EncodeTests.cs" />
     <Compile Include="Text\Base64DecodeTests.cs" />
-    <Compile Include="Context.cs" />
     <Compile Include="Dataverse\CalculateRollupFieldTests.cs" />
     <Compile Include="Dataverse\RunFetchXmlTests.cs" />
     <Compile Include="Dataverse\RunSQLTests.cs" />
@@ -208,6 +207,12 @@
     <Compile Include="Text\ParseTests.cs" />
     <Compile Include="Text\ParseURLTests.cs" />
     <Compile Include="Text\ReplaceParamsTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SparkCode.Tests\SparkCode.Tests.csproj">
+      <Project>{7A429C0C-F9E0-469E-9493-B7AC2CC24EB5}</Project>
+      <Name>SparkCode.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
