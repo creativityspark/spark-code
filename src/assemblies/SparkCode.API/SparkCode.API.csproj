@@ -17,14 +17,15 @@
   <PropertyGroup>
     <PackageId>SparkCode.API</PackageId>
     <Version>$(FileVersion)</Version>
-    <Authors>Creativity Spark Consultin SL</Authors>
+    <Authors>Creativity Spark Consulting SL</Authors>
     <Company>Creativity Spark</Company>
     <Description>Custom APIs library for Dataverse</Description>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>C:\src\spark-code\src\assemblies\Key.snk</AssemblyOriginatorKeyFile>
-    <Copyright>2025 Creativity Spark Consulting SL</Copyright>
+    <Copyright>2026 Creativity Spark Consulting SL</Copyright>
     <Title>SparkCode.API</Title>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <PackageProjectUrl>http://www.creativityspark.es</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

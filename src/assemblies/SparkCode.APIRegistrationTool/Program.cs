@@ -5,17 +5,13 @@ using SparkCode.APIRegistrationTool;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
-Console.WriteLine("Creativity Spark's API Registration Tool");
-Console.Write("Environment URL:");
-var url = Console.ReadLine();
+// Use this powershell command to register the environment variable
+// [System.Environment]::SetEnvironmentVariable('DATAVERSE_CONNECTION_STRING_SPARK_CODE', 'AuthType=ClientSecret;Url=https://url.crm.dynamics.com;AppId=XXX;ClientSecret=YYY', 'User')   
 
-string connectionString =
-    $@"AuthType=OAuth;
-      Url={url};
-      AppId=51f81489-12ee-4a9e-aaae-a2591f45987d;
-      RedirectUri=http://localhost;
-      TokenCacheStorePath=%userprofile%\.cache;
-      LoginPrompt=Auto";
+// Get connection string from environment variable
+var connectionString = Environment.GetEnvironmentVariable("DATAVERSE_CONNECTION_STRING_SPARK_CODE");
+
+Console.WriteLine("Creativity Spark's API Registration Tool. (c) 2026");
 
 // Initialize the service client
 using (var serviceClient = new ServiceClient(connectionString))
@@ -28,38 +24,69 @@ using (var serviceClient = new ServiceClient(connectionString))
     }
     else
     {
-        Console.WriteLine("Failed to connect to Dataverse.");
-        Console.WriteLine(serviceClient.LastError);
+        throw new Exception($"Failed to connect to Dataverse: {serviceClient.LastError}");
     }
 }
 
 void RegisterCustomAPIs(ServiceClient client)
 {
     string solutionPrefix = "csp_";
-    string assemblyName = "SparkCode.API";
-    string packageName = solutionPrefix+assemblyName;
     var solutionName = "SparkCode";
-    var documentationFile = "..\\..\\..\\..\\SparkCode.API\\bin\\Debug\\net462\\SparkCode.API.xml";
+    string assemblyName = $"{solutionName}.API";
+    string packageName = $"{solutionPrefix}{assemblyName}";
+    string packageVersion = "1.0.0";
+    string buildMode = "Release";
+    #if DEBUG
+        buildMode = "Debug";
+    #endif
 
-    var apiSpec = LoadSpecification(documentationFile);
+    var assembliesRootDirectory = System.AppContext.BaseDirectory;
+
+    var documentationFile = Path.GetFullPath(Path.Combine(assembliesRootDirectory, $"..\\..\\..\\..\\{assemblyName}\\bin\\{buildMode}\\net462\\{assemblyName}.xml"));
+
+    var assemblyPackageFile = Path.GetFullPath(Path.Combine(assembliesRootDirectory, $"..\\..\\..\\..\\{assemblyName}\\bin\\{buildMode}\\{assemblyName}.{packageVersion}.nupkg"));
+
     var pluginPackage = GetPluginPackage(client, packageName);
-    var pluginAssembly = GetPluginAssembly(client, pluginPackage.Id, assemblyName);
 
-    NormalizeSpecification(apiSpec);
+    if (pluginPackage == null)
+    {
+        Console.WriteLine($"Creating Plugin Package: {packageName} ({packageVersion}) from {assemblyPackageFile} ...");
+        pluginPackage = CreatePluginPackage(client, packageName, assemblyPackageFile, packageVersion);
+        Console.WriteLine("Plugin package created successfully.");
+    }
+    else
+    {
+        Console.WriteLine($"Updating Plugin Package: {packageName} ({packageVersion}) from {assemblyPackageFile} ...");
+        UpdatePluginPackage(client, pluginPackage, assemblyPackageFile, packageVersion);
+        Console.WriteLine("Plugin package updated successfully.");
+    }
+
+    Console.WriteLine($"Retrieving Plugin Assembly: {assemblyName} ...");
+    var pluginAssembly = GetPluginAssembly(client, pluginPackage.Id, assemblyName);
+    if (pluginAssembly == null)
+    {
+       throw new Exception($"Plugin Assembly {assemblyName} not found in package {packageName}.");
+    }
+    Console.WriteLine("Plugin Assembly retrieved successfully.");
+
+
+    Console.WriteLine($"Loading API specification from {documentationFile} ...");
+    var apiSpec = LoadSpecification(documentationFile);
+    NormalizeSpecification(apiSpec, solutionPrefix, assemblyName);
+    Console.WriteLine("API specification loaded and normalized successfully.");
 
     foreach (var api in apiSpec.Members)
     {
         var existingAPI = Upsert(client, pluginAssembly.Id, api);
         AddToSolution(client, existingAPI, solutionName);
     }
-
 }
 
-void NormalizeSpecification(APISpecification spec)
+
+void NormalizeSpecification(APISpecification spec, string apiPrefix, string memberPrefix)
 {
-    const string apiPrefix = "csp_";
     const string assemblyPrefix = "T:";
-    const string memberPrefix = "SparkCode.API.";
+    memberPrefix = memberPrefix + ".";
 
     var newMembers = new List<Member>();
 
@@ -414,6 +441,33 @@ Entity GetPluginPackage (ServiceClient client, string name)
     };
     var results = client.RetrieveMultiple(query);
     return results.Entities.FirstOrDefault();
+}
+
+Entity CreatePluginPackage(ServiceClient client, string name, string assemblyPackageFile, string packageVersion)
+{
+    var packageContent = Convert.ToBase64String(File.ReadAllBytes(assemblyPackageFile));
+
+    var newPackage = new Entity("pluginpackage");
+    newPackage["name"] = name;
+    newPackage["uniquename"] = name;
+    newPackage["version"] = packageVersion;
+    newPackage["content"] = packageContent;
+
+    var pluginPackageId = client.Create(newPackage);
+
+    var createdPackage = client.Retrieve("pluginpackage", pluginPackageId, new Microsoft.Xrm.Sdk.Query.ColumnSet("pluginpackageid", "name", "version"));
+    return createdPackage;
+}
+
+void UpdatePluginPackage(ServiceClient client, Entity package, string assemblyPackageFile, string packageVersion)
+{
+    var packageContent = Convert.ToBase64String(File.ReadAllBytes(assemblyPackageFile));
+
+    var packageToUpdate = new Entity("pluginpackage", package.Id);
+    packageToUpdate["version"] = packageVersion;
+    packageToUpdate["content"] = packageContent;
+
+    client.Update(packageToUpdate);
 }
 
 Entity GetPluginAssembly(ServiceClient client, Guid packageId, string name)
