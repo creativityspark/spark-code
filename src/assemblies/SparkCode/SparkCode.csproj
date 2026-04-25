@@ -103,6 +103,7 @@
     <Compile Include="Data\Select.cs" />
     <Compile Include="EntityExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templates\GetFrontMatter.cs" />
     <Compile Include="Text\ParseURL.cs" />
     <Compile Include="Text\ReplaceParams.cs" />
   </ItemGroup>

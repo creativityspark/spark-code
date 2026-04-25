@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
@@ -27,6 +27,14 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageProjectUrl>http://www.creativityspark.es</PackageProjectUrl>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Number\**" />
+    <Compile Remove="Other\**" />
+    <EmbeddedResource Remove="Number\**" />
+    <EmbeddedResource Remove="Other\**" />
+    <None Remove="Number\**" />
+    <None Remove="Other\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Fluid.Core" Version="2.11.1" />
@@ -36,11 +44,6 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.*" PrivateAssets="All" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="XrmEntitySerializer.9" Version="1.3.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Number\" />
-    <Folder Include="Other\" />
   </ItemGroup>
 
   <ItemGroup>

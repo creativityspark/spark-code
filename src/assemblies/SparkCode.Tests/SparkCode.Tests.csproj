@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\SelectTests.cs" />
+    <Compile Include="Templates\GetFrontMatterTests.cs" />
     <Compile Include="Text\ParseURLTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Text\ReplaceParamsTests.cs" />
