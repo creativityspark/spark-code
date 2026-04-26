@@ -9,7 +9,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void ParseURL_ValidUrl_Returns_Parsed_Components()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var url = "https://example.com:8080/path/to/resource?query=param#fragment";
             var output = service.Execute(new OrganizationRequest("csp_Text_ParseURL")
             {
@@ -28,7 +28,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void ParseURL_ValidUrl_Returns_Parsed_Components_Json()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var url = "https://example.com:8080/path/to/resource?query=param#fragment";
             var output = service.Execute(new OrganizationRequest("csp_Text_ParseURLJson")
             {
@@ -51,7 +51,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void ParseURL_InvalidUrl_Throws_Exception()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var invalidUrl = "not_a_valid_url";
             Assert.ThrowsAny<Exception>(() =>
             {
@@ -68,7 +68,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void ParseURLJson_InvalidUrl_Throws_Exception()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var invalidUrl = "not_a_valid_url";
             Assert.ThrowsAny<Exception>(() =>
             {

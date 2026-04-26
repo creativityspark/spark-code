@@ -8,7 +8,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void Base64Encode_ValidText_Returns_Base64_String()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var input = "Hello World";
             var output = service.Execute(new OrganizationRequest("csp_Text_Base64Encode")
             {
@@ -24,7 +24,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void Base64Encode_ValidUnicode_Returns_Base64_String()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var input = "\u00A1Hola!";
             var output = service.Execute(new OrganizationRequest("csp_Text_Base64Encode")
             {
@@ -40,7 +40,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void Base64Encode_EmptyString_Returns_EmptyString()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var input = string.Empty;
             var output = service.Execute(new OrganizationRequest("csp_Text_Base64Encode")
             {

@@ -8,7 +8,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void ReplaceParams_AllParams_ReplacesAllPlaceholders()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var text = "{{param1}}-{{param2}}-{{param3}}-{{param4}}-{{param5}}-{{param6}}-{{param7}}-{{param8}}-{{param9}}";
             var output = service.Execute(new OrganizationRequest("csp_Text_ReplaceParams")
             {

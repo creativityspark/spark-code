@@ -5,7 +5,7 @@ namespace SparkCode.Text
 {
     public static class ParseURL
     {
-        public static Entity Parse(Context ctx, string url)
+        public static Entity Parse(string url)
         {
             var results = new Entity();
             Uri uri = new Uri(url);

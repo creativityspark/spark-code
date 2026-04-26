@@ -10,7 +10,7 @@ namespace SparkCode.API.Tests.Dataverse
         [Fact]
         public void RunFetchXml_ValidQuery_Returns_Results_EntityCollection()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var fetchXml = "<fetch top='10'><entity name='account'><attribute name='accountid' /><attribute name='name' /></entity></fetch>";
             var output = service.Execute(new OrganizationRequest("csp_Dataverse_RunFetchXml")
             {
@@ -26,7 +26,7 @@ namespace SparkCode.API.Tests.Dataverse
         [Fact]
         public void RunFetchXml_ValidQuery_Returns_ResultsJson_Json()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var fetchXml = "<fetch top='10'><entity name='account'><attribute name='accountid' /><attribute name='name' /></entity></fetch>";
             var output = service.Execute(new OrganizationRequest("csp_Dataverse_RunFetchXmlJson")
             {
@@ -42,7 +42,7 @@ namespace SparkCode.API.Tests.Dataverse
         [Fact]
         public void RunFetchXml_InvalidQuery_Throws_Exception()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var fetchXml = "<fetch><entity name='non_existing_table'><attribute name='name' /></entity></fetch>";
             Assert.ThrowsAny<Exception>(() =>
             {

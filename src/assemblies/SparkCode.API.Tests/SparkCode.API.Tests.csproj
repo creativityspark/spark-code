@@ -209,17 +209,17 @@
     <Compile Include="Text\ReplaceParamsTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SparkCode.Tests\SparkCode.Tests.csproj">
-      <Project>{7A429C0C-F9E0-469E-9493-B7AC2CC24EB5}</Project>
-      <Name>SparkCode.Tests</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SparkCode\SparkCode.csproj">
+      <Project>{5fcd491f-5873-4d7e-8e58-7f561fce9ec9}</Project>
+      <Name>SparkCode</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

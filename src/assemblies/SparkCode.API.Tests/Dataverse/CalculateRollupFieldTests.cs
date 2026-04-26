@@ -9,7 +9,7 @@ namespace SparkCode.API.Tests.Dataverse
         [Fact]
         public void CalculateRollupField_InvalidTargetId_Throws_FormatException()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
 
             Assert.ThrowsAny<Exception>(() =>
             {
@@ -28,7 +28,7 @@ namespace SparkCode.API.Tests.Dataverse
         [Fact]
         public void CalculateRollupField_InvalidTarget_Throws_Exception()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
 
             Assert.ThrowsAny<Exception>(() =>
             {

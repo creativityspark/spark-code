@@ -17,7 +17,7 @@ namespace SparkCode.API.Text
             string url = ctx.GetInputParameter<string>("Url", true);
 
             // Run Logic
-            var results = SparkCode.Text.ParseURL.Parse(ctx, url);
+            var results = SparkCode.Text.ParseURL.Parse(url);
 
             // API Outputs
             ctx.SetOutputParameter("Results", results);

@@ -22,7 +22,7 @@ namespace SparkCode.API.Templates
             string inputText = ctx.GetInputParameter<string>("InputText", true);
 
             // Run Logic
-            var results = SparkCode.Templates.GetFrontMatter.Parse(ctx, inputText);
+            var results = SparkCode.Templates.GetFrontMatter.Parse(inputText);
             var frontMatter = (Entity)results["frontMatter"];
             var body = (string)results["body"];
 

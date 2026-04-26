@@ -41,7 +41,7 @@ namespace SparkCode.API.Text
             parameters[8] = ctx.GetInputParameter<string>("Param9", false);
 
             // Run Logic
-            var result = SparkCode.Text.ReplaceParams.Replace(ctx, text, parameters);
+            var result = SparkCode.Text.ReplaceParams.Replace(text, parameters);
 
             // API Outputs
             ctx.SetOutputParameter("Results", result);

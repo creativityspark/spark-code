@@ -9,29 +9,25 @@ namespace SparkCode.Tests.Data
         [Fact]
         public void Convert_ValidXml_ReturnsJson()
         {
-            var ctx = new Context();
             string xml = "<root><element>value</element></root>";
             string expectedJson = "{\"root\":{\"element\":\"value\"}}";
 
-            string json = SparkCode.Data.XmlToJson.Convert(ctx, xml);
+            string json = SparkCode.Data.XmlToJson.Convert(xml);
             Assert.Equal(expectedJson, json);
         }
 
         [Fact]
         public void Convert_InvalidXml_ThrowsException()
         {
-            var ctx = new Context();
             string invalidXml = "<root><element>value</element>";
 
-            Assert.Throws<XmlException>(() => SparkCode.Data.XmlToJson.Convert(ctx, invalidXml));
+            Assert.Throws<XmlException>(() => SparkCode.Data.XmlToJson.Convert(invalidXml));
         }
 
         [Fact]
         public void Convert_EmptyXml_ThrowsArgumentNullException()
         {
-            var ctx = new Context();
-
-            Assert.Throws<ArgumentNullException>(() => SparkCode.Data.XmlToJson.Convert(ctx, string.Empty));
+            Assert.Throws<ArgumentNullException>(() => SparkCode.Data.XmlToJson.Convert(string.Empty));
         }
     }
 }

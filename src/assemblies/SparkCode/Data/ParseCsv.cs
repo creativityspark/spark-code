@@ -9,7 +9,7 @@ namespace SparkCode.Data
 {
     public static class ParseCsv
     {
-        public static Entity Parse(Context ctx, string csv, string delimiter, bool fieldsEnclosedInQuotes)
+        public static Entity Parse(string csv, string delimiter, bool fieldsEnclosedInQuotes)
         {
             if (string.IsNullOrWhiteSpace(csv))
             {
@@ -24,8 +24,6 @@ namespace SparkCode.Data
             var result = new Entity();
             var rows = new EntityCollection();
             var columnNames = new List<string>();
-
-            ctx?.Trace($"Parsing CSV with delimiter '{delimiter}' and HasFieldsEnclosedInQuotes={fieldsEnclosedInQuotes}");
 
             using (var csvStream = new MemoryStream(Encoding.UTF8.GetBytes(csv)))
             using (var parser = new TextFieldParser(csvStream))

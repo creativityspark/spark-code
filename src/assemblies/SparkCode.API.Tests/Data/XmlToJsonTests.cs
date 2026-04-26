@@ -9,7 +9,7 @@ namespace SparkCode.API.Tests.Data
         [Fact]
         public void XmlToJson_ValidXml_Returns_Json()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var xml = "<root><element>value</element></root>";
 
             var output = service.Execute(new OrganizationRequest("csp_Data_XmlToJson")
@@ -27,7 +27,7 @@ namespace SparkCode.API.Tests.Data
         [Fact]
         public void XmlToJson_InvalidXml_Throws_Exception()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var invalidXml = "<root><element>value</element>";
 
             Assert.ThrowsAny<Exception>(() =>

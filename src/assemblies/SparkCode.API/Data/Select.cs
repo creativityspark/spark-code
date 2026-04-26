@@ -26,7 +26,7 @@ namespace SparkCode.API.Data
             string query = ctx.GetInputParameter<string>("Query", true);
 
             // Run Logic
-            string results = SparkCode.Data.Select.RunQuery(ctx, data, query);
+            string results = SparkCode.Data.Select.RunQuery(data, query);
 
             // API Outputs
             ctx.SetOutputParameter("Results", results);

@@ -9,10 +9,9 @@ namespace SparkCode.Tests.Data
         [Fact]
         public void Parse_ValidCsv_ReturnsParsedRows()
         {
-            var ctx = new Context();
             var csv = "name,age\nAlice,30\nBob,25";
 
-            var result = SparkCode.Data.ParseCsv.Parse(ctx, csv, ",", false);
+            var result = SparkCode.Data.ParseCsv.Parse(csv, ",", false);
             var rows = (EntityCollection)result["rows"];
 
             Assert.Equal(2, (int)result["rowCount"]);
@@ -26,10 +25,9 @@ namespace SparkCode.Tests.Data
         [Fact]
         public void Parse_WithSemicolonAndQuotedValues_ReturnsExpectedFields()
         {
-            var ctx = new Context();
             var csv = "name;note\n\"Alice\";\"hello;world\"";
 
-            var result = SparkCode.Data.ParseCsv.Parse(ctx, csv, ";", true);
+            var result = SparkCode.Data.ParseCsv.Parse(csv, ";", true);
             var rows = (EntityCollection)result["rows"];
 
             Assert.Single(rows.Entities);
@@ -40,7 +38,6 @@ namespace SparkCode.Tests.Data
         [Fact]
         public void Parse_ComplexCsv_MultipleRows_ParsesAllSupportedDataTypes()
         {
-            var ctx = new Context();
             var csv = string.Join("\n", new[]
             {
                 "name,count,price,createdOn",
@@ -49,7 +46,7 @@ namespace SparkCode.Tests.Data
                 "WidgetC,0,100.01,2026-04-26T23:59:59"
             });
 
-            var result = SparkCode.Data.ParseCsv.Parse(ctx, csv, ",", false);
+            var result = SparkCode.Data.ParseCsv.Parse(csv, ",", false);
             var rows = (EntityCollection)result["rows"];
 
             Assert.Equal(3, (int)result["rowCount"]);
@@ -74,7 +71,6 @@ namespace SparkCode.Tests.Data
         [Fact]
         public void Parse_ComplexCsv_WithSemicolonAndQuotedTextAndDateTime_ParsesAllSupportedDataTypes()
         {
-            var ctx = new Context();
             var csv = string.Join("\n", new[]
             {
                 "name;count;price;createdOn",
@@ -83,7 +79,7 @@ namespace SparkCode.Tests.Data
                 "\"Widget C\";0;100.01;\"2026-04-26T23:59:59\""
             });
 
-            var result = SparkCode.Data.ParseCsv.Parse(ctx, csv, ";", true);
+            var result = SparkCode.Data.ParseCsv.Parse(csv, ";", true);
             var rows = (EntityCollection)result["rows"];
 
             Assert.Equal(3, (int)result["rowCount"]);
@@ -108,10 +104,8 @@ namespace SparkCode.Tests.Data
         [Fact]
         public void Parse_EmptyCsv_ThrowsArgumentNullException()
         {
-            var ctx = new Context();
-
             Assert.Throws<ArgumentNullException>(() =>
-                SparkCode.Data.ParseCsv.Parse(ctx, string.Empty, ",", true)
+                SparkCode.Data.ParseCsv.Parse(string.Empty, ",", true)
             );
         }
     }

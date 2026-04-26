@@ -9,7 +9,7 @@ namespace SparkCode.API.Tests.Data
 		[Fact]
 		public void Select_ValidQuery_Returns_ExpectedResults()
 		{
-			var service = Context.GetService();
+			var service = new Context().Service;
 			var data = "{ \"items\": [{ \"id\": 1 }, { \"id\": 2 }] }";
 			var query = "items[0].id";
 			var output = service.Execute(new OrganizationRequest("csp_Data_Select")
@@ -27,7 +27,7 @@ namespace SparkCode.API.Tests.Data
 		[Fact]
 		public void Select_MultipleTokens_Returns_JoinedResults()
 		{
-			var service = Context.GetService();
+			var service = new Context().Service;
 			var data = "{ \"items\": [{ \"id\": 1 }, { \"id\": 2 }] }";
 			var query = "items[*].id";
 			var output = service.Execute(new OrganizationRequest("csp_Data_Select")
@@ -45,7 +45,7 @@ namespace SparkCode.API.Tests.Data
 		[Fact]
 		public void Select_InvalidQuery_Returns_Null()
 		{
-			var service = Context.GetService();
+			var service = new Context().Service;
 			var data = "{ \"items\": [{ \"id\": 1 }] }";
 			var query = "not_a_valid_query";
             var output = service.Execute(new OrganizationRequest("csp_Data_Select")
@@ -63,7 +63,7 @@ namespace SparkCode.API.Tests.Data
 		[Fact]
 		public void Select_InvalidJson_Throws_Exception()
 		{
-			var service = Context.GetService();
+			var service = new Context().Service;
 			var data = "not_a_valid_json";
 			var query = "items[0].id";
 			Assert.ThrowsAny<Exception>(() =>

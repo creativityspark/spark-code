@@ -10,7 +10,7 @@ namespace SparkCode.API.Tests.Data
         [Fact]
         public void ParseCsv_ValidCsv_Returns_ParsedRows()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var csv = "name,count,price,createdOn\nWidgetA,10,19.95,2026-04-24T10:15:00\nWidgetB,25,3.5,2026-04-25T00:00:00";
 
             var output = service.Execute(new OrganizationRequest("csp_Data_ParseCsv")
@@ -37,7 +37,7 @@ namespace SparkCode.API.Tests.Data
         [Fact]
         public void ParseCsvJson_WithSemicolonAndQuotedValues_Returns_ResultsJson()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var csv = "name;count;price;createdOn\n\"Widget A\";10;19.95;\"2026-04-24T10:15:00\"\n\"Widget B\";25;3.5;\"2026-04-25T00:00:00\"";
 
             var output = service.Execute(new OrganizationRequest("csp_Data_ParseCsvJson")
@@ -65,7 +65,7 @@ namespace SparkCode.API.Tests.Data
         [Fact]
         public void ParseCsv_InvalidCsv_Throws_Exception()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var invalidCsv = "name;count\n\"Widget A;10";
 
             Assert.ThrowsAny<Exception>(() =>

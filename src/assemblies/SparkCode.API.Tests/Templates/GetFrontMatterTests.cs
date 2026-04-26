@@ -9,7 +9,7 @@ namespace SparkCode.API.Tests.Templates
         [Fact]
         public void GetFrontMatter_WithFrontMatter_Returns_FrontMatter_And_Body()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var inputText = "---\ntitle: Hello\nauthor: Cris\n---\n# Body";
             var output = service.Execute(new OrganizationRequest("csp_Templates_GetFrontMatter")
             {
@@ -33,7 +33,7 @@ namespace SparkCode.API.Tests.Templates
         [Fact]
         public void GetFrontMatterJson_WithFrontMatter_Returns_FrontMatterJson_And_Body()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var inputText = "---\ntitle: Hello\nauthor: Cris\n---\n# Body";
             var output = service.Execute(new OrganizationRequest("csp_Templates_GetFrontMatterJson")
             {
@@ -58,7 +58,7 @@ namespace SparkCode.API.Tests.Templates
         [Fact]
         public void GetFrontMatter_WithoutFrontMatter_Returns_EmptyFrontMatter_And_OriginalBody()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var inputText = "# Body";
             var output = service.Execute(new OrganizationRequest("csp_Templates_GetFrontMatter")
             {
@@ -81,7 +81,7 @@ namespace SparkCode.API.Tests.Templates
         [Fact]
         public void GetFrontMatterJson_WithoutFrontMatter_Returns_EmptyFrontMatterJson_And_OriginalBody()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var inputText = "# Body";
             var output = service.Execute(new OrganizationRequest("csp_Templates_GetFrontMatterJson")
             {
@@ -105,7 +105,7 @@ namespace SparkCode.API.Tests.Templates
         [Fact]
         public void GetFrontMatter_WithQuotedValues_Removes_Quotes()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var inputText = "---\ntitle: \"Hello World\"\n---\nBody";
             var output = service.Execute(new OrganizationRequest("csp_Templates_GetFrontMatter")
             {
@@ -125,7 +125,7 @@ namespace SparkCode.API.Tests.Templates
         [Fact]
         public void GetFrontMatterJson_WithQuotedValues_Removes_Quotes()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var inputText = "---\ntitle: \"Hello World\"\n---\nBody";
             var output = service.Execute(new OrganizationRequest("csp_Templates_GetFrontMatterJson")
             {

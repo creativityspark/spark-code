@@ -17,7 +17,7 @@ namespace SparkCode.API.Data
             string xml = ctx.GetInputParameter<string>("Xml", true);
 
             // Run Logic
-            string results = SparkCode.Data.XmlToJson.Convert(ctx, xml);
+            string results = SparkCode.Data.XmlToJson.Convert(xml);
 
             // API Outputs
             ctx.SetOutputParameter("Results", results);

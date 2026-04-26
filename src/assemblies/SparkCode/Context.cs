@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk;
 using System;
 
 namespace SparkCode
@@ -10,10 +11,16 @@ namespace SparkCode
         public IOrganizationService Service { get; }
         public IPluginExecutionContext PluginContext { get; }
 
-
         public Context()
         {
             // provided for unit testing purposes
+
+            // Use this powershell command to register the environment variable
+            // [System.Environment]::SetEnvironmentVariable('DATAVERSE_CONNECTION_STRING_TESTS', 'AuthType=ClientSecret;Url=https://url.crm.dynamics.com;AppId=XXX;ClientSecret=YYY', 'User')
+
+            // Get connection string from environment variable
+            var connectionString = Environment.GetEnvironmentVariable("DATAVERSE_CONNECTION_STRING_TESTS");
+            this.Service = new ServiceClient(connectionString);
         }
 
         public Context(IServiceProvider serviceProvider)

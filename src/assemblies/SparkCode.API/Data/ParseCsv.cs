@@ -31,7 +31,7 @@ namespace SparkCode.API.Data
             }
 
             // Run Logic
-            var results = SparkCode.Data.ParseCsv.Parse(ctx, csv, delimiter, fieldsEnclosedInQuotes);
+            var results = SparkCode.Data.ParseCsv.Parse(csv, delimiter, fieldsEnclosedInQuotes);
 
             // API Outputs
             ctx.SetOutputParameter("Results", results);

@@ -8,7 +8,7 @@ namespace SparkCode.Text
 {
     public static class ReplaceParams
     {
-        public static string Replace(Context ctx, string text, string[] parameters)
+        public static string Replace(string text, string[] parameters)
         {
             for (int i = 0; i < parameters.Length; i++)
             {

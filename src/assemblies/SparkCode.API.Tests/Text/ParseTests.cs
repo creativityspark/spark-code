@@ -9,7 +9,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void Parse_ValidIntegerString_Returns_Integer()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var text = "12345";
             var output = service.Execute(new OrganizationRequest("csp_Text_Parse")
             {
@@ -25,7 +25,7 @@ namespace SparkCode.API.Tests.Text
         [Fact]
         public void Parse_InvalidIntegerString_Throws_FormatException()
         {
-            var service = Context.GetService();
+            var service = new Context().Service;
             var text = "abc";
             Assert.ThrowsAny<Exception>(() =>
             {

@@ -6,7 +6,7 @@ namespace SparkCode.Templates
 {
     public static class GetFrontMatter
     {
-        public static Entity Parse(Context ctx, string inputText)
+        public static Entity Parse(string inputText)
         {
             string frontMatterPattern = @"^---\s*\n(.*?)\n---\s*\n";
             var frontMatter = new Entity();
