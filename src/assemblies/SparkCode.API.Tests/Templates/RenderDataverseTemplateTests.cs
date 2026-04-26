@@ -85,5 +85,29 @@ namespace SparkCode.API.Tests.Templates
                 });
             });
         }
+
+        [Fact]
+        public void RenderDataverseTemplate_WithAdditionalContext_Merges_Values_Into_Model()
+        {
+            var service = new Context().Service;
+            var recordId = GetFirstAccountId();
+            var template = "Account: {{ name }} | Prefix: {{ prefix }}";
+            var additionalContext = "{\"prefix\":\"VIP\"}";
+
+            var output = service.Execute(new OrganizationRequest("csp_Templates_RenderDataverseTemplate")
+            {
+                Parameters = new ParameterCollection
+                {
+                    { "Template", template },
+                    { "RecordId", recordId },
+                    { "RecordType", "account" },
+                    { "AdditionalContext", additionalContext }
+                }
+            });
+
+            Assert.True(output.Results.Contains("Results"), "Expected output parameter 'Results' was not returned.");
+            var result = (string)output["Results"];
+            Assert.Contains("Prefix: VIP", result);
+        }
     }
 }
