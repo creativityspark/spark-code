@@ -68,7 +68,7 @@ namespace SparkCode.Tests
             var views = service.RetrieveMultiple(query);
             var viewId = views.Entities[0].Id;
 
-            var result = ServiceExtensions.GetSavedQuery(service, viewId, 0, null);
+            var result = ServiceExtensions.GetSavedQuery(service, viewId, null, null);
 
             Assert.NotNull(result);
             Assert.Equal(viewId, result.Id);

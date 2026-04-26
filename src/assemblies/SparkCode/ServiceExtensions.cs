@@ -105,36 +105,51 @@ namespace SparkCode
         /// <param name="objectTypeCode"></param>
         /// <param name="viewName"></param>
         /// <returns></returns>
-        public static Entity GetSavedQuery(this IOrganizationService service, Guid? viewId, int objectTypeCode, string viewName)
+        public static Entity GetSavedQuery(this IOrganizationService service, Guid? viewId, int? objectTypeCode, string viewName)
         {
-            // If ViewId is provided, retrieve the view directly by ID
+            Entity result;
+
             if (viewId.HasValue && viewId.Value != Guid.Empty)
             {
-                return service.Retrieve("savedquery", viewId.Value, new ColumnSet(true));
+                result = service.Retrieve("savedquery", viewId.Value, new ColumnSet(true));
             }
-
-            // Retrieve the specific view by name and objectTypeCode
-            var query = new QueryExpression("savedquery")
+            else
             {
-                ColumnSet = new ColumnSet(true),
-                Criteria = new FilterExpression
+                if (!objectTypeCode.HasValue)
                 {
-                    Conditions =
-                    {
-                        new ConditionExpression("returnedtypecode", ConditionOperator.Equal, objectTypeCode),
-                        new ConditionExpression("name", ConditionOperator.Equal, viewName)
-                    }
+                    throw new ArgumentNullException(nameof(objectTypeCode), "objectTypeCode is required when viewId is not provided.");
                 }
-            };
 
-            var views = service.RetrieveMultiple(query);
+                if (string.IsNullOrWhiteSpace(viewName))
+                {
+                    throw new ArgumentNullException(nameof(viewName), "viewName is required when viewId is not provided.");
+                }
 
-            if (views.Entities.Count == 0)
-            {
-                throw new Exception($"View '{viewName}' not found for etc '{objectTypeCode}'.");
+                // Retrieve the specific view by name and objectTypeCode
+                var query = new QueryExpression("savedquery")
+                {
+                    ColumnSet = new ColumnSet(true),
+                    Criteria = new FilterExpression
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression("returnedtypecode", ConditionOperator.Equal, objectTypeCode.Value),
+                            new ConditionExpression("name", ConditionOperator.Equal, viewName)
+                        }
+                    }
+                };
+
+                var views = service.RetrieveMultiple(query);
+
+                if (views.Entities.Count == 0)
+                {
+                    throw new Exception($"View '{viewName}' not found for etc '{objectTypeCode.Value}'.");
+                }
+
+                result = views.Entities[0];
             }
 
-            return views.Entities[0];
+            return result;
         }
 
         /// <summary>
