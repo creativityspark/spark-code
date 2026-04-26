@@ -1,15 +1,14 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Query;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using System;
-using Microsoft.Xrm.Sdk.Metadata;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace SparkCode.CustomAPIs.Dataverse
+namespace SparkCode
 {
     /// <summary>
     /// Extensions for the IOrganizationService to work with Dataverse metadata and data retrieval.
@@ -58,7 +57,7 @@ namespace SparkCode.CustomAPIs.Dataverse
         /// <param name="service">Service Reference used to connect to Dataverse</param>
         /// <param name="entityLogicalName">Logical name of the entity whose ETC is to be retrieved.</param>
         /// <returns></returns>
-        private static int GetEntityTypeCode(this IOrganizationService service, string entityLogicalName)
+        public static int GetEntityTypeCode(this IOrganizationService service, string entityLogicalName)
         {
             // Use RetrieveEntityRequest to get metadata
             var request = new RetrieveEntityRequest
