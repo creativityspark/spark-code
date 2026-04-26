@@ -197,6 +197,7 @@
     <Compile Include="Text\Base64EncodeTests.cs" />
     <Compile Include="Text\Base64DecodeTests.cs" />
     <Compile Include="Dataverse\CalculateRollupFieldTests.cs" />
+    <Compile Include="Dataverse\GetViewDataTests.cs" />
     <Compile Include="Dataverse\RunFetchXmlTests.cs" />
     <Compile Include="Dataverse\RunSQLTests.cs" />
     <Compile Include="Data\ParseCsvTests.cs" />
