@@ -208,6 +208,7 @@
     <Compile Include="Text\ParseTests.cs" />
     <Compile Include="Text\ParseURLTests.cs" />
     <Compile Include="Text\RegexMatchesTests.cs" />
+    <Compile Include="Text\RegexReplaceTests.cs" />
     <Compile Include="Text\ReplaceParamsTests.cs" />
   </ItemGroup>
   <ItemGroup>
