@@ -68,6 +68,16 @@ namespace SparkCode
                     var optionSetValue = (OptionSetValue)entity.Attributes[key];
                     writer.WriteValue(optionSetValue.Value);
                 }
+                else if (entity.Attributes[key] is EntityReference)
+                {
+                    var entityReference = (EntityReference)entity.Attributes[key];
+                    writer.WriteValue(entityReference.Name ?? entityReference.Id.ToString());
+                }
+                else if (entity.Attributes[key] is Money)
+                {
+                    var moneyValue = (Money)entity.Attributes[key];
+                    writer.WriteValue(moneyValue.Value);
+                }
                 else
                 {
                     writer.WriteValue(entity.Attributes[key]);
