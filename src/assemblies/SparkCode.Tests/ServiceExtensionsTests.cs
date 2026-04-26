@@ -160,5 +160,50 @@ namespace SparkCode.Tests
 
             Assert.ThrowsAny<Exception>(() => ServiceExtensions.GetFriendlyNames(service, fetchXml));
         }
+
+        [Fact]
+        public void GetFriendlyNames_WithEntityObject_ReturnsFriendlyNameEntity()
+        {
+            var service = new Context().Service;
+            var entityObject = new Entity("account")
+            {
+                ["name"] = "Contoso",
+                ["createdon"] = DateTime.UtcNow
+            };
+
+            var result = ServiceExtensions.GetFriendlyNames(service, entityObject);
+
+            Assert.NotNull(result);
+            Assert.True(result.Attributes.Contains("name"));
+            Assert.True(result.Attributes.Contains("createdon"));
+            Assert.Equal("Account Name", result.GetAttributeValue<string>("name"));
+            Assert.Equal("Created On", result.GetAttributeValue<string>("createdon"));
+        }
+
+        [Fact]
+        public void GetFriendlyNames_WithEntityObjectUnknownAttribute_FallsBackToLogicalName()
+        {
+            var service = new Context().Service;
+            var entityObject = new Entity("account")
+            {
+                ["new_notrealattribute"] = "x"
+            };
+
+            var result = ServiceExtensions.GetFriendlyNames(service, entityObject);
+
+            Assert.NotNull(result);
+            Assert.True(result.Attributes.Contains("new_notrealattribute"));
+            Assert.Equal("new_notrealattribute", result.GetAttributeValue<string>("new_notrealattribute"));
+        }
+
+        [Fact]
+        public void GetFriendlyNames_WithEntityObjectWithoutLogicalName_ThrowsException()
+        {
+            var service = new Context().Service;
+            var entityObject = new Entity();
+            entityObject["name"] = "Contoso";
+
+            Assert.Throws<ArgumentNullException>(() => ServiceExtensions.GetFriendlyNames(service, entityObject));
+        }
     }
 }

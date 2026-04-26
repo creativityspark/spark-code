@@ -203,6 +203,55 @@ namespace SparkCode
             return friendlyNames;
         }
 
+        /// <summary>
+        /// Retrieves friendly names for all attributes present in an entity object,
+        /// where each attribute logical name is a key and its localized label is the value.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="entityObject"></param>
+        /// <returns></returns>
+        public static Entity GetFriendlyNames(this IOrganizationService service, Entity entityObject)
+        {
+            if (entityObject == null)
+            {
+                throw new ArgumentNullException(nameof(entityObject));
+            }
+
+            if (string.IsNullOrWhiteSpace(entityObject.LogicalName))
+            {
+                throw new ArgumentNullException(nameof(entityObject), "Entity must include a logical name.");
+            }
+
+            var friendlyNames = new Entity();
+            var attributes = entityObject.Attributes.Keys.ToList();
+
+            // Retrieve metadata for the entity
+            var metadataRequest = new RetrieveEntityRequest
+            {
+                EntityFilters = EntityFilters.Attributes,
+                LogicalName = entityObject.LogicalName
+            };
+            var metadataResponse = (RetrieveEntityResponse)service.Execute(metadataRequest);
+            var attributeMetadata = metadataResponse.EntityMetadata.Attributes;
+
+            // Map logical names to localized labels
+            foreach (var attrName in attributes)
+            {
+                var attribute = attributeMetadata.FirstOrDefault(a => a.LogicalName == attrName);
+                if (attribute != null && attribute.DisplayName?.UserLocalizedLabel != null &&
+                    !string.IsNullOrEmpty(attribute.DisplayName.UserLocalizedLabel.Label))
+                {
+                    friendlyNames[attrName] = attribute.DisplayName.UserLocalizedLabel.Label;
+                }
+                else
+                {
+                    friendlyNames[attrName] = attrName; // Fallback to logical name
+                }
+            }
+
+            return friendlyNames;
+        }
+
         // This method formats attribute values based on their type
         public static object FormatAttributeValue(object value)
         {
