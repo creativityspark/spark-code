@@ -1,8 +1,5 @@
-using Fluid;
 using Microsoft.Xrm.Sdk;
-using Newtonsoft.Json;
 using System;
-using System.Dynamic;
 
 namespace SparkCode.API.Templates
 {
@@ -26,18 +23,7 @@ namespace SparkCode.API.Templates
             string jsonValues = ctx.GetInputParameter<string>("Context", true);
 
             // Run Logic
-            string renderedTemplate;
-            var parser = new FluidParser();
-            if (parser.TryParse(templateSource, out IFluidTemplate template, out string errorMessage))
-            {
-                var model = JsonConvert.DeserializeObject<ExpandoObject>(jsonValues);
-                var templateContext = new TemplateContext(model);
-                renderedTemplate = template.Render(templateContext);
-            }
-            else
-            {
-                throw new InvalidPluginExecutionException($"Invalid Liquid template: {errorMessage}");
-            }
+            string renderedTemplate = SparkCode.Templates.TemplateRenderer.Render(templateSource, jsonValues);
 
             // API Outputs
             ctx.SetOutputParameter("Results", renderedTemplate);

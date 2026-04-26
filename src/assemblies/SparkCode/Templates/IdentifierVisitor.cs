@@ -2,7 +2,7 @@ using Fluid.Ast;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SparkCode.API.Templates
+namespace SparkCode.Templates
 {
     public class IdentifierVisitor : AstVisitor
     {
@@ -15,6 +15,7 @@ namespace SparkCode.API.Templates
             {
                 Identifiers.Add(firstSegment.Identifier);
             }
+
             return base.VisitMemberExpression(memberExpression);
         }
     }

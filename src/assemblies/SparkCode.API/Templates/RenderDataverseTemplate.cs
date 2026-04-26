@@ -1,11 +1,5 @@
-using Fluid;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 
 namespace SparkCode.API.Templates
 {
@@ -36,46 +30,16 @@ namespace SparkCode.API.Templates
                 : null;
 
             // Run Logic
-            string renderedTemplate;
-            var parser = new FluidParser();
-            if (parser.TryParse(templateSource, out IFluidTemplate template, out string errorMessage))
-            {
-                var additionalValuesDictionary = string.IsNullOrWhiteSpace(additionalContext)
-                    ? new Dictionary<string, object>()
-                    : JsonConvert.DeserializeObject<Dictionary<string, object>>(additionalContext) ?? new Dictionary<string, object>();
+            var parsedTemplate = SparkCode.Templates.TemplateRenderer.ParseTemplate(templateSource);
+            var model = SparkCode.Templates.TemplateRenderer.BuildDataverseModel(
+                ctx.Service,
+                recordType,
+                recordIdStr,
+                additionalContext,
+                parsedTemplate
+            );
 
-                // Collect identifiers referenced by the template
-                var visitor = new IdentifierVisitor();
-                visitor.VisitTemplate(template);
-                var filteredIdentifiers = new HashSet<string>(
-                    visitor.Identifiers.Where(id => !additionalValuesDictionary.ContainsKey(id))
-                );
-                var identifiers = filteredIdentifiers.ToArray();
-
-                // Retrieve only the needed columns from Dataverse
-                var recordId = new Guid(recordIdStr);
-                var columnSet = identifiers.Length > 0
-                    ? new ColumnSet(identifiers)
-                    : new ColumnSet(false);
-
-                var record = ctx.Service.Retrieve(recordType, recordId, columnSet);
-
-                // Convert the entity to ExpandoObject via JSON for use as template model
-                var model = JsonConvert.DeserializeObject<ExpandoObject>(record.ToJson());
-                var modelDictionary = (IDictionary<string, object>)model;
-
-                foreach (var kvp in additionalValuesDictionary)
-                {
-                    modelDictionary[kvp.Key] = kvp.Value;
-                }
-
-                var templateContext = new TemplateContext(model);
-                renderedTemplate = template.Render(templateContext);
-            }
-            else
-            {
-                throw new InvalidPluginExecutionException($"Invalid Liquid template: {errorMessage}");
-            }
+            string renderedTemplate = SparkCode.Templates.TemplateRenderer.Render(parsedTemplate, model);
 
             // API Outputs
             ctx.SetOutputParameter("Results", renderedTemplate);
