@@ -92,7 +92,9 @@ namespace SparkCode.API.Tests.Templates
             var service = new Context().Service;
             var recordId = GetFirstAccountId();
             var template = "Account: {{ name }} | Prefix: {{ prefix }}";
-            var additionalContext = "{\"prefix\":\"VIP\"}";
+            // Although the account record contains a 'name' attribute, we include it in the additional context to verify
+            // that additional context values are merged correctly and can override record attributes if needed.
+            var additionalContext = "{\"prefix\":\"VIP\", \"name\":\"ABC\"}";
 
             var output = service.Execute(new OrganizationRequest("csp_Templates_RenderDataverseTemplate")
             {
@@ -108,6 +110,7 @@ namespace SparkCode.API.Tests.Templates
             Assert.True(output.Results.Contains("Results"), "Expected output parameter 'Results' was not returned.");
             var result = (string)output["Results"];
             Assert.Contains("Prefix: VIP", result);
+            Assert.Contains("Account: ABC", result);
         }
     }
 }

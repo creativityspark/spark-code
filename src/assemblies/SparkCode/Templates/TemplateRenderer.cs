@@ -40,23 +40,21 @@ namespace SparkCode.Templates
             return template.Render(templateContext);
         }
 
-        public static ExpandoObject BuildDataverseModel(IOrganizationService service, string recordType, string recordIdStr, string additionalContext, IFluidTemplate parsedTemplate)
+        public static ExpandoObject BuildDataverseModel(IOrganizationService service, string recordType, string recordIdStr, string additionalContext, string[] identifiers)
         {
             var additionalValuesDictionary = string.IsNullOrWhiteSpace(additionalContext)
                 ? new Dictionary<string, object>()
                 : JsonConvert.DeserializeObject<Dictionary<string, object>>(additionalContext) ?? new Dictionary<string, object>();
 
-            var visitor = new IdentifierVisitor();
-            visitor.VisitTemplate(parsedTemplate);
-
+            // ensure we don't try to retrieve columns that are provided in the additional context
             var filteredIdentifiers = new HashSet<string>(
-                visitor.Identifiers.Where(id => !additionalValuesDictionary.ContainsKey(id))
+                identifiers.Where(id => !additionalValuesDictionary.ContainsKey(id))
             );
-            var identifiers = filteredIdentifiers.ToArray();
+            var filteredIdentifiersArray = filteredIdentifiers.ToArray();
 
             var recordId = new Guid(recordIdStr);
-            var columnSet = identifiers.Length > 0
-                ? new ColumnSet(identifiers)
+            var columnSet = filteredIdentifiersArray.Length > 0
+                ? new ColumnSet(filteredIdentifiersArray)
                 : new ColumnSet(false);
 
             var record = service.Retrieve(recordType, recordId, columnSet);

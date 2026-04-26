@@ -1,5 +1,6 @@
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Linq;
 
 namespace SparkCode.API.Templates
 {
@@ -31,12 +32,16 @@ namespace SparkCode.API.Templates
 
             // Run Logic
             var parsedTemplate = SparkCode.Templates.TemplateRenderer.ParseTemplate(templateSource);
+            var visitor = new SparkCode.Templates.IdentifierVisitor();
+            visitor.VisitTemplate(parsedTemplate);
+            var identifiers = visitor.Identifiers.ToArray();
+
             var model = SparkCode.Templates.TemplateRenderer.BuildDataverseModel(
                 ctx.Service,
                 recordType,
                 recordIdStr,
                 additionalContext,
-                parsedTemplate
+                identifiers
             );
 
             string renderedTemplate = SparkCode.Templates.TemplateRenderer.Render(parsedTemplate, model);
