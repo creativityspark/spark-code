@@ -54,32 +54,27 @@ However, when an Expando object is used, the API can't be made available to Clas
 This repository includes several Dataverse Custom APIs. Each entry below shows the class name and a short description.
 
 ### Dataverse
-- **GetViewData**: Retrieves data for a Saved View and returns it as JSON.
-- **RunFetchXml**: Executes a FetchXML query in Dataverse and returns results as JSON.
-- **RunSQL**: Executes SQL queries against an external SQL endpoint and returns JSON results.
-- **UpdateRollupField**: Triggers calculation of a rollup field on a specified record.
+- **CalculateRollupField**: Triggers Dataverse rollup field recalculation for a target record.
+- **GetViewData**: Retrieves records from a Dataverse saved view by ViewId or by TableName and ViewName.
+- **RunFetchXml**: A plugin that executes a FetchXML query and returns the results.
+- **RunSQL**: Executes a SQL query against the Dataverse TDS endpoint and returns the results.
 
 ### Data
-- **CsvToJson**: Converts CSV text into a JSON array.
-- **JsonJoin**: Joins two JSON arrays on specified keys and returns the joined result.
-- **Select**: Selects token(s) from JSON using JSONPath-like queries.
+- **ParseCsv**: Parses CSV data and returns rows as an expando object.
+- **Select**: Performs a JSONQuery select on the specified data and returns the results.
 - **XmlToJson**: Converts an XML string into JSON.
 
-### Other
-- **HttpRequest**: Performs HTTP requests with optional parameter substitution and returns the response body.
-- **ParseURL**: Parses a URL to extract `etc` (object type code) and `id`, and resolves the logical type name.
-- **RunCSharp**: Compiles and runs supplied C# code and returns execution output.
-
 ### Templates
-- **GetFrontMatter**: Extracts YAML front matter from text and returns it as JSON plus the remaining body.
+- **GetFrontMatter**: Extracts YAML front matter from a text input and returns it together with the remaining body.
+- **RenderDataverseTemplate**: Renders a Liquid template by sourcing context values from a Dataverse record.
+- **RenderTemplate**: Renders a Liquid template using the provided JSON context data.
 
 ### Text
-- **Base64Decode**: Decodes a Base64-encoded input string.
-- **Base64Encode**: Encodes an input string to Base64.
-- **RegexMatch**: Runs a regex match and returns success, index and matched value.
-- **RegexMatches**: Finds all regex matches and returns capture info as JSON.
-- **RegexReplace**: Performs regex replacements on a string.
-
-# Copyright
-Some of the code included in these libraries is taken from [Guido Preite's github repo](https://github.com/GuidoPreite/).
+- **Base64Decode**: Converts a Base64 encoded string into a UTF8 string.
+- **Base64Encode**: Converts a UTF8 string into a Base64 encoded string.
+- **Parse**: Converts a text value to diferent data types.
+- **ParseURL**: Parses a URL and returns its parts.
+- **RegexMatches**: Captures all matches of a regular expression over an input text.
+- **RegexReplace**: Runs a regular expression replacement over the provided input text.
+- **ReplaceParams**: Replaces parameter placeholders in text with provided values.
 
