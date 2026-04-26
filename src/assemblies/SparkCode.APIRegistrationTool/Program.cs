@@ -113,9 +113,13 @@ void NormalizeSpecification(APISpecification spec, string apiPrefix, string memb
                 param.Name = member.Name + "-" + direction + "-" + param.Name;
                 param.TypeValue = GetParameterType(param.Type);
 
-                if (param.Type != null && param.Type.Contains("expando"))
-                {
-                    hasEpando = true;
+                if (param.Type != null) {
+                    var type = param.Type.ToLower();
+
+                    if (type == "expando" || type == "entitycollection")
+                    {
+                        hasEpando = true;
+                    }
                 }
             }
         }
@@ -147,16 +151,24 @@ void NormalizeSpecification(APISpecification spec, string apiPrefix, string memb
                         UniqueName = param.UniqueName,
                         DisplayName = param.DisplayName,
                         Type = param.Type,
-                        TypeValue = param.TypeValue
+                        TypeValue = param.TypeValue,
+                        IsOptional = param.IsOptional
                     };
-                    if (param.Type != null && param.Type.Contains("expando"))
+
+                    if (param.Type != null)
                     {
-                        newParam.Name = param.Name + "Json";
-                        newParam.UniqueName = param.UniqueName + "Json";
-                        newParam.DisplayName = param.DisplayName + " (JSON)";
-                        newParam.Type = "string";
-                        newParam.TypeValue = GetParameterType("string");
+                        var type = param.Type.ToLower();
+
+                        if (type == "expando" || type == "entitycollection")
+                        {
+                            newParam.Name = param.Name + "Json";
+                            newParam.UniqueName = param.UniqueName + "Json";
+                            newParam.DisplayName = param.DisplayName + " (JSON)";
+                            newParam.Type = "string";
+                            newParam.TypeValue = GetParameterType("string");
+                        }
                     }
+
                     newMember.Parameters.Add(newParam);
                 }
             }
