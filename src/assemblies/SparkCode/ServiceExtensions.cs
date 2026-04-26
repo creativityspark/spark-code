@@ -79,7 +79,7 @@ namespace SparkCode
         /// <param name="viewName"></param>
         /// <param name="friendlyNames"></param>
         /// <returns></returns>
-        public static EntityCollection GetViewData(this IOrganizationService service, Guid? viewId, string tableName, string viewName, bool friendlyNames)
+        public static EntityCollection GetViewData(this IOrganizationService service, Guid? viewId, string tableName, string viewName)
         {
             var etc = 0;
             if (viewName != null)
@@ -153,18 +153,24 @@ namespace SparkCode
         }
 
         /// <summary>
-        /// Retrieves a mapping of attribute logical names to their display names based on the FetchXML query.
+        /// Retrieves query column friendly names where each attribute logical name is a key and
+        /// its localized label is the value.
         /// </summary>
         /// <param name="service"></param>
         /// <param name="fetchXmlQuery"></param>
-        /// <param name="tableName"></param>
         /// <returns></returns>
-        public static Dictionary<string, string> GetQueryDisplayNames(this IOrganizationService service, string fetchXmlQuery, string tableName)
+        public static Entity GetFriendlyNames(this IOrganizationService service, string fetchXmlQuery)
         {
-            var displayNames = new Dictionary<string, string>();
+            var friendlyNames = new Entity();
 
             // Parse FetchXML to get attributes
             XDocument fetchDoc = XDocument.Parse(fetchXmlQuery);
+            var tableName = fetchDoc.Descendants("entity").FirstOrDefault()?.Attribute("name")?.Value;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                throw new ArgumentNullException(nameof(fetchXmlQuery), "FetchXML must include an entity name.");
+            }
+
             var attributes = fetchDoc.Descendants("attribute")
                 .Select(attr => attr.Attribute("name")?.Value)
                 .Where(name => !string.IsNullOrEmpty(name))
@@ -179,22 +185,22 @@ namespace SparkCode
             var metadataResponse = (RetrieveEntityResponse)service.Execute(metadataRequest);
             var attributeMetadata = metadataResponse.EntityMetadata.Attributes;
 
-            // Map logical names to display names
+            // Map logical names to localized labels
             foreach (var attrName in attributes)
             {
                 var attribute = attributeMetadata.FirstOrDefault(a => a.LogicalName == attrName);
                 if (attribute != null && attribute.DisplayName?.UserLocalizedLabel != null &&
                     !string.IsNullOrEmpty(attribute.DisplayName.UserLocalizedLabel.Label))
                 {
-                    displayNames[attrName] = attribute.DisplayName.UserLocalizedLabel.Label;
+                    friendlyNames[attrName] = attribute.DisplayName.UserLocalizedLabel.Label;
                 }
                 else
                 {
-                    displayNames[attrName] = attrName; // Fallback to logical name
+                    friendlyNames[attrName] = attrName; // Fallback to logical name
                 }
             }
 
-            return displayNames;
+            return friendlyNames;
         }
 
         // This method formats attribute values based on their type
