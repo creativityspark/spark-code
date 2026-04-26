@@ -11,16 +11,20 @@ using System.Xml.Linq;
 namespace SparkCode
 {
     /// <summary>
-    /// Extensions for the IOrganizationService to work with Dataverse metadata and data retrieval.
+    /// Extension methods for <see cref="IOrganizationService"/> to retrieve Dataverse metadata,
+    /// resolve saved views, and normalize query output values.
     /// </summary>
     public static class ServiceExtensions
     {
         /// <summary>
-        /// Retrieves the logical name of an entity given its Object Type Code (ETC).
+        /// Retrieves the logical name of an entity by its object type code (ETC).
         /// </summary>
-        /// <param name="service">Service Reference used to connect to Dataverse</param>
-        /// <param name="etc">Entity Type Code wich table must be retrieved</param>
-        /// <returns>The logical name of the table</returns>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="etc">Object type code of the target table.</param>
+        /// <returns>
+        /// The table logical name when exactly one entity metadata record matches;
+        /// otherwise an empty string.
+        /// </returns>
         public static string GetTableLogicalName(this IOrganizationService service, int etc)
         {
             var logicalName = string.Empty;
@@ -52,11 +56,11 @@ namespace SparkCode
         }
 
         /// <summary>
-        /// Retrieves the Entity Type Code (ETC) for a given entity logical name.
+        /// Retrieves the object type code (ETC) for a given table logical name.
         /// </summary>
-        /// <param name="service">Service Reference used to connect to Dataverse</param>
-        /// <param name="entityLogicalName">Logical name of the entity whose ETC is to be retrieved.</param>
-        /// <returns></returns>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="entityLogicalName">Logical name of the target table (for example, <c>account</c>).</param>
+        /// <returns>The object type code for the specified table.</returns>
         public static int GetEntityTypeCode(this IOrganizationService service, string entityLogicalName)
         {
             // Use RetrieveEntityRequest to get metadata
@@ -71,14 +75,13 @@ namespace SparkCode
         }
 
         /// <summary>
-        /// Retrieves data from a specified view and returns it in JSON format.
+        /// Retrieves records returned by a Dataverse saved view.
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="viewId"></param>
-        /// <param name="tableName"></param>
-        /// <param name="viewName"></param>
-        /// <param name="friendlyNames"></param>
-        /// <returns></returns>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="viewId">Saved query identifier. When provided, this value takes precedence over <paramref name="viewName"/>.</param>
+        /// <param name="tableName">Logical table name used to resolve ETC when <paramref name="viewName"/> is used.</param>
+        /// <param name="viewName">Saved query name to resolve when <paramref name="viewId"/> is not provided.</param>
+        /// <returns>The collection of records returned by the view FetchXML.</returns>
         public static EntityCollection GetViewData(this IOrganizationService service, Guid? viewId, string tableName, string viewName)
         {
             var etc = 0;
@@ -98,13 +101,17 @@ namespace SparkCode
         }
 
         /// <summary>
-        /// Retrieves a SavedQuery (view) based on view ID, or table and view name.
+        /// Retrieves a saved query (view) either by identifier or by ETC and name.
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="viewId"></param>
-        /// <param name="objectTypeCode"></param>
-        /// <param name="viewName"></param>
-        /// <returns></returns>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="viewId">Saved query identifier. When provided, this value is used directly.</param>
+        /// <param name="objectTypeCode">Table object type code required when <paramref name="viewId"/> is not provided.</param>
+        /// <param name="viewName">Saved query name required when <paramref name="viewId"/> is not provided.</param>
+        /// <returns>The matching saved query record.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="objectTypeCode"/> or <paramref name="viewName"/> is missing and <paramref name="viewId"/> is not provided.
+        /// </exception>
+        /// <exception cref="Exception">Thrown when no saved query matches the provided ETC and view name.</exception>
         public static Entity GetSavedQuery(this IOrganizationService service, Guid? viewId, int? objectTypeCode, string viewName)
         {
             Entity result;
@@ -153,12 +160,13 @@ namespace SparkCode
         }
 
         /// <summary>
-        /// Retrieves query column friendly names where each attribute logical name is a key and
-        /// its localized label is the value.
+        /// Builds a friendly-name map for attributes in a FetchXML query,
+        /// where each attribute logical name is a key and the localized label is the value.
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="fetchXmlQuery"></param>
-        /// <returns></returns>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="fetchXmlQuery">FetchXML containing one entity and its requested attributes.</param>
+        /// <returns>An <see cref="Entity"/> containing logical-name-to-friendly-name pairs.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the FetchXML does not include an entity name.</exception>
         public static Entity GetFriendlyNames(this IOrganizationService service, string fetchXmlQuery)
         {
             var friendlyNames = new Entity();
@@ -204,12 +212,13 @@ namespace SparkCode
         }
 
         /// <summary>
-        /// Retrieves friendly names for all attributes present in an entity object,
-        /// where each attribute logical name is a key and its localized label is the value.
+        /// Builds a friendly-name map for attributes present in an entity object,
+        /// where each attribute logical name is a key and the localized label is the value.
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="entityObject"></param>
-        /// <returns></returns>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="entityObject">Entity instance whose attribute keys are resolved to localized labels.</param>
+        /// <returns>An <see cref="Entity"/> containing logical-name-to-friendly-name pairs.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="entityObject"/> is null or has no logical name.</exception>
         public static Entity GetFriendlyNames(this IOrganizationService service, Entity entityObject)
         {
             if (entityObject == null)
@@ -251,20 +260,5 @@ namespace SparkCode
 
             return friendlyNames;
         }
-
-        // This method formats attribute values based on their type
-        public static object FormatAttributeValue(object value)
-        {
-            if (value is EntityReference er)
-                return er.Name ?? er.Id.ToString();
-            if (value is OptionSetValue osv)
-                return osv.Value;
-            if (value is Money money)
-                return money.Value;
-            if (value is AliasedValue av)
-                return FormatAttributeValue(av.Value);
-            return value;
-        }
-
     }
 }

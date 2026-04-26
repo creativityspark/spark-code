@@ -10,6 +10,36 @@ namespace SparkCode.Tests
     public class ServiceExtensionsTests
     {
         [Fact]
+        public void GetTableLogicalName_WithAccountEtc_ReturnsAccount()
+        {
+            var service = new Context().Service;
+
+            var result = ServiceExtensions.GetTableLogicalName(service, 1);
+
+            Assert.Equal("account", result);
+        }
+
+        [Fact]
+        public void GetTableLogicalName_WithContactEtc_ReturnsContact()
+        {
+            var service = new Context().Service;
+
+            var result = ServiceExtensions.GetTableLogicalName(service, 2);
+
+            Assert.Equal("contact", result);
+        }
+
+        [Fact]
+        public void GetTableLogicalName_WithInvalidEtc_ReturnsEmptyString()
+        {
+            var service = new Context().Service;
+
+            var result = ServiceExtensions.GetTableLogicalName(service, 999999);
+
+            Assert.Equal(string.Empty, result);
+        }
+
+        [Fact]
         public void GetEntityTypeCode_WithAccountEntity_ReturnsOne()
         {
             var service = new Context().Service;
