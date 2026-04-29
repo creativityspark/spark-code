@@ -1,4 +1,5 @@
 using Fluid;
+using Fluid.Ast;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Newtonsoft.Json;
@@ -35,7 +36,8 @@ namespace SparkCode.Templates
         /// <returns>The rendered template output.</returns>
         public static string Render(string templateSource, ExpandoObject model)
         {
-            var template = ParseTemplate(templateSource);
+            var parser = new FluidParser();
+            var template = ParseTemplate(templateSource, parser);
             return Render(template, model);
         }
 
@@ -43,19 +45,54 @@ namespace SparkCode.Templates
         /// Parses Liquid template source into a compiled Fluid template instance.
         /// </summary>
         /// <param name="templateSource">The Liquid template source text.</param>
+        /// <param name="parser">The Fluid parser instance used to parse the template.</param>
         /// <returns>The parsed <see cref="IFluidTemplate"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="parser"/> is null.</exception>
         /// <exception cref="InvalidPluginExecutionException">
         /// Thrown when the provided template source is invalid Liquid syntax.
         /// </exception>
-        public static IFluidTemplate ParseTemplate(string templateSource)
+        public static IFluidTemplate ParseTemplate(string templateSource, FluidParser parser)
         {
-            var parser = new FluidParser();
+            if (parser == null)
+            {
+                throw new ArgumentNullException(nameof(parser));
+            }
+
             if (parser.TryParse(templateSource, out IFluidTemplate template, out string errorMessage))
             {
                 return template;
             }
 
             throw new InvalidPluginExecutionException($"Invalid Liquid template: {errorMessage}");
+        }
+
+
+        /// <summary>
+        /// Registers custom Fluid identifier tags supported by SparkCode templates.
+        /// </summary>
+        /// <param name="parser">The Fluid parser where custom tags are registered.</param>
+        /// <param name="service">The Dataverse organization service used by tag resolvers.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="parser"/> or <paramref name="service"/> is null.
+        /// </exception>
+        public static void RegisterCustomTags(FluidParser parser, IOrganizationService service)
+        {
+            if (parser == null)
+            {
+                throw new ArgumentNullException(nameof(parser));
+            }
+
+            if (service == null)
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
+
+            parser.RegisterIdentifierTag("_envVar", (identifier, writer, encoder, ctx) =>
+            {
+                string envVarValue = service.GetEnvironmentVariableValue(identifier);
+                writer.Write(envVarValue);
+                return Statement.Normal();
+            });
         }
 
         /// <summary>

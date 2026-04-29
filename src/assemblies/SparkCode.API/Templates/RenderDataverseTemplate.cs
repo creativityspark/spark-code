@@ -1,3 +1,4 @@
+using Fluid;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
@@ -31,7 +32,9 @@ namespace SparkCode.API.Templates
                 : null;
 
             // Run Logic
-            var parsedTemplate = SparkCode.Templates.TemplateRenderer.ParseTemplate(templateSource);
+            var parser = new FluidParser();
+            SparkCode.Templates.TemplateRenderer.RegisterCustomTags(parser, ctx.Service);
+            var parsedTemplate = SparkCode.Templates.TemplateRenderer.ParseTemplate(templateSource, parser);
             var visitor = new SparkCode.Templates.IdentifierVisitor();
             visitor.VisitTemplate(parsedTemplate);
             var identifiers = visitor.Identifiers.ToArray();

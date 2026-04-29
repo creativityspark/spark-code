@@ -288,5 +288,64 @@ namespace SparkCode
 
             return friendlyNames;
         }
+
+
+        public static string GetEnvironmentVariableValue(this IOrganizationService service, string name)
+        {
+            // Create a query to fetch the environment variable definition based on the identifier (schemaname)
+            var definitionQuery = new QueryExpression("environmentvariabledefinition")
+            {
+                ColumnSet = new ColumnSet("environmentvariabledefinitionid", "schemaname", "defaultvalue"),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        // Filter the records to find the environment variable definition with the matching schema name (identifier)
+                        new ConditionExpression("schemaname", ConditionOperator.Equal, name)
+                    }
+                }
+            };
+
+            // Add a link to the 'environmentvariablevalue' entity using a left outer join on the environmentvariabledefinitionid field
+            var link = definitionQuery.AddLink(
+                "environmentvariablevalue", // The linked entity (environmentvariablevalue)
+                "environmentvariabledefinitionid", // The field in the definition entity to join on
+                "environmentvariabledefinitionid", // The field in the linked entity to join on
+                JoinOperator.LeftOuter
+            );
+            link.Columns = new ColumnSet("value");
+            link.EntityAlias = "envVarValue";
+
+            // Execute the query to retrieve matching environment variable definitions.
+            var result = service.RetrieveMultiple(definitionQuery);
+
+            if (result.Entities.Count == 0)
+            {
+                throw new Exception($"Environment variable definition with identifier '{name}' not found.");
+            }
+
+            var definition = result.Entities[0];
+
+            // Retrieve the 'value' field from the linked entity using the alias ('envVarValue').
+            var value = definition.GetAttributeValue<AliasedValue>("envVarValue.value")?.Value as string;
+
+            // Retrieve the default value (if any) from the environment variable definition.
+            var defaultValue = definition.GetAttributeValue<string>("defaultvalue");
+
+            // If no specific value is found, check if there is a default value available.
+            if (string.IsNullOrEmpty(value))
+            {
+                if (!string.IsNullOrEmpty(defaultValue))
+                {
+                    return defaultValue;
+                }
+                // If neither a value nor a default value exists, throw an exception.
+                throw new Exception($"Environment variable value for identifier '{name}' not found.");
+            }
+
+            // Return the value
+            return value;
+        }
+
     }
 }

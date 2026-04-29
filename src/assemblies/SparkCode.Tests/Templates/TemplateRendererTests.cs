@@ -1,9 +1,11 @@
+using Fluid;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using SparkCode.Templates;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using Xunit;
 
 namespace SparkCode.Tests.Templates
@@ -24,10 +26,46 @@ namespace SparkCode.Tests.Templates
             return results.Entities[0].Id.ToString();
         }
 
+        private static string GetFirstEnvironmentVariableValue()
+        {
+            var service = new Context().Service;
+            var query = new QueryExpression("environmentvariabledefinition")
+            {
+                ColumnSet = new ColumnSet("schemaname", "defaultvalue"),
+                TopCount = 250
+            };
+
+            var link = query.AddLink(
+                "environmentvariablevalue",
+                "environmentvariabledefinitionid",
+                "environmentvariabledefinitionid",
+                JoinOperator.LeftOuter);
+            link.Columns = new ColumnSet("value");
+            link.EntityAlias = "envVarValue";
+
+            var definitions = service.RetrieveMultiple(query).Entities;
+
+            var definitionWithValue = definitions.FirstOrDefault(entity =>
+            {
+                var envValue = entity.GetAttributeValue<AliasedValue>("envVarValue.value")?.Value as string;
+                var defaultValue = entity.GetAttributeValue<string>("defaultvalue");
+                return !string.IsNullOrWhiteSpace(envValue) || !string.IsNullOrWhiteSpace(defaultValue);
+            });
+
+            if (definitionWithValue == null)
+            {
+                throw new InvalidOperationException("No environment variable with a current or default value was found in the test environment.");
+            }
+
+            return definitionWithValue.GetAttributeValue<string>("schemaname");
+        }
+
         [Fact]
         public void ParseTemplate_WithInvalidLiquid_ThrowsInvalidPluginExecutionException()
         {
-            Assert.Throws<InvalidPluginExecutionException>(() => TemplateRenderer.ParseTemplate("Hello {{name"));
+            var parser = new FluidParser();
+
+            Assert.Throws<InvalidPluginExecutionException>(() => TemplateRenderer.ParseTemplate("Hello {{name", parser));
         }
 
         [Fact]
@@ -44,7 +82,8 @@ namespace SparkCode.Tests.Templates
         [Fact]
         public void Render_WithParsedTemplateAndExpandoModel_RendersTemplate()
         {
-            var template = TemplateRenderer.ParseTemplate("Hello {{ name }}");
+            var parser = new FluidParser();
+            var template = TemplateRenderer.ParseTemplate("Hello {{ name }}", parser);
             var model = new ExpandoObject();
             ((IDictionary<string, object>)model)["name"] = "Cris";
 
@@ -71,6 +110,23 @@ namespace SparkCode.Tests.Templates
             Assert.Equal("Overridden Name", modelDictionary["name"]?.ToString());
             Assert.Equal("VIP", modelDictionary["prefix"]?.ToString());
             Assert.False(modelDictionary.ContainsKey("new_notrealattribute"));
+        }
+
+        [Fact]
+        public void RegisterCustomTags_WithEnvVar_RendersEnvironmentVariableValue()
+        {
+            var service = new Context().Service;
+            var envVarSchemaName = GetFirstEnvironmentVariableValue();
+            var expectedValue = service.GetEnvironmentVariableValue(envVarSchemaName);
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomTags(parser, service);
+            var template = TemplateRenderer.ParseTemplate($"{{% _envVar {envVarSchemaName} %}}", parser);
+
+            var model = new ExpandoObject();
+            var result = TemplateRenderer.Render(template, model);
+
+            Assert.Equal(expectedValue, result);
         }
     }
 }
