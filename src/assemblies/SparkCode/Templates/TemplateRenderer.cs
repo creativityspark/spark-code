@@ -52,6 +52,10 @@ namespace SparkCode.Templates
             );
             var filteredIdentifiersArray = filteredIdentifiers.ToArray();
 
+            // Apply an additional filter to ensure we only retrieve columns that are part of the entity
+            var entityColumns = ServiceExtensions.GetTableColumnNames(service, recordType);
+            filteredIdentifiersArray = filteredIdentifiersArray.Where(id => entityColumns.Contains(id)).ToArray();
+
             var recordId = new Guid(recordIdStr);
             var columnSet = filteredIdentifiersArray.Length > 0
                 ? new ColumnSet(filteredIdentifiersArray)

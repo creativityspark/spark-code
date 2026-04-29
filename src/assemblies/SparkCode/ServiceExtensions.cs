@@ -75,6 +75,34 @@ namespace SparkCode
         }
 
         /// <summary>
+        /// Retrieves all logical column names for a Dataverse table.
+        /// </summary>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="tableLogicalName">Logical name of the target table (for example, <c>account</c>).</param>
+        /// <returns>A case-insensitive set of logical column names for the table.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableLogicalName"/> is null or whitespace.</exception>
+        public static HashSet<string> GetTableColumnNames(this IOrganizationService service, string tableLogicalName)
+        {
+            if (string.IsNullOrWhiteSpace(tableLogicalName))
+            {
+                throw new ArgumentNullException(nameof(tableLogicalName));
+            }
+
+            var request = new RetrieveEntityRequest
+            {
+                LogicalName = tableLogicalName,
+                EntityFilters = EntityFilters.Attributes
+            };
+
+            var response = (RetrieveEntityResponse)service.Execute(request);
+            return new HashSet<string>(
+                response.EntityMetadata.Attributes
+                    .Select(a => a.LogicalName)
+                    .Where(name => !string.IsNullOrWhiteSpace(name)),
+                StringComparer.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
         /// Retrieves records returned by a Dataverse saved view.
         /// </summary>
         /// <param name="service">Dataverse organization service instance.</param>

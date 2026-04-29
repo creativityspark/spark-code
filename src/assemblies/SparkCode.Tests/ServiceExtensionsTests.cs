@@ -68,6 +68,35 @@ namespace SparkCode.Tests
         }
 
         [Fact]
+        public void GetTableColumnNames_WithAccount_ReturnsKnownColumns()
+        {
+            var service = new Context().Service;
+
+            var result = ServiceExtensions.GetTableColumnNames(service, "account");
+
+            Assert.NotNull(result);
+            Assert.Contains("accountid", result);
+            Assert.Contains("name", result);
+            Assert.Contains("NAME", result);
+        }
+
+        [Fact]
+        public void GetTableColumnNames_WithInvalidTableName_ThrowsException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => ServiceExtensions.GetTableColumnNames(service, "notanentity_invalid"));
+        }
+
+        [Fact]
+        public void GetTableColumnNames_WithNullTableName_ThrowsException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<ArgumentNullException>(() => ServiceExtensions.GetTableColumnNames(service, null));
+        }
+
+        [Fact]
         public void GetSavedQuery_ByNameAndEtc_ReturnsEntity()
         {
             var service = new Context().Service;
