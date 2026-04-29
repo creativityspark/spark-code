@@ -144,5 +144,22 @@ namespace SparkCode.Tests.Templates
 
             Assert.Equal(expectedValue, result);
         }
+
+        [Fact]
+        public void RegisterCustomTags_WithOrgUrl_RendersOrganizationUrls()
+        {
+            var service = new Context().Service;
+            var expectedUrl = service.GetOrganizationUrl(null);
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomTags(parser, service);
+
+            var template = TemplateRenderer.ParseTemplate("{% _orgUrl %}", parser);
+
+            var model = new ExpandoObject();
+            var result = TemplateRenderer.Render(template, model);
+
+            Assert.Equal(expectedUrl, result);
+        }
     }
 }

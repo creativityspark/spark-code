@@ -377,7 +377,12 @@ namespace SparkCode
             }
 
             var details = service.GetOrganizationDetails();
-            var detail = details.FirstOrDefault(kvp => string.Equals(kvp.Key, detailName, StringComparison.OrdinalIgnoreCase));
+
+            var jsonDetails = JsonConvert.SerializeObject(details);
+            var detailsDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonDetails);
+
+
+            var detail = detailsDictionary.FirstOrDefault(kvp => string.Equals(kvp.Key, detailName, StringComparison.OrdinalIgnoreCase));
 
             if (string.IsNullOrEmpty(detail.Key) || detail.Value == null)
             {
@@ -387,13 +392,41 @@ namespace SparkCode
             return detail.Value.ToString();
         }
 
+
+        /// <summary>
+        /// Retrieves an organization endpoint URL by endpoint type name.
+        /// </summary>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="urlType">
+        /// Endpoint type name from <see cref="Microsoft.Xrm.Sdk.Organization.EndpointType"/>.
+        /// When null or whitespace, <c>WebApplication</c> is used.
+        /// </param>
+        /// <returns>The endpoint URL for the requested endpoint type.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="urlType"/> is not a valid endpoint type name.</exception>
+        public static string GetOrganizationUrl(this IOrganizationService service, string urlType)
+        {
+            if (string.IsNullOrWhiteSpace(urlType))
+            {
+                urlType = "WebApplication";
+            }
+
+            if (!Enum.TryParse<Microsoft.Xrm.Sdk.Organization.EndpointType>(urlType, true, out var endpointKey)) 
+            { 
+                throw new ArgumentException($"Invalid endpoint name '{urlType}'. Valid values are: {string.Join(", ", Enum.GetNames(typeof(Microsoft.Xrm.Sdk.Organization.EndpointType)))}", nameof(urlType));
+            }
+
+            var details = service.GetOrganizationDetails();
+
+            return details.Endpoints[endpointKey];
+        }
+
         /// <summary>
         /// Retrieves all current organization details as a key-value dictionary.
         /// </summary>
         /// <param name="service">Dataverse organization service instance.</param>
         /// <returns>A dictionary containing organization detail keys and values.</returns>
         /// <exception cref="Exception">Thrown when organization details cannot be retrieved from Dataverse.</exception>
-        private static Dictionary<string, object> GetOrganizationDetails(this IOrganizationService service)
+        private static Microsoft.Xrm.Sdk.Organization.OrganizationDetail GetOrganizationDetails(this IOrganizationService service)
         {
             var request = new RetrieveCurrentOrganizationRequest();
             var response = (RetrieveCurrentOrganizationResponse)service.Execute(request);
@@ -403,10 +436,7 @@ namespace SparkCode
                 throw new Exception("Unable to retrieve organization details.");
             }
 
-            var jsonDetails = JsonConvert.SerializeObject(response.Detail);
-            var detailsDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonDetails);
-
-            return detailsDictionary;
+            return response.Detail;
         }
 
     }

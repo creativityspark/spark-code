@@ -100,6 +100,13 @@ namespace SparkCode.Templates
                 writer.Write(organizationDetail);
                 return Statement.Normal();
             });
+
+            parser.RegisterEmptyTag("_orgUrl", async (writer, encoder, ctx) =>
+            {
+                string organizationUrl = service.GetOrganizationUrl(null);
+                writer.Write(organizationUrl);
+                return Completion.Normal;
+            });
         }
 
         /// <summary>
