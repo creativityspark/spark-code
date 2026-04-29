@@ -93,6 +93,13 @@ namespace SparkCode.Templates
                 writer.Write(envVarValue);
                 return Statement.Normal();
             });
+
+            parser.RegisterIdentifierTag("_orgDetails", (identifier, writer, encoder, ctx) =>
+            {
+                string organizationDetail = service.GetOrganizationDetails(identifier);
+                writer.Write(organizationDetail);
+                return Statement.Normal();
+            });
         }
 
         /// <summary>

@@ -1,10 +1,14 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Discovery;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Query;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -289,7 +293,17 @@ namespace SparkCode
             return friendlyNames;
         }
 
-
+    /// <summary>
+    /// Retrieves an environment variable value by schema name.
+    /// </summary>
+    /// <param name="service">Dataverse organization service instance.</param>
+    /// <param name="name">Schema name of the environment variable definition.</param>
+    /// <returns>
+    /// The current environment variable value when present; otherwise the definition default value.
+    /// </returns>
+    /// <exception cref="Exception">
+    /// Thrown when the environment variable definition is not found, or when both current and default values are empty.
+    /// </exception>
         public static string GetEnvironmentVariableValue(this IOrganizationService service, string name)
         {
             // Create a query to fetch the environment variable definition based on the identifier (schemaname)
@@ -345,6 +359,54 @@ namespace SparkCode
 
             // Return the value
             return value;
+        }
+
+        /// <summary>
+        /// Retrieves a single organization detail value by key.
+        /// </summary>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="detailName">The organization detail name (for example, <c>FriendlyName</c> or <c>UniqueName</c>).</param>
+        /// <returns>The organization detail value as a string.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="detailName"/> is null or whitespace.</exception>
+        /// <exception cref="Exception">Thrown when the requested detail does not exist.</exception>
+        public static string GetOrganizationDetails(this IOrganizationService service, string detailName)
+        {
+            if (string.IsNullOrWhiteSpace(detailName))
+            {
+                throw new ArgumentNullException(nameof(detailName));
+            }
+
+            var details = service.GetOrganizationDetails();
+            var detail = details.FirstOrDefault(kvp => string.Equals(kvp.Key, detailName, StringComparison.OrdinalIgnoreCase));
+
+            if (string.IsNullOrEmpty(detail.Key) || detail.Value == null)
+            {
+                throw new Exception($"Organization detail '{detailName}' not found.");
+            }
+
+            return detail.Value.ToString();
+        }
+
+        /// <summary>
+        /// Retrieves all current organization details as a key-value dictionary.
+        /// </summary>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <returns>A dictionary containing organization detail keys and values.</returns>
+        /// <exception cref="Exception">Thrown when organization details cannot be retrieved from Dataverse.</exception>
+        private static Dictionary<string, object> GetOrganizationDetails(this IOrganizationService service)
+        {
+            var request = new RetrieveCurrentOrganizationRequest();
+            var response = (RetrieveCurrentOrganizationResponse)service.Execute(request);
+
+            if (response?.Detail == null)
+            {
+                throw new Exception("Unable to retrieve organization details.");
+            }
+
+            var jsonDetails = JsonConvert.SerializeObject(response.Detail);
+            var detailsDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonDetails);
+
+            return detailsDictionary;
         }
 
     }

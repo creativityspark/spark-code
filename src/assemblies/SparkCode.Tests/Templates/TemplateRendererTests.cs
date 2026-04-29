@@ -128,5 +128,21 @@ namespace SparkCode.Tests.Templates
 
             Assert.Equal(expectedValue, result);
         }
+
+        [Fact]
+        public void RegisterCustomTags_WithOrgDetails_RendersOrganizationDetail()
+        {
+            var service = new Context().Service;
+            var expectedValue = service.GetOrganizationDetails("FriendlyName");
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomTags(parser, service);
+            var template = TemplateRenderer.ParseTemplate("{% _orgDetails FriendlyName %}", parser);
+
+            var model = new ExpandoObject();
+            var result = TemplateRenderer.Render(template, model);
+
+            Assert.Equal(expectedValue, result);
+        }
     }
 }
