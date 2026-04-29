@@ -29,11 +29,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Number\**" />
-    <Compile Remove="Other\**" />
     <EmbeddedResource Remove="Number\**" />
-    <EmbeddedResource Remove="Other\**" />
     <None Remove="Number\**" />
-    <None Remove="Other\**" />
   </ItemGroup>
 
   <ItemGroup>

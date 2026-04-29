@@ -194,6 +194,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Other\RunCSharpTests.cs" />
     <Compile Include="Text\Base64EncodeTests.cs" />
     <Compile Include="Text\Base64DecodeTests.cs" />
     <Compile Include="Dataverse\CalculateRollupFieldTests.cs" />
