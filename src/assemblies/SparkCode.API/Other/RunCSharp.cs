@@ -44,8 +44,8 @@ namespace SparkCode.API.Other
                 "using System; using System.Dynamic; using Newtonsoft.Json; using Newtonsoft.Json.Linq;" +
                 (usingStatements ?? string.Empty) +
                 "namespace SparkCode {" +
-                "   public class CSharpRunner {" +
-                "       static public string Run(string input) {" +
+                "   public static class CSharpRunner {" +
+                "       public static string Run(string input) {" +
                 "           string output = null;" +
                 code +
                 "           return output;" +   
