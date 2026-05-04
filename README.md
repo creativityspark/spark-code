@@ -78,3 +78,5 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 - **RegexReplace**: Runs a regular expression replacement over the provided input text.
 - **ReplaceParams**: Replaces parameter placeholders in text with provided values.
 
+### Contributors
+- TBC
