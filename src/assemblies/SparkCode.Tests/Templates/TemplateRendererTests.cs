@@ -239,5 +239,39 @@ namespace SparkCode.Tests.Templates
 
             Assert.Equal(expectedUrl, result);
         }
+
+        [Fact]
+        public void RegisterCustomTags_WithAppNameIdentifier_UsesCanvasNameWhenPresent()
+        {
+            var service = new Context().Service;
+            var appNameIdentifier = GetCanvasAppNameForIdentifierTag();
+            var expectedName = service.GetCanvasAppAttribute<string>(appNameIdentifier, "name") ?? string.Empty;
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomTags(parser, service);
+            var template = TemplateRenderer.ParseTemplate($"{{% _appName {appNameIdentifier} %}}", parser);
+
+            var model = new ExpandoObject();
+            var result = TemplateRenderer.Render(template, model);
+
+            Assert.Equal(expectedName, result);
+        }
+
+        [Fact]
+        public void RegisterCustomTags_WithAppNameIdentifier_FallsBackToModelDrivenDisplayName()
+        {
+            var service = new Context().Service;
+            var appUniqueName = GetModelDrivenUniqueNameForIdentifierTag();
+            var expectedName = service.GetMDAAttribute<string>(appUniqueName, "displayname") ?? string.Empty;
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomTags(parser, service);
+            var template = TemplateRenderer.ParseTemplate($"{{% _appName {appUniqueName} %}}", parser);
+
+            var model = new ExpandoObject();
+            var result = TemplateRenderer.Render(template, model);
+
+            Assert.Equal(expectedName, result);
+        }
     }
 }
