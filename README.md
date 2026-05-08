@@ -61,22 +61,23 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 
 ### Data
 - **ParseCsv**: Parses CSV data and returns rows as an expando object.
-- **Select**: Performs a JSONQuery select on the specified data and returns the results.
-- **XmlToJson**: Converts an XML string into JSON.
+- **Select**: Performs a JSONQuery select on the specified data and returns the results
+- **XmlToJson**: Converts an XML string to JSON.
+
+### Other
+- **RunCSharp**: Compiles and executes C# 4.0 code at runtime, passing optional input JSON and custom assembly/usings.
 
 ### Templates
 - **GetFrontMatter**: Extracts YAML front matter from a text input and returns it together with the remaining body.
-- **RenderDataverseTemplate**: Renders a Liquid template by sourcing context values from a Dataverse record.
+- **RenderDataverseTemplate**: Renders a Liquid template by sourcing context values from an optional Dataverse record and optional additional context.
 - **RenderTemplate**: Renders a Liquid template using the provided JSON context data.
+- **RenderWebResourceTemplate**: Renders a Liquid template stored in a Dataverse web resource by sourcing context values from an optional Dataverse record and optional additional context.
 
 ### Text
 - **Base64Decode**: Converts a Base64 encoded string into a UTF8 string.
 - **Base64Encode**: Converts a UTF8 string into a Base64 encoded string.
-- **Parse**: Converts a text value to diferent data types.
-- **ParseURL**: Parses a URL and returns its parts.
+- **Parse**: Converts a text value to diferent data types
+- **ParseURL**: Parses a URL and returns its parts
 - **RegexMatches**: Captures all matches of a regular expression over an input text.
 - **RegexReplace**: Runs a regular expression replacement over the provided input text.
 - **ReplaceParams**: Replaces parameter placeholders in text with provided values.
-
-### Contributors
-- TBC
