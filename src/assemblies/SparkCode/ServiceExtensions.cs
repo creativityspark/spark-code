@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.ServiceModel;
+using System.Text;
 using System.Xml.Linq;
 
 namespace SparkCode
@@ -187,6 +188,49 @@ namespace SparkCode
                 }
 
                 result = views.Entities[0];
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Retrieves the content of a Dataverse web resource by unique name.
+        /// </summary>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="webResourceName">Unique name of the web resource to retrieve.</param>
+        /// <param name="decode">
+        /// Indicates whether the returned content should be decoded from Base64 using UTF-8.
+        /// Defaults to <c>true</c>.
+        /// </param>
+        /// <returns>The web resource content, decoded when <paramref name="decode"/> is <c>true</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="webResourceName"/> is null or whitespace.</exception>
+        /// <exception cref="Exception">Thrown when no web resource matches <paramref name="webResourceName"/>.</exception>
+        public static string GetWebResourceContent(this IOrganizationService service, string webResourceName, bool decode = true)
+        {
+            if (string.IsNullOrWhiteSpace(webResourceName))
+            {
+                throw new ArgumentNullException(nameof(webResourceName));
+            }
+
+            var query = new QueryExpression("webresource")
+            {
+                ColumnSet = new ColumnSet("content"),
+                TopCount = 1
+            };
+            query.Criteria.AddCondition("name", ConditionOperator.Equal, webResourceName);
+
+            var webResources = service.RetrieveMultiple(query);
+            if (webResources.Entities.Count == 0)
+            {
+                throw new Exception($"Web resource '{webResourceName}' was not found.");
+            }
+
+            var content = webResources.Entities[0].GetAttributeValue<string>("content") ?? string.Empty;
+            var result = content;
+
+            if (decode && !string.IsNullOrWhiteSpace(content))
+            {
+                result = Encoding.UTF8.GetString(Convert.FromBase64String(content));
             }
 
             return result;

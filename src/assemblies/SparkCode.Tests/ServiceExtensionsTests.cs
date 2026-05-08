@@ -4,6 +4,7 @@ using System;
 using System.ServiceModel;
 using Xunit;
 using Microsoft.Xrm.Sdk.Query;
+using System.Text;
 
 namespace SparkCode.Tests
 {
@@ -335,6 +336,49 @@ namespace SparkCode.Tests
             Assert.Null(result);
         }
 
+        [Fact]
+        public void GetWebResourceContent_WithExistingWebResource_DecodeFalse_ReturnsRawContent()
+        {
+            var service = new Context().Service;
+            var webResource = GetExistingWebResource(service);
+            var webResourceName = webResource.GetAttributeValue<string>("name");
+            var rawContent = webResource.GetAttributeValue<string>("content");
+
+            var result = ServiceExtensions.GetWebResourceContent(service, webResourceName, decode: false);
+
+            Assert.Equal(rawContent, result);
+        }
+
+        [Fact]
+        public void GetWebResourceContent_WithExistingWebResource_DecodeTrue_ReturnsDecodedContent()
+        {
+            var service = new Context().Service;
+            var webResource = GetExistingWebResource(service);
+            var webResourceName = webResource.GetAttributeValue<string>("name");
+            var rawContent = webResource.GetAttributeValue<string>("content");
+            var expected = Encoding.UTF8.GetString(Convert.FromBase64String(rawContent));
+
+            var result = ServiceExtensions.GetWebResourceContent(service, webResourceName, decode: true);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void GetWebResourceContent_WithMissingWebResource_ThrowsException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<Exception>(() => ServiceExtensions.GetWebResourceContent(service, "missing_webresource_name_12345"));
+        }
+
+        [Fact]
+        public void GetWebResourceContent_WithNullWebResourceName_ThrowsArgumentNullException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<ArgumentNullException>(() => ServiceExtensions.GetWebResourceContent(service, null));
+        }
+
         private static Entity GetExistingModelDrivenApp(IOrganizationService service)
         {
             var query = new QueryExpression("appmodule")
@@ -375,6 +419,32 @@ namespace SparkCode.Tests
             Assert.True(result.Entities.Count > 0, "No canvas app records found in canvasapp.");
 
             return result.Entities[0];
+        }
+
+        private static Entity GetExistingWebResource(IOrganizationService service)
+        {
+            var query = new QueryExpression("webresource")
+            {
+                ColumnSet = new ColumnSet("webresourceid", "name", "content"),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("name", ConditionOperator.NotNull),
+                        new ConditionExpression("content", ConditionOperator.NotNull)
+                    }
+                },
+                TopCount = 1
+            };
+
+            var result = service.RetrieveMultiple(query);
+            Assert.True(result.Entities.Count > 0, "No web resource records with content found in webresource.");
+
+            var webResource = result.Entities[0];
+            var rawContent = webResource.GetAttributeValue<string>("content");
+            Assert.False(string.IsNullOrWhiteSpace(rawContent), "The selected web resource has empty content.");
+
+            return webResource;
         }
     }
 }
