@@ -157,6 +157,51 @@ namespace SparkCode.Tests.Templates
         }
 
         [Fact]
+        public void BuildDataverseModel_WithoutRecordInputs_UsesOnlyAdditionalContext()
+        {
+            var service = new Context().Service;
+
+            var model = TemplateRenderer.BuildDataverseModel(
+                service,
+                additionalContext: "{\"prefix\":\"VIP\",\"region\":\"NA\"}");
+
+            var modelDictionary = (IDictionary<string, object>)model;
+
+            Assert.Equal(2, modelDictionary.Count);
+            Assert.Equal("VIP", modelDictionary["prefix"]?.ToString());
+            Assert.Equal("NA", modelDictionary["region"]?.ToString());
+        }
+
+        [Fact]
+        public void BuildDataverseModel_WithoutRecordInputsAndAdditionalContext_ReturnsEmptyObject()
+        {
+            var service = new Context().Service;
+
+            var model = TemplateRenderer.BuildDataverseModel(service);
+
+            var modelDictionary = (IDictionary<string, object>)model;
+
+            Assert.Empty(modelDictionary);
+        }
+
+        [Fact]
+        public void BuildDataverseModel_WithRecordTypeOnly_ThrowsException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<Exception>(() => TemplateRenderer.BuildDataverseModel(service, recordType: "account"));
+        }
+
+        [Fact]
+        public void BuildDataverseModel_WithRecordIdOnly_ThrowsException()
+        {
+            var service = new Context().Service;
+            var recordId = GetFirstAccountId();
+
+            Assert.Throws<Exception>(() => TemplateRenderer.BuildDataverseModel(service, recordIdStr: recordId));
+        }
+
+        [Fact]
         public void RegisterCustomTags_WithEnvVar_RendersEnvironmentVariableValue()
         {
             var service = new Context().Service;

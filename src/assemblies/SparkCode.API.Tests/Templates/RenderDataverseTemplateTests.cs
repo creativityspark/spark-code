@@ -112,5 +112,61 @@ namespace SparkCode.API.Tests.Templates
             Assert.Contains("Prefix: VIP", result);
             Assert.Contains("Account: ABC", result);
         }
+
+        [Fact]
+        public void RenderDataverseTemplate_WithoutRecordInputs_UsesOnlyAdditionalContext()
+        {
+            var service = new Context().Service;
+            var template = "Hello {{ name }}";
+
+            var output = service.Execute(new OrganizationRequest("csp_Templates_RenderDataverseTemplate")
+            {
+                Parameters = new ParameterCollection
+                {
+                    { "Template", template },
+                    { "AdditionalContext", "{\"name\":\"FromContext\"}" }
+                }
+            });
+
+            Assert.True(output.Results.Contains("Results"), "Expected output parameter 'Results' was not returned.");
+            var result = (string)output["Results"];
+            Assert.Equal("Hello FromContext", result);
+        }
+
+        [Fact]
+        public void RenderDataverseTemplate_WithOnlyRecordId_Throws_Exception()
+        {
+            var service = new Context().Service;
+
+            Assert.ThrowsAny<Exception>(() =>
+            {
+                service.Execute(new OrganizationRequest("csp_Templates_RenderDataverseTemplate")
+                {
+                    Parameters = new ParameterCollection
+                    {
+                        { "Template", "Hello {{ name }}" },
+                        { "RecordId", Guid.NewGuid().ToString() }
+                    }
+                });
+            });
+        }
+
+        [Fact]
+        public void RenderDataverseTemplate_WithOnlyRecordType_Throws_Exception()
+        {
+            var service = new Context().Service;
+
+            Assert.ThrowsAny<Exception>(() =>
+            {
+                service.Execute(new OrganizationRequest("csp_Templates_RenderDataverseTemplate")
+                {
+                    Parameters = new ParameterCollection
+                    {
+                        { "Template", "Hello {{ name }}" },
+                        { "RecordType", "account" }
+                    }
+                });
+            });
+        }
     }
 }

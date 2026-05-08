@@ -160,42 +160,73 @@ namespace SparkCode.Templates
         /// Builds a template model by retrieving a Dataverse record and merging additional context values.
         /// </summary>
         /// <param name="service">The Dataverse organization service.</param>
-        /// <param name="recordType">The logical name of the target Dataverse table.</param>
-        /// <param name="recordIdStr">The identifier of the record to retrieve.</param>
+        /// <param name="recordType">
+        /// Optional logical name of the target Dataverse table. Must be provided together with <paramref name="recordIdStr"/>.
+        /// </param>
+        /// <param name="recordIdStr">
+        /// Optional identifier of the record to retrieve. Must be provided together with <paramref name="recordType"/>.
+        /// </param>
         /// <param name="additionalContext">Optional JSON object merged into the returned model.</param>
-        /// <param name="identifiers">Identifiers referenced in the template used to limit retrieved columns.</param>
+        /// <param name="identifiers">Optional identifiers referenced in the template used to limit retrieved columns.</param>
         /// <returns>An <see cref="ExpandoObject"/> containing Dataverse and additional context values.</returns>
-        public static ExpandoObject BuildDataverseModel(IOrganizationService service, string recordType, string recordIdStr, string additionalContext, string[] identifiers)
+        /// <exception cref="Exception">
+        /// Thrown when only one of <paramref name="recordType"/> or <paramref name="recordIdStr"/> is provided.
+        /// </exception>
+        public static ExpandoObject BuildDataverseModel(
+            IOrganizationService service,
+            string recordType = null,
+            string recordIdStr = null,
+            string additionalContext = null,
+            string[] identifiers = null)
         {
             var additionalValuesDictionary = string.IsNullOrWhiteSpace(additionalContext)
                 ? new Dictionary<string, object>()
                 : JsonConvert.DeserializeObject<Dictionary<string, object>>(additionalContext) ?? new Dictionary<string, object>();
 
-            // ensure we don't try to retrieve columns that are provided in the additional context
-            var filteredIdentifiers = new HashSet<string>(
-                identifiers.Where(id => !additionalValuesDictionary.ContainsKey(id))
-            );
-            var filteredIdentifiersArray = filteredIdentifiers.ToArray();
+            var hasRecordType = !string.IsNullOrWhiteSpace(recordType);
+            var hasRecordId = !string.IsNullOrWhiteSpace(recordIdStr);
 
-            // Apply an additional filter to ensure we only retrieve columns that are part of the entity
-            var entityColumns = ServiceExtensions.GetTableColumnNames(service, recordType);
-            filteredIdentifiersArray = filteredIdentifiersArray.Where(id => entityColumns.Contains(id)).ToArray();
+            if (hasRecordType != hasRecordId)
+            {
+                throw new Exception("recordType and recordIdStr must both be provided together or both omitted.");
+            }
 
-            var recordId = new Guid(recordIdStr);
-            var columnSet = filteredIdentifiersArray.Length > 0
-                ? new ColumnSet(filteredIdentifiersArray)
-                : new ColumnSet(false);
+            IDictionary<string, object> modelDictionary;
 
-            var record = service.Retrieve(recordType, recordId, columnSet);
-            var model = JsonConvert.DeserializeObject<ExpandoObject>(record.ToJson());
-            var modelDictionary = (IDictionary<string, object>)model;
+            if (!hasRecordType)
+            {
+                modelDictionary = new ExpandoObject();
+            }
+            else
+            {
+                var safeIdentifiers = identifiers ?? Array.Empty<string>();
+
+                // ensure we don't try to retrieve columns that are provided in the additional context
+                var filteredIdentifiers = new HashSet<string>(
+                    safeIdentifiers.Where(id => !additionalValuesDictionary.ContainsKey(id))
+                );
+                var filteredIdentifiersArray = filteredIdentifiers.ToArray();
+
+                // Apply an additional filter to ensure we only retrieve columns that are part of the entity
+                var entityColumns = ServiceExtensions.GetTableColumnNames(service, recordType);
+                filteredIdentifiersArray = filteredIdentifiersArray.Where(id => entityColumns.Contains(id)).ToArray();
+
+                var recordId = new Guid(recordIdStr);
+                var columnSet = filteredIdentifiersArray.Length > 0
+                    ? new ColumnSet(filteredIdentifiersArray)
+                    : new ColumnSet(false);
+
+                var record = service.Retrieve(recordType, recordId, columnSet);
+                var model = JsonConvert.DeserializeObject<ExpandoObject>(record.ToJson()) ?? new ExpandoObject();
+                modelDictionary = model;
+            }
 
             foreach (var kvp in additionalValuesDictionary)
             {
                 modelDictionary[kvp.Key] = kvp.Value;
             }
 
-            return model;
+            return (ExpandoObject)modelDictionary;
         }
     }
 }
