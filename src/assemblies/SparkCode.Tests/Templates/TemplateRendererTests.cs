@@ -60,6 +60,50 @@ namespace SparkCode.Tests.Templates
             return definitionWithValue.GetAttributeValue<string>("schemaname");
         }
 
+        private static string GetCanvasAppNameForIdentifierTag()
+        {
+            var service = new Context().Service;
+            var query = new QueryExpression("canvasapp")
+            {
+                ColumnSet = new ColumnSet("name"),
+                TopCount = 250
+            };
+
+            var appName = service.RetrieveMultiple(query)
+                .Entities
+                .Select(entity => entity.GetAttributeValue<string>("name"))
+                .FirstOrDefault(name => !string.IsNullOrWhiteSpace(name) && !name.Contains(" "));
+
+            if (string.IsNullOrWhiteSpace(appName))
+            {
+                throw new InvalidOperationException("No canvas app name without spaces was found for _appUrl tag testing.");
+            }
+
+            return appName;
+        }
+
+        private static string GetModelDrivenUniqueNameForIdentifierTag()
+        {
+            var service = new Context().Service;
+            var query = new QueryExpression("appmodule")
+            {
+                ColumnSet = new ColumnSet("uniquename"),
+                TopCount = 250
+            };
+
+            var uniqueName = service.RetrieveMultiple(query)
+                .Entities
+                .Select(entity => entity.GetAttributeValue<string>("uniquename"))
+                .FirstOrDefault(name => !string.IsNullOrWhiteSpace(name) && !name.Contains(" "));
+
+            if (string.IsNullOrWhiteSpace(uniqueName))
+            {
+                throw new InvalidOperationException("No model-driven app unique name without spaces was found for _appUrl tag testing.");
+            }
+
+            return uniqueName;
+        }
+
         [Fact]
         public void ParseTemplate_WithInvalidLiquid_ThrowsInvalidPluginExecutionException()
         {
@@ -155,6 +199,40 @@ namespace SparkCode.Tests.Templates
             TemplateRenderer.RegisterCustomTags(parser, service);
 
             var template = TemplateRenderer.ParseTemplate("{% _orgUrl %}", parser);
+
+            var model = new ExpandoObject();
+            var result = TemplateRenderer.Render(template, model);
+
+            Assert.Equal(expectedUrl, result);
+        }
+
+        [Fact]
+        public void RegisterCustomTags_WithAppUrlIdentifier_UsesCanvasAppUrlWhenPresent()
+        {
+            var service = new Context().Service;
+            var appName = GetCanvasAppNameForIdentifierTag();
+            var expectedUrl = service.GetCanvasAppAttribute<string>(appName, "url") ?? string.Empty;
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomTags(parser, service);
+            var template = TemplateRenderer.ParseTemplate($"{{% _appUrl {appName} %}}", parser);
+
+            var model = new ExpandoObject();
+            var result = TemplateRenderer.Render(template, model);
+
+            Assert.Equal(expectedUrl, result);
+        }
+
+        [Fact]
+        public void RegisterCustomTags_WithAppUrlIdentifier_FallsBackToModelDrivenAppOpenUri()
+        {
+            var service = new Context().Service;
+            var appUniqueName = GetModelDrivenUniqueNameForIdentifierTag();
+            var expectedUrl = service.GetMDAAttribute<string>(appUniqueName, "appopenuri") ?? string.Empty;
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomTags(parser, service);
+            var template = TemplateRenderer.ParseTemplate($"{{% _appUrl {appUniqueName} %}}", parser);
 
             var model = new ExpandoObject();
             var result = TemplateRenderer.Render(template, model);

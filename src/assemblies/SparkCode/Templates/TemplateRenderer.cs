@@ -68,7 +68,8 @@ namespace SparkCode.Templates
 
 
         /// <summary>
-        /// Registers custom Fluid identifier tags supported by SparkCode templates.
+        /// Registers custom Fluid tags supported by SparkCode templates.
+        /// Supported tags: <c>_envVar</c>, <c>_orgDetails</c>, <c>_orgUrl</c>, and <c>_appUrl</c>.
         /// </summary>
         /// <param name="parser">The Fluid parser where custom tags are registered.</param>
         /// <param name="service">The Dataverse organization service used by tag resolvers.</param>
@@ -106,6 +107,23 @@ namespace SparkCode.Templates
                 string organizationUrl = service.GetOrganizationUrl(null);
                 writer.Write(organizationUrl);
                 return Completion.Normal;
+            });
+
+            parser.RegisterIdentifierTag("_appUrl", (identifier, writer, encoder, ctx) =>
+            {
+                var appUrl = service.GetCanvasAppAttribute<string>(identifier, "url");
+
+                if (string.IsNullOrWhiteSpace(appUrl))
+                {
+                    appUrl = service.GetMDAAttribute<string>(identifier, "appopenuri");
+                }
+
+                if (!string.IsNullOrWhiteSpace(appUrl))
+                {
+                    writer.Write(appUrl);
+                }
+
+                return Statement.Normal();
             });
         }
 

@@ -264,5 +264,117 @@ namespace SparkCode.Tests
 
             Assert.Throws<ArgumentNullException>(() => ServiceExtensions.GetFriendlyNames(service, entityObject));
         }
+
+        [Fact]
+        public void GetMDAAttribute_WithExistingModelDrivenApp_ReturnsTypedValue()
+        {
+            var service = new Context().Service;
+            var modelDrivenApp = GetExistingModelDrivenApp(service);
+            var appUniqueName = modelDrivenApp.GetAttributeValue<string>("uniquename");
+
+            var result = ServiceExtensions.GetMDAAttribute<string>(service, appUniqueName, "uniquename");
+
+            Assert.False(string.IsNullOrWhiteSpace(result));
+            Assert.Equal(appUniqueName, result);
+        }
+
+        [Fact]
+        public void GetCanvasAppAttribute_WithExistingCanvasApp_ReturnsTypedValue()
+        {
+            var service = new Context().Service;
+            var canvasApp = GetExistingCanvasApp(service);
+            var appName = canvasApp.GetAttributeValue<string>("name");
+
+            var result = ServiceExtensions.GetCanvasAppAttribute<string>(service, appName, "name");
+
+            Assert.False(string.IsNullOrWhiteSpace(result));
+            Assert.Equal(appName, result);
+        }
+
+        [Fact]
+        public void GetMDAAttribute_WithInvalidApp_ReturnsDefault()
+        {
+            var service = new Context().Service;
+
+            var result = ServiceExtensions.GetMDAAttribute<string>(service, "missing_app_unique_name_12345", "name");
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetCanvasAppAttribute_WithInvalidApp_ReturnsDefault()
+        {
+            var service = new Context().Service;
+
+            var result = ServiceExtensions.GetCanvasAppAttribute<string>(service, "missing_canvas_app_name_12345", "name");
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetMDAAttribute_WithInvalidAttribute_ReturnsDefault()
+        {
+            var service = new Context().Service;
+            var modelDrivenApp = GetExistingModelDrivenApp(service);
+            var appUniqueName = modelDrivenApp.GetAttributeValue<string>("uniquename");
+
+            var result = ServiceExtensions.GetMDAAttribute<string>(service, appUniqueName, "attribute_that_does_not_exist_12345");
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetCanvasAppAttribute_WithInvalidAttribute_ReturnsDefault()
+        {
+            var service = new Context().Service;
+            var canvasApp = GetExistingCanvasApp(service);
+            var appName = canvasApp.GetAttributeValue<string>("name");
+
+            var result = ServiceExtensions.GetCanvasAppAttribute<string>(service, appName, "attribute_that_does_not_exist_12345");
+
+            Assert.Null(result);
+        }
+
+        private static Entity GetExistingModelDrivenApp(IOrganizationService service)
+        {
+            var query = new QueryExpression("appmodule")
+            {
+                ColumnSet = new ColumnSet("appmoduleid", "uniquename", "name"),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("uniquename", ConditionOperator.NotNull)
+                    }
+                },
+                TopCount = 1
+            };
+
+            var result = service.RetrieveMultiple(query);
+            Assert.True(result.Entities.Count > 0, "No model-driven app records found in appmodule.");
+
+            return result.Entities[0];
+        }
+
+        private static Entity GetExistingCanvasApp(IOrganizationService service)
+        {
+            var query = new QueryExpression("canvasapp")
+            {
+                ColumnSet = new ColumnSet("canvasappid", "name"),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("name", ConditionOperator.NotNull)
+                    }
+                },
+                TopCount = 1
+            };
+
+            var result = service.RetrieveMultiple(query);
+            Assert.True(result.Entities.Count > 0, "No canvas app records found in canvasapp.");
+
+            return result.Entities[0];
+        }
     }
 }

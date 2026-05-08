@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.ServiceModel;
 using System.Xml.Linq;
 
 namespace SparkCode
@@ -437,6 +438,92 @@ namespace SparkCode
             }
 
             return response.Detail;
+        }
+
+
+
+        /// <summary>
+        /// Retrieves a strongly typed attribute value from a canvas app by name.
+        /// </summary>
+        /// <typeparam name="T">The expected attribute value type.</typeparam>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="appName">The name of the canvas app to search for.</param>
+        /// <param name="attributeName">The logical name of the attribute to retrieve.</param>
+        /// <returns>
+        /// The typed attribute value from the canvas app when both the app and attribute are found;
+        /// otherwise <c>default(T)</c>.
+        /// </returns>
+        public static T GetCanvasAppAttribute<T>(this IOrganizationService service, string appName, string attributeName)
+        {
+            try
+            {
+                var canvasAppQuery = new QueryExpression("canvasapp")
+                {
+                    ColumnSet = new ColumnSet(attributeName),
+                    Criteria = new FilterExpression
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression("name", ConditionOperator.Equal, appName)
+                        }
+                    }
+                };
+
+                var canvasAppResult = service.RetrieveMultiple(canvasAppQuery);
+
+                if (canvasAppResult.Entities.Count == 0)
+                {
+                    return default(T);
+                }
+
+                return canvasAppResult.Entities[0].GetAttributeValue<T>(attributeName);
+            }
+            catch (FaultException<OrganizationServiceFault>)
+            {
+                return default(T);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a strongly typed attribute value from a model-driven app by unique name.
+        /// </summary>
+        /// <typeparam name="T">The expected attribute value type.</typeparam>
+        /// <param name="service">Dataverse organization service instance.</param>
+        /// <param name="appUniqueName">The unique name of the model-driven app to search for.</param>
+        /// <param name="attributeName">The logical name of the attribute to retrieve.</param>
+        /// <returns>
+        /// The typed attribute value from the model-driven app when both the app and attribute are found;
+        /// otherwise <c>default(T)</c>.
+        /// </returns>
+        public static T GetMDAAttribute<T>(this IOrganizationService service, string appUniqueName, string attributeName)
+        {
+            try
+            {
+                var appModuleQuery = new QueryExpression("appmodule")
+                {
+                    ColumnSet = new ColumnSet(attributeName),
+                    Criteria = new FilterExpression
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression("uniquename", ConditionOperator.Equal, appUniqueName)
+                        }
+                    }
+                };
+
+                var appModuleResult = service.RetrieveMultiple(appModuleQuery);
+
+                if (appModuleResult.Entities.Count == 0)
+                {
+                    return default(T);
+                }
+
+                return appModuleResult.Entities[0].GetAttributeValue<T>(attributeName);
+            }
+            catch (FaultException<OrganizationServiceFault>)
+            {
+                return default(T);
+            }
         }
 
     }
