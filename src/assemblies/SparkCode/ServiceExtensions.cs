@@ -499,33 +499,28 @@ namespace SparkCode
         /// </returns>
         public static T GetCanvasAppAttribute<T>(this IOrganizationService service, string appName, string attributeName)
         {
-            try
+            var result = default(T);
+            var canvasAppQuery = new QueryExpression("canvasapp")
             {
-                var canvasAppQuery = new QueryExpression("canvasapp")
+                ColumnSet = new ColumnSet(true),
+                TopCount = 1,
+                Criteria = new FilterExpression
                 {
-                    ColumnSet = new ColumnSet(attributeName),
-                    Criteria = new FilterExpression
+                    Conditions =
                     {
-                        Conditions =
-                        {
-                            new ConditionExpression("name", ConditionOperator.Equal, appName)
-                        }
+                        new ConditionExpression("name", ConditionOperator.Equal, appName)
                     }
-                };
-
-                var canvasAppResult = service.RetrieveMultiple(canvasAppQuery);
-
-                if (canvasAppResult.Entities.Count == 0)
-                {
-                    return default(T);
                 }
+            };
 
-                return canvasAppResult.Entities[0].GetAttributeValue<T>(attributeName);
-            }
-            catch (FaultException<OrganizationServiceFault>)
+            var canvasAppResult = service.RetrieveMultiple(canvasAppQuery);
+
+            if (canvasAppResult.Entities.Count > 0 && canvasAppResult.Entities[0].Contains(attributeName))
             {
-                return default(T);
+                result = canvasAppResult.Entities[0].GetAttributeValue<T>(attributeName);
             }
+
+            return result;
         }
 
         /// <summary>
@@ -541,33 +536,28 @@ namespace SparkCode
         /// </returns>
         public static T GetMDAAttribute<T>(this IOrganizationService service, string appUniqueName, string attributeName)
         {
-            try
+            var result = default(T);
+            var appModuleQuery = new QueryExpression("appmodule")
             {
-                var appModuleQuery = new QueryExpression("appmodule")
+                ColumnSet = new ColumnSet(true),
+                TopCount = 1,
+                Criteria = new FilterExpression
                 {
-                    ColumnSet = new ColumnSet(attributeName),
-                    Criteria = new FilterExpression
+                    Conditions =
                     {
-                        Conditions =
-                        {
-                            new ConditionExpression("uniquename", ConditionOperator.Equal, appUniqueName)
-                        }
+                        new ConditionExpression("uniquename", ConditionOperator.Equal, appUniqueName)
                     }
-                };
-
-                var appModuleResult = service.RetrieveMultiple(appModuleQuery);
-
-                if (appModuleResult.Entities.Count == 0)
-                {
-                    return default(T);
                 }
+            };
 
-                return appModuleResult.Entities[0].GetAttributeValue<T>(attributeName);
-            }
-            catch (FaultException<OrganizationServiceFault>)
+            var appModuleResult = service.RetrieveMultiple(appModuleQuery);
+
+            if (appModuleResult.Entities.Count > 0 && appModuleResult.Entities[0].Contains(attributeName))
             {
-                return default(T);
+                result = appModuleResult.Entities[0].GetAttributeValue<T>(attributeName);
             }
+
+            return result;     
         }
 
     }

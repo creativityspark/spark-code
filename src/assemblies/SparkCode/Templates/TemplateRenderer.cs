@@ -111,15 +111,19 @@ namespace SparkCode.Templates
 
             parser.RegisterIdentifierTag("_appUrl", (identifier, writer, encoder, ctx) =>
             {
-                var appUrl = service.GetCanvasAppAttribute<string>(identifier, "url");
+                var appUrl = service.GetCanvasAppAttribute<string>(identifier, "appopenuri");
 
                 if (string.IsNullOrWhiteSpace(appUrl))
                 {
-                    appUrl = service.GetMDAAttribute<string>(identifier, "appopenuri");
+                    var appId = service.GetMDAAttribute<Guid>(identifier, "appmoduleid");
+                    var appIdString = appId != Guid.Empty ? appId.ToString() : string.Empty;
+                    var environmentUrl = service.GetOrganizationUrl(null)?.TrimEnd('/');
+                    appUrl = $"{environmentUrl}/main.aspx?appid={appId}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(appUrl))
                 {
+
                     writer.Write(appUrl);
                 }
 

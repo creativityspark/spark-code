@@ -256,7 +256,7 @@ namespace SparkCode.Tests.Templates
         {
             var service = new Context().Service;
             var appName = GetCanvasAppNameForIdentifierTag();
-            var expectedUrl = service.GetCanvasAppAttribute<string>(appName, "url") ?? string.Empty;
+            var expectedUrl = service.GetCanvasAppAttribute<string>(appName, "appopenuri") ?? string.Empty;
 
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
@@ -273,7 +273,9 @@ namespace SparkCode.Tests.Templates
         {
             var service = new Context().Service;
             var appUniqueName = GetModelDrivenUniqueNameForIdentifierTag();
-            var expectedUrl = service.GetMDAAttribute<string>(appUniqueName, "appopenuri") ?? string.Empty;
+            var environmentUrl = service.GetOrganizationUrl(null)?.TrimEnd('/');
+            var appId = service.GetMDAAttribute<Guid>(appUniqueName, "appmoduleid");
+            var expectedUrl = $"{environmentUrl}/main.aspx?appid={appId.ToString()}";
 
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
