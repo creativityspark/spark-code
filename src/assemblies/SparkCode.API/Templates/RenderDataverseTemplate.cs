@@ -1,7 +1,5 @@
-using Fluid;
 using Microsoft.Xrm.Sdk;
 using System;
-using System.Linq;
 
 namespace SparkCode.API.Templates
 {
@@ -34,31 +32,14 @@ namespace SparkCode.API.Templates
                 ? ctx.PluginContext.InputParameters["AdditionalContext"] as string
                 : null;
 
-            var hasRecordId = !string.IsNullOrWhiteSpace(recordIdStr);
-            var hasRecordType = !string.IsNullOrWhiteSpace(recordType);
-
-            if (hasRecordId != hasRecordType)
-            {
-                throw new Exception("RecordId and RecordType must both be provided together or both omitted.");
-            }
-
             // Run Logic
-            var parser = new FluidParser();
-            SparkCode.Templates.TemplateRenderer.RegisterCustomTags(parser, ctx.Service);
-            var parsedTemplate = SparkCode.Templates.TemplateRenderer.Parse(templateSource, parser);
-            var visitor = new SparkCode.Templates.IdentifierVisitor();
-            visitor.VisitTemplate(parsedTemplate);
-            var identifiers = visitor.Identifiers.ToArray();
-
-            var model = SparkCode.Templates.TemplateRenderer.BuildModel(
+            string renderedTemplate = SparkCode.Templates.TemplateRenderer.Render(
                 ctx.Service,
-                recordType,
+                templateSource,
                 recordIdStr,
-                additionalContext,
-                identifiers
+                recordType,
+                additionalContext
             );
-
-            string renderedTemplate = SparkCode.Templates.TemplateRenderer.Render(parsedTemplate, model);
 
             // API Outputs
             ctx.SetOutputParameter("Results", renderedTemplate);

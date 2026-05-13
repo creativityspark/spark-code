@@ -87,33 +87,6 @@ namespace SparkCode.API.Tests.Templates
         }
 
         [Fact]
-        public void RenderDataverseTemplate_WithAdditionalContext_Merges_Values_Into_Model()
-        {
-            var service = new Context().Service;
-            var recordId = GetFirstAccountId();
-            var template = "Account: {{ name }} | Prefix: {{ prefix }}";
-            // Although the account record contains a 'name' attribute, we include it in the additional context to verify
-            // that additional context values are merged correctly and can override record attributes if needed.
-            var additionalContext = "{\"prefix\":\"VIP\", \"name\":\"ABC\"}";
-
-            var output = service.Execute(new OrganizationRequest("csp_Templates_RenderDataverseTemplate")
-            {
-                Parameters = new ParameterCollection
-                {
-                    { "Template", template },
-                    { "RecordId", recordId },
-                    { "RecordType", "account" },
-                    { "AdditionalContext", additionalContext }
-                }
-            });
-
-            Assert.True(output.Results.Contains("Results"), "Expected output parameter 'Results' was not returned.");
-            var result = (string)output["Results"];
-            Assert.Contains("Prefix: VIP", result);
-            Assert.Contains("Account: ABC", result);
-        }
-
-        [Fact]
         public void RenderDataverseTemplate_WithoutRecordInputs_UsesOnlyAdditionalContext()
         {
             var service = new Context().Service;

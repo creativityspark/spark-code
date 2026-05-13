@@ -137,6 +137,84 @@ namespace SparkCode.Tests.Templates
         }
 
         [Fact]
+        public void Render_WithDataverseInputs_RendersTemplate()
+        {
+            var service = new Context().Service;
+            var recordId = GetFirstAccountId();
+
+            var result = TemplateRenderer.Render(
+                service,
+                "Account: {{ name }}",
+                recordId,
+                "account");
+
+            Assert.NotNull(result);
+            Assert.StartsWith("Account: ", result);
+        }
+
+        [Fact]
+        public void Render_WithAdditionalContext_MergesAndOverridesRecordValues()
+        {
+            var service = new Context().Service;
+            var recordId = GetFirstAccountId();
+
+            var result = TemplateRenderer.Render(
+                service,
+                "Account: {{ name }} | Prefix: {{ prefix }}",
+                recordId,
+                "account",
+                "{\"prefix\":\"VIP\",\"name\":\"ABC\"}");
+
+            Assert.Contains("Prefix: VIP", result);
+            Assert.Contains("Account: ABC", result);
+        }
+
+        [Fact]
+        public void Render_WithAdditionalContextOnly_UsesAdditionalContext()
+        {
+            var service = new Context().Service;
+
+            var result = TemplateRenderer.Render(
+                service,
+                "Hello {{ name }}",
+                additionalContext: "{\"name\":\"FromContext\"}");
+
+            Assert.Equal("Hello FromContext", result);
+        }
+
+        [Fact]
+        public void Render_WithOnlyRecordType_ThrowsException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<Exception>(() => TemplateRenderer.Render(
+                service,
+                "Hello {{ name }}",
+                recordType: "account"));
+        }
+
+        [Fact]
+        public void Render_WithOnlyRecordId_ThrowsException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<Exception>(() => TemplateRenderer.Render(
+                service,
+                "Hello {{ name }}",
+                recordIdStr: Guid.NewGuid().ToString()));
+        }
+
+        [Fact]
+        public void Render_WithInvalidLiquid_ThrowsException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<Exception>(() => TemplateRenderer.Render(
+                service,
+                "Account: {{ name"));
+        }
+
+        [Fact]
         public void BuildDataverseModel_WithAdditionalContext_MergesAndOverridesValues()
         {
             var service = new Context().Service;

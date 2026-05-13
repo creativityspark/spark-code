@@ -16,6 +16,7 @@ namespace SparkCode.Templates
     /// </summary>
     public static class TemplateRenderer
     {
+        
         /// <summary>
         /// Renders a Liquid template using a JSON object as the model.
         /// </summary>
@@ -51,6 +52,47 @@ namespace SparkCode.Templates
         {
             var templateContext = new TemplateContext(model);
             return template.Render(templateContext);
+        }
+
+        /// <summary>
+        /// Renders a Liquid template using Dataverse context inputs from the Render Dataverse Template custom API.
+        /// </summary>
+        /// <param name="service">The Dataverse organization service used to resolve records and custom tags.</param>
+        /// <param name="templateSource">Liquid template text to render.</param>
+        /// <param name="recordIdStr">
+        /// Optional GUID of the Dataverse record to use as context. Must be provided together with <paramref name="recordType"/>.
+        /// </param>
+        /// <param name="recordType">
+        /// Optional logical name of the Dataverse table for <paramref name="recordIdStr"/>. Must be provided together with <paramref name="recordIdStr"/>.
+        /// </param>
+        /// <param name="additionalContext">Optional JSON object merged into the template model before rendering.</param>
+        /// <returns>The rendered template output.</returns>
+        /// <exception cref="Exception">
+        /// Thrown when template syntax is invalid, when record inputs are incomplete, or when record retrieval fails.
+        /// </exception>
+        public static string Render(
+            IOrganizationService service,
+            string templateSource,
+            string recordIdStr = null,
+            string recordType = null,
+            string additionalContext = null)
+        {
+            var parser = new FluidParser();
+            RegisterCustomTags(parser, service);
+
+            var parsedTemplate = Parse(templateSource, parser);
+            var visitor = new IdentifierVisitor();
+            visitor.VisitTemplate(parsedTemplate);
+            var identifiers = visitor.Identifiers.ToArray();
+
+            var model = BuildModel(
+                service,
+                recordType,
+                recordIdStr,
+                additionalContext,
+                identifiers);
+
+            return Render(parsedTemplate, model);
         }
 
         /// <summary>
