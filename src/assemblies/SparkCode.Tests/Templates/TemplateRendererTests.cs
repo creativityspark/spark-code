@@ -547,7 +547,7 @@ namespace SparkCode.Tests.Templates
         public void RegisterCustomTags_WithWebResourceIdentifier_ReturnsRawContentWithoutDecoding()
         {
             var service = new Context().Service;
-            var webResourceName = $"csp_testwebresource_{Guid.NewGuid():N}_html";
+            var webResourceName = $"csp_/testwebresource_{Guid.NewGuid():N}.html";
             var decodedContent = "Hello from _webResource tag";
             var encodedContent = Convert.ToBase64String(Encoding.UTF8.GetBytes(decodedContent));
             var createdWebResourceId = Guid.Empty;
@@ -565,7 +565,7 @@ namespace SparkCode.Tests.Templates
 
                 var parser = new FluidParser();
                 TemplateRenderer.RegisterCustomTags(parser, service);
-                var template = TemplateRenderer.Parse($"{{% _webResource {webResourceName} %}}", parser);
+                var template = TemplateRenderer.Parse($"{{% _webResource '{webResourceName}' %}}", parser);
 
                 var model = new ExpandoObject();
                 var result = TemplateRenderer.Render(template, model);
@@ -588,7 +588,7 @@ namespace SparkCode.Tests.Templates
             var service = new Context().Service;
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
-            var template = TemplateRenderer.Parse("{% _webResource missing_webresource_name_12345 %}", parser);
+            var template = TemplateRenderer.Parse("{% _webResource \"csp_/missing_webresource_name_12345.ext\" %}", parser);
 
             var model = new ExpandoObject();
 

@@ -289,9 +289,10 @@ namespace SparkCode.Templates
                 return Statement.Normal();
             });
 
-            parser.RegisterIdentifierTag("_webResource", (identifier, writer, encoder, ctx) =>
+            parser.RegisterExpressionTag("_webResource", (expression, writer, encoder, ctx) =>
             {
-                var webResourceContent = service.GetWebResourceContent(identifier, decode: false);
+                var webResourceName = expression.EvaluateAsync(ctx).Result.ToStringValue();
+                var webResourceContent = service.GetWebResourceContent(webResourceName, decode: false);
 
                 if (!string.IsNullOrWhiteSpace(webResourceContent))
                 {
