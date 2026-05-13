@@ -157,28 +157,94 @@ namespace SparkCode.Tests.Templates
         {
             var service = new Context().Service;
             var webResourceName = GetRenderableWebResourceName(service);
+            var additionalContext = "{\"name\":\"FromContext\"}";
             var expected = GetFrontMatter.Parse(service.GetWebResourceContent(webResourceName));
             var expectedBody = (string)expected["body"];
             var expectedRenderedTemplate = TemplateRenderer.Render(
                 service,
                 expectedBody,
-                additionalContext: "{\"name\":\"FromContext\"}");
+                additionalContext: additionalContext);
 
             var result = TemplateRenderer.Parse(
                 service,
                 webResourceName,
-                additionalContext: "{\"name\":\"FromContext\"}");
+                additionalContext: additionalContext);
             var expectedFrontMatter = (Entity)expected["frontMatter"];
             var actualFrontMatter = (Entity)result["frontMatter"];
+            var actualRenderedFrontMatter = (Entity)result["renderedFrontMatter"];
 
             Assert.Equal(expectedBody, (string)result["body"]);
             Assert.Equal(expectedRenderedTemplate, (string)result["renderedTemplate"]);
             Assert.Equal(expectedFrontMatter.Attributes.Count, actualFrontMatter.Attributes.Count);
+            Assert.Equal(expectedFrontMatter.Attributes.Count, actualRenderedFrontMatter.Attributes.Count);
 
             foreach (var attribute in expectedFrontMatter.Attributes)
             {
                 Assert.True(actualFrontMatter.Attributes.Contains(attribute.Key));
                 Assert.Equal(attribute.Value?.ToString(), actualFrontMatter[attribute.Key]?.ToString());
+
+                Assert.True(actualRenderedFrontMatter.Attributes.Contains(attribute.Key));
+                if (attribute.Value is string frontMatterString)
+                {
+                    var expectedRenderedValue = TemplateRenderer.Render(
+                        service,
+                        frontMatterString,
+                        additionalContext: additionalContext);
+                    Assert.Equal(expectedRenderedValue, actualRenderedFrontMatter[attribute.Key]?.ToString());
+                }
+                else
+                {
+                    Assert.Equal(attribute.Value, actualRenderedFrontMatter[attribute.Key]);
+                }
+            }
+        }
+
+        [Fact]
+        public void Parse_WithFrontMatterLiquidPlaceholders_ReturnsRenderedFrontMatter()
+        {
+            var service = new Context().Service;
+            var webResourceName = $"csp_/tests/template-renderer-{Guid.NewGuid():N}.html";
+            var createdWebResourceId = Guid.Empty;
+
+            try
+            {
+                var templateSource = string.Join("\n", new[]
+                {
+                    "---",
+                    "title: Hello {{ name }}",
+                    "priority: 5",
+                    "---",
+                    "Body: {{ name }}"
+                });
+
+                var webResource = new Entity("webresource")
+                {
+                    ["name"] = webResourceName,
+                    ["displayname"] = webResourceName,
+                    ["webresourcetype"] = new OptionSetValue(1),
+                    ["content"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(templateSource))
+                };
+                createdWebResourceId = service.Create(webResource);
+
+                var result = TemplateRenderer.Parse(
+                    service,
+                    webResourceName,
+                    additionalContext: "{\"name\":\"FromContext\"}");
+
+                var originalFrontMatter = (Entity)result["frontMatter"];
+                var renderedFrontMatter = (Entity)result["renderedFrontMatter"];
+
+                Assert.Equal("Hello {{ name }}", originalFrontMatter.GetAttributeValue<string>("title"));
+                Assert.Equal("Hello FromContext", renderedFrontMatter.GetAttributeValue<string>("title"));
+                Assert.Equal(originalFrontMatter["priority"], renderedFrontMatter["priority"]);
+                Assert.Equal("Body: FromContext", (string)result["renderedTemplate"]);
+            }
+            finally
+            {
+                if (createdWebResourceId != Guid.Empty)
+                {
+                    service.Delete("webresource", createdWebResourceId);
+                }
             }
         }
 

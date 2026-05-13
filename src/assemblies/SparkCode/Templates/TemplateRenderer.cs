@@ -108,7 +108,8 @@ namespace SparkCode.Templates
         /// </param>
         /// <param name="additionalContext">Optional JSON object merged into the template model before rendering.</param>
         /// <returns>
-        /// An <see cref="Entity"/> containing <c>frontMatter</c>, <c>body</c>, and <c>renderedTemplate</c> attributes.
+        /// An <see cref="Entity"/> containing <c>frontMatter</c>, <c>renderedFrontMatter</c>, <c>body</c>,
+        /// and <c>renderedTemplate</c> attributes.
         /// </returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> is null.</exception>
         /// <exception cref="Exception">
@@ -128,12 +129,58 @@ namespace SparkCode.Templates
             }
 
             var templateSource = service.GetWebResourceContent(webResourceName);
+
             var parsedTemplate = GetFrontMatter.Parse(templateSource);
+            var frontMatter = parsedTemplate.Contains("frontMatter")
+                ? parsedTemplate["frontMatter"] as Entity
+                : null;
+            var renderedFrontMatter = RenderFrontMatter(
+                service,
+                frontMatter,
+                recordIdStr,
+                recordType,
+                additionalContext);
+            
             var templateBody = (string)parsedTemplate["body"];
+
             var renderedTemplate = Render(service, templateBody, recordIdStr, recordType, additionalContext);
 
+            parsedTemplate["renderedFrontMatter"] = renderedFrontMatter;
             parsedTemplate["renderedTemplate"] = renderedTemplate;
             return parsedTemplate;
+        }
+
+        private static Entity RenderFrontMatter(
+            IOrganizationService service,
+            Entity frontMatter,
+            string recordIdStr,
+            string recordType,
+            string additionalContext)
+        {
+            if (frontMatter == null)
+            {
+                return new Entity();
+            }
+
+            var renderedFrontMatter = new Entity(frontMatter.LogicalName, frontMatter.Id);
+
+            foreach (var attribute in frontMatter.Attributes)
+            {
+                if (attribute.Value is string frontMatterValue)
+                {
+                    renderedFrontMatter[attribute.Key] = Render(
+                        service,
+                        frontMatterValue,
+                        recordIdStr,
+                        recordType,
+                        additionalContext);
+                    continue;
+                }
+
+                renderedFrontMatter[attribute.Key] = attribute.Value;
+            }
+
+            return renderedFrontMatter;
         }
 
         /// <summary>

@@ -14,7 +14,7 @@ namespace SparkCode.API.Templates
     /// <param name="RecordType" type="string" optional="true">Optional logical name of the table the record belongs to. Must be provided together with RecordId.</param>
     /// <param name="AdditionalContext" type="string" optional="true">Optional JSON object merged into the template model before rendering.</param>
     /// <param name="Results" type="string" direction="output">Rendered template text.</param>
-    /// <param name="FrontMatter" type="expando" direction="output">Front matter extracted from the web resource template.</param>
+    /// <param name="FrontMatter" type="expando" direction="output">Rendered front matter extracted from the web resource template.</param>
     /// <example>
     /// To render a template from a web resource named "csp_/templates/welcome.liquid",
     /// set WebResourceName to that value, RecordId to a contact GUID, and RecordType to "contact".
@@ -41,13 +41,13 @@ namespace SparkCode.API.Templates
                 recordIdStr,
                 recordType,
                 additionalContext);
-            var frontMatter = (Entity)parsedTemplate["frontMatter"];
+            var renderedFrontMatter = (Entity)parsedTemplate["renderedFrontMatter"];
             var renderedTemplate = (string)parsedTemplate["renderedTemplate"];
 
             // API Outputs
             ctx.SetOutputParameter("Results", renderedTemplate);
-            ctx.SetOutputParameter("FrontMatter", frontMatter);
-            ctx.SetOutputParameter("FrontMatterJson", frontMatter.ToJson());
+            ctx.SetOutputParameter("FrontMatter", renderedFrontMatter);
+            ctx.SetOutputParameter("FrontMatterJson", renderedFrontMatter.ToJson());
         }
     }
 }
