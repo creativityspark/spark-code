@@ -159,10 +159,10 @@ namespace SparkCode.Templates
         {
             if (frontMatter == null)
             {
-                return new Entity();
+                throw new ArgumentNullException(nameof(frontMatter));
             }
 
-            var renderedFrontMatter = new Entity(frontMatter.LogicalName, frontMatter.Id);
+            var renderedFrontMatter = new Entity();
 
             foreach (var attribute in frontMatter.Attributes)
             {
