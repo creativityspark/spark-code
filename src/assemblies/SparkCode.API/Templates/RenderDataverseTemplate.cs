@@ -45,12 +45,12 @@ namespace SparkCode.API.Templates
             // Run Logic
             var parser = new FluidParser();
             SparkCode.Templates.TemplateRenderer.RegisterCustomTags(parser, ctx.Service);
-            var parsedTemplate = SparkCode.Templates.TemplateRenderer.ParseTemplate(templateSource, parser);
+            var parsedTemplate = SparkCode.Templates.TemplateRenderer.Parse(templateSource, parser);
             var visitor = new SparkCode.Templates.IdentifierVisitor();
             visitor.VisitTemplate(parsedTemplate);
             var identifiers = visitor.Identifiers.ToArray();
 
-            var model = SparkCode.Templates.TemplateRenderer.BuildDataverseModel(
+            var model = SparkCode.Templates.TemplateRenderer.BuildModel(
                 ctx.Service,
                 recordType,
                 recordIdStr,

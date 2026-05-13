@@ -37,8 +37,20 @@ namespace SparkCode.Templates
         public static string Render(string templateSource, ExpandoObject model)
         {
             var parser = new FluidParser();
-            var template = ParseTemplate(templateSource, parser);
+            var template = Parse(templateSource, parser);
             return Render(template, model);
+        }
+
+        /// <summary>
+        /// Renders a parsed Fluid template using an <see cref="ExpandoObject"/> model.
+        /// </summary>
+        /// <param name="template">The parsed template to render.</param>
+        /// <param name="model">The model passed to the template context.</param>
+        /// <returns>The rendered template output.</returns>
+        public static string Render(IFluidTemplate template, ExpandoObject model)
+        {
+            var templateContext = new TemplateContext(model);
+            return template.Render(templateContext);
         }
 
         /// <summary>
@@ -48,10 +60,10 @@ namespace SparkCode.Templates
         /// <param name="parser">The Fluid parser instance used to parse the template.</param>
         /// <returns>The parsed <see cref="IFluidTemplate"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="parser"/> is null.</exception>
-        /// <exception cref="InvalidPluginExecutionException">
+        /// <exception cref="Exception">
         /// Thrown when the provided template source is invalid Liquid syntax.
         /// </exception>
-        public static IFluidTemplate ParseTemplate(string templateSource, FluidParser parser)
+        public static IFluidTemplate Parse(string templateSource, FluidParser parser)
         {
             if (parser == null)
             {
@@ -63,7 +75,7 @@ namespace SparkCode.Templates
                 return template;
             }
 
-            throw new InvalidPluginExecutionException($"Invalid Liquid template: {errorMessage}");
+            throw new Exception($"Invalid Liquid template: {errorMessage}");
         }
 
 
@@ -148,17 +160,6 @@ namespace SparkCode.Templates
             });
         }
 
-        /// <summary>
-        /// Renders a parsed Fluid template using an <see cref="ExpandoObject"/> model.
-        /// </summary>
-        /// <param name="template">The parsed template to render.</param>
-        /// <param name="model">The model passed to the template context.</param>
-        /// <returns>The rendered template output.</returns>
-        public static string Render(IFluidTemplate template, ExpandoObject model)
-        {
-            var templateContext = new TemplateContext(model);
-            return template.Render(templateContext);
-        }
 
         /// <summary>
         /// Builds a template model by retrieving a Dataverse record and merging additional context values.
@@ -176,7 +177,7 @@ namespace SparkCode.Templates
         /// <exception cref="Exception">
         /// Thrown when only one of <paramref name="recordType"/> or <paramref name="recordIdStr"/> is provided.
         /// </exception>
-        public static ExpandoObject BuildDataverseModel(
+        public static ExpandoObject BuildModel(
             IOrganizationService service,
             string recordType = null,
             string recordIdStr = null,

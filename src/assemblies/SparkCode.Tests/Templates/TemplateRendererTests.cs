@@ -105,11 +105,11 @@ namespace SparkCode.Tests.Templates
         }
 
         [Fact]
-        public void ParseTemplate_WithInvalidLiquid_ThrowsInvalidPluginExecutionException()
+        public void ParseTemplate_WithInvalidLiquid_ThrowsException()
         {
             var parser = new FluidParser();
 
-            Assert.Throws<InvalidPluginExecutionException>(() => TemplateRenderer.ParseTemplate("Hello {{name", parser));
+            Assert.Throws<Exception>(() => TemplateRenderer.Parse("Hello {{name", parser));
         }
 
         [Fact]
@@ -127,7 +127,7 @@ namespace SparkCode.Tests.Templates
         public void Render_WithParsedTemplateAndExpandoModel_RendersTemplate()
         {
             var parser = new FluidParser();
-            var template = TemplateRenderer.ParseTemplate("Hello {{ name }}", parser);
+            var template = TemplateRenderer.Parse("Hello {{ name }}", parser);
             var model = new ExpandoObject();
             ((IDictionary<string, object>)model)["name"] = "Cris";
 
@@ -142,7 +142,7 @@ namespace SparkCode.Tests.Templates
             var service = new Context().Service;
             var recordId = GetFirstAccountId();
 
-            var model = TemplateRenderer.BuildDataverseModel(
+            var model = TemplateRenderer.BuildModel(
                 service,
                 "account",
                 recordId,
@@ -161,7 +161,7 @@ namespace SparkCode.Tests.Templates
         {
             var service = new Context().Service;
 
-            var model = TemplateRenderer.BuildDataverseModel(
+            var model = TemplateRenderer.BuildModel(
                 service,
                 additionalContext: "{\"prefix\":\"VIP\",\"region\":\"NA\"}");
 
@@ -177,7 +177,7 @@ namespace SparkCode.Tests.Templates
         {
             var service = new Context().Service;
 
-            var model = TemplateRenderer.BuildDataverseModel(service);
+            var model = TemplateRenderer.BuildModel(service);
 
             var modelDictionary = (IDictionary<string, object>)model;
 
@@ -189,7 +189,7 @@ namespace SparkCode.Tests.Templates
         {
             var service = new Context().Service;
 
-            Assert.Throws<Exception>(() => TemplateRenderer.BuildDataverseModel(service, recordType: "account"));
+            Assert.Throws<Exception>(() => TemplateRenderer.BuildModel(service, recordType: "account"));
         }
 
         [Fact]
@@ -198,7 +198,7 @@ namespace SparkCode.Tests.Templates
             var service = new Context().Service;
             var recordId = GetFirstAccountId();
 
-            Assert.Throws<Exception>(() => TemplateRenderer.BuildDataverseModel(service, recordIdStr: recordId));
+            Assert.Throws<Exception>(() => TemplateRenderer.BuildModel(service, recordIdStr: recordId));
         }
 
         [Fact]
@@ -210,7 +210,7 @@ namespace SparkCode.Tests.Templates
 
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
-            var template = TemplateRenderer.ParseTemplate($"{{% _envVar {envVarSchemaName} %}}", parser);
+            var template = TemplateRenderer.Parse($"{{% _envVar {envVarSchemaName} %}}", parser);
 
             var model = new ExpandoObject();
             var result = TemplateRenderer.Render(template, model);
@@ -226,7 +226,7 @@ namespace SparkCode.Tests.Templates
 
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
-            var template = TemplateRenderer.ParseTemplate("{% _orgDetails FriendlyName %}", parser);
+            var template = TemplateRenderer.Parse("{% _orgDetails FriendlyName %}", parser);
 
             var model = new ExpandoObject();
             var result = TemplateRenderer.Render(template, model);
@@ -243,7 +243,7 @@ namespace SparkCode.Tests.Templates
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
 
-            var template = TemplateRenderer.ParseTemplate("{% _orgUrl %}", parser);
+            var template = TemplateRenderer.Parse("{% _orgUrl %}", parser);
 
             var model = new ExpandoObject();
             var result = TemplateRenderer.Render(template, model);
@@ -260,7 +260,7 @@ namespace SparkCode.Tests.Templates
 
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
-            var template = TemplateRenderer.ParseTemplate($"{{% _appUrl {appName} %}}", parser);
+            var template = TemplateRenderer.Parse($"{{% _appUrl {appName} %}}", parser);
 
             var model = new ExpandoObject();
             var result = TemplateRenderer.Render(template, model);
@@ -279,7 +279,7 @@ namespace SparkCode.Tests.Templates
 
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
-            var template = TemplateRenderer.ParseTemplate($"{{% _appUrl {appUniqueName} %}}", parser);
+            var template = TemplateRenderer.Parse($"{{% _appUrl {appUniqueName} %}}", parser);
 
             var model = new ExpandoObject();
             var result = TemplateRenderer.Render(template, model);
@@ -296,7 +296,7 @@ namespace SparkCode.Tests.Templates
 
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
-            var template = TemplateRenderer.ParseTemplate($"{{% _appName {appNameIdentifier} %}}", parser);
+            var template = TemplateRenderer.Parse($"{{% _appName {appNameIdentifier} %}}", parser);
 
             var model = new ExpandoObject();
             var result = TemplateRenderer.Render(template, model);
@@ -313,7 +313,7 @@ namespace SparkCode.Tests.Templates
 
             var parser = new FluidParser();
             TemplateRenderer.RegisterCustomTags(parser, service);
-            var template = TemplateRenderer.ParseTemplate($"{{% _appName {appUniqueName} %}}", parser);
+            var template = TemplateRenderer.Parse($"{{% _appName {appUniqueName} %}}", parser);
 
             var model = new ExpandoObject();
             var result = TemplateRenderer.Render(template, model);
