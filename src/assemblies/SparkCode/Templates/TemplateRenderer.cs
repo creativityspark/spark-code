@@ -211,7 +211,7 @@ namespace SparkCode.Templates
 
         /// <summary>
         /// Registers custom Fluid tags supported by SparkCode templates.
-        /// Supported tags: <c>_envVar</c>, <c>_orgDetails</c>, <c>_orgUrl</c>, <c>_appUrl</c>, and <c>_appName</c>.
+        /// Supported tags: <c>_envVar</c>, <c>_orgDetails</c>, <c>_orgUrl</c>, <c>_appUrl</c>, <c>_appName</c>, and <c>_webResource</c>.
         /// </summary>
         /// <param name="parser">The Fluid parser where custom tags are registered.</param>
         /// <param name="service">The Dataverse organization service used by tag resolvers.</param>
@@ -284,6 +284,18 @@ namespace SparkCode.Templates
                 if (!string.IsNullOrWhiteSpace(appName))
                 {
                     writer.Write(appName);
+                }
+
+                return Statement.Normal();
+            });
+
+            parser.RegisterIdentifierTag("_webResource", (identifier, writer, encoder, ctx) =>
+            {
+                var webResourceContent = service.GetWebResourceContent(identifier, decode: false);
+
+                if (!string.IsNullOrWhiteSpace(webResourceContent))
+                {
+                    writer.Write(webResourceContent);
                 }
 
                 return Statement.Normal();

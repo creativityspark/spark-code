@@ -542,5 +542,57 @@ namespace SparkCode.Tests.Templates
 
             Assert.Equal(expectedName, result);
         }
+
+        [Fact]
+        public void RegisterCustomTags_WithWebResourceIdentifier_ReturnsRawContentWithoutDecoding()
+        {
+            var service = new Context().Service;
+            var webResourceName = $"csp_testwebresource_{Guid.NewGuid():N}_html";
+            var decodedContent = "Hello from _webResource tag";
+            var encodedContent = Convert.ToBase64String(Encoding.UTF8.GetBytes(decodedContent));
+            var createdWebResourceId = Guid.Empty;
+
+            try
+            {
+                var webResource = new Entity("webresource")
+                {
+                    ["name"] = webResourceName,
+                    ["displayname"] = webResourceName,
+                    ["webresourcetype"] = new OptionSetValue(1),
+                    ["content"] = encodedContent
+                };
+                createdWebResourceId = service.Create(webResource);
+
+                var parser = new FluidParser();
+                TemplateRenderer.RegisterCustomTags(parser, service);
+                var template = TemplateRenderer.Parse($"{{% _webResource {webResourceName} %}}", parser);
+
+                var model = new ExpandoObject();
+                var result = TemplateRenderer.Render(template, model);
+
+                Assert.Equal(encodedContent, result);
+                Assert.NotEqual(decodedContent, result);
+            }
+            finally
+            {
+                if (createdWebResourceId != Guid.Empty)
+                {
+                    service.Delete("webresource", createdWebResourceId);
+                }
+            }
+        }
+
+        [Fact]
+        public void RegisterCustomTags_WithMissingWebResourceIdentifier_ThrowsException()
+        {
+            var service = new Context().Service;
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomTags(parser, service);
+            var template = TemplateRenderer.Parse("{% _webResource missing_webresource_name_12345 %}", parser);
+
+            var model = new ExpandoObject();
+
+            Assert.ThrowsAny<Exception>(() => TemplateRenderer.Render(template, model));
+        }
     }
 }
