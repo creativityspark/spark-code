@@ -3,6 +3,14 @@ using System.Xml.Serialization;
 
 namespace SparkCode.APIRegistrationTool
 {
+    public enum SolutionComponentType
+    {
+        CustomAPI = 10023,
+        CustomAPIRequestParameter = 10024,
+        CustomAPIResponseProperty = 10025,
+    }
+
+
     [XmlRoot("doc")]
     public class APISpecification
     {

@@ -5,6 +5,7 @@ using SparkCode.APIRegistrationTool;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
+
 // Use this powershell command to register the environment variable
 // [System.Environment]::SetEnvironmentVariable('DATAVERSE_CONNECTION_STRING_SPARK_CODE', 'AuthType=ClientSecret;Url=https://url.crm.dynamics.com;AppId=XXX;ClientSecret=YYY', 'User')   
 
@@ -77,8 +78,8 @@ void RegisterCustomAPIs(ServiceClient client)
 
     foreach (var api in apiSpec.Members)
     {
-        var existingAPI = Upsert(client, pluginAssembly.Id, api);
-        AddToSolution(client, existingAPI, solutionName);
+        var existingAPI = Upsert(client, pluginAssembly.Id, api, solutionName);
+        AddToSolution(client, existingAPI, solutionName, SolutionComponentType.CustomAPI);
     }
 }
 
@@ -219,9 +220,9 @@ OptionSetValue GetParameterType(string? type)
     }
 }
 
-void AddToSolution(ServiceClient client, Entity existingAPI, string solutionName)
+void AddToSolution(ServiceClient client, Entity component, string solutionName, SolutionComponentType componentType)
 {
-    // check if the custom api is already in the solution
+    // check if the component is already in the solution
     var query = new Microsoft.Xrm.Sdk.Query.QueryExpression("solutioncomponent")
     {
         ColumnSet = new Microsoft.Xrm.Sdk.Query.ColumnSet("solutioncomponentid"),
@@ -229,7 +230,7 @@ void AddToSolution(ServiceClient client, Entity existingAPI, string solutionName
         {
             Conditions =
             {
-                new Microsoft.Xrm.Sdk.Query.ConditionExpression("objectid", Microsoft.Xrm.Sdk.Query.ConditionOperator.Equal, existingAPI.Id),
+                new Microsoft.Xrm.Sdk.Query.ConditionExpression("objectid", Microsoft.Xrm.Sdk.Query.ConditionOperator.Equal, component.Id),
             }
         },
         LinkEntities =         
@@ -253,19 +254,19 @@ void AddToSolution(ServiceClient client, Entity existingAPI, string solutionName
     var results = client.RetrieveMultiple(query);
     if (results.Entities.Count == 0)
     {
-        // add the custom api to the solution
         var addRequest = new AddSolutionComponentRequest
         {
-            ComponentType = 10023, // Custom API
-            ComponentId = existingAPI.Id,
+            ComponentType = (int)componentType,
+            ComponentId = component.Id,
             SolutionUniqueName = solutionName
         };
         client.Execute(addRequest);
+        Console.WriteLine($"Added {component.LogicalName} id {component.Id} to solution.");
     }
 
 }
 
-Entity Upsert(ServiceClient client, Guid assemblyId, Member api)
+Entity Upsert(ServiceClient client, Guid assemblyId, Member api, string solutionName)
 {
     Entity existingAPI = GetApi(client, api.UniqueName);
     Entity pluginType = GetPluginType(client, assemblyId, api.TypeName);
@@ -278,11 +279,11 @@ Entity Upsert(ServiceClient client, Guid assemblyId, Member api)
     {
         Console.WriteLine($"Custom API already exists: {api.Name}");
     }
-    UpsertParameters(client, api, existingAPI);
+    UpsertParameters(client, api, existingAPI, solutionName);
     return existingAPI;
 }
 
-void UpsertParameters(ServiceClient client, Member api, Entity apiRecord)
+void UpsertParameters(ServiceClient client, Member api, Entity apiRecord, string solutionName)
 {
     foreach (var parameter in api.Parameters)
     {
@@ -298,6 +299,7 @@ void UpsertParameters(ServiceClient client, Member api, Entity apiRecord)
             {
                 Console.WriteLine($"Input Parameter already exists: {parameter.Name}");
             }
+            AddToSolution(client, inputParameter, solutionName, SolutionComponentType.CustomAPIRequestParameter);
         }
         else
         {
@@ -311,6 +313,7 @@ void UpsertParameters(ServiceClient client, Member api, Entity apiRecord)
             {
                 Console.WriteLine($"Output Parameter already exists: {parameter.Name}");
             }
+            AddToSolution(client, outputParameter, solutionName, SolutionComponentType.CustomAPIResponseProperty);
         }
     }
 }
