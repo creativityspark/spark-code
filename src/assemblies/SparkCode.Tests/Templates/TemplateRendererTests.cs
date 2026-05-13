@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace SparkCode.Tests.Templates
@@ -104,12 +105,89 @@ namespace SparkCode.Tests.Templates
             return uniqueName;
         }
 
+        private static string GetRenderableWebResourceName(IOrganizationService service)
+        {
+            var query = new QueryExpression("webresource")
+            {
+                ColumnSet = new ColumnSet("name", "content"),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("name", ConditionOperator.NotNull),
+                        new ConditionExpression("content", ConditionOperator.NotNull),
+                        new ConditionExpression("webresourcetype", ConditionOperator.Equal, 1)
+                    }
+                },
+                TopCount = 50
+            };
+
+            var webResources = service.RetrieveMultiple(query);
+
+            foreach (var webResource in webResources.Entities)
+            {
+                var candidateName = webResource.GetAttributeValue<string>("name");
+                var encodedContent = webResource.GetAttributeValue<string>("content");
+
+                if (string.IsNullOrWhiteSpace(candidateName) || string.IsNullOrWhiteSpace(encodedContent))
+                {
+                    continue;
+                }
+
+                var decodedContent = Encoding.UTF8.GetString(Convert.FromBase64String(encodedContent));
+                if (decodedContent.Contains("{{"))
+                {
+                    return candidateName;
+                }
+            }
+
+            throw new InvalidOperationException("No HTML web resource containing a Liquid template (with '{{') was found in the test environment.");
+        }
+
         [Fact]
         public void ParseTemplate_WithInvalidLiquid_ThrowsException()
         {
             var parser = new FluidParser();
 
             Assert.Throws<Exception>(() => TemplateRenderer.Parse("Hello {{name", parser));
+        }
+
+        [Fact]
+        public void Parse_WithWebResource_ReturnsFrontMatterBodyAndRenderedTemplate()
+        {
+            var service = new Context().Service;
+            var webResourceName = GetRenderableWebResourceName(service);
+            var expected = GetFrontMatter.Parse(service.GetWebResourceContent(webResourceName));
+            var expectedBody = (string)expected["body"];
+            var expectedRenderedTemplate = TemplateRenderer.Render(
+                service,
+                expectedBody,
+                additionalContext: "{\"name\":\"FromContext\"}");
+
+            var result = TemplateRenderer.Parse(
+                service,
+                webResourceName,
+                additionalContext: "{\"name\":\"FromContext\"}");
+            var expectedFrontMatter = (Entity)expected["frontMatter"];
+            var actualFrontMatter = (Entity)result["frontMatter"];
+
+            Assert.Equal(expectedBody, (string)result["body"]);
+            Assert.Equal(expectedRenderedTemplate, (string)result["renderedTemplate"]);
+            Assert.Equal(expectedFrontMatter.Attributes.Count, actualFrontMatter.Attributes.Count);
+
+            foreach (var attribute in expectedFrontMatter.Attributes)
+            {
+                Assert.True(actualFrontMatter.Attributes.Contains(attribute.Key));
+                Assert.Equal(attribute.Value?.ToString(), actualFrontMatter[attribute.Key]?.ToString());
+            }
+        }
+
+        [Fact]
+        public void Parse_WithMissingWebResource_ThrowsException()
+        {
+            var service = new Context().Service;
+
+            Assert.ThrowsAny<Exception>(() => TemplateRenderer.Parse(service, "missing_webresource_name_12345"));
         }
 
         [Fact]

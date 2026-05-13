@@ -16,7 +16,6 @@ namespace SparkCode.Templates
     /// </summary>
     public static class TemplateRenderer
     {
-        
         /// <summary>
         /// Renders a Liquid template using a JSON object as the model.
         /// </summary>
@@ -93,6 +92,48 @@ namespace SparkCode.Templates
                 identifiers);
 
             return Render(parsedTemplate, model);
+        }
+
+        /// <summary>
+        /// Retrieves a Liquid template from a Dataverse web resource, parses its front matter and body,
+        /// and renders the body using optional Dataverse record and additional context values.
+        /// </summary>
+        /// <param name="service">The Dataverse organization service used to retrieve the web resource content.</param>
+        /// <param name="webResourceName">Unique name of the web resource containing the template text.</param>
+        /// <param name="recordIdStr">
+        /// Optional GUID of the Dataverse record to use as context. Must be provided together with <paramref name="recordType"/>.
+        /// </param>
+        /// <param name="recordType">
+        /// Optional logical name of the Dataverse table for <paramref name="recordIdStr"/>. Must be provided together with <paramref name="recordIdStr"/>.
+        /// </param>
+        /// <param name="additionalContext">Optional JSON object merged into the template model before rendering.</param>
+        /// <returns>
+        /// An <see cref="Entity"/> containing <c>frontMatter</c>, <c>body</c>, and <c>renderedTemplate</c> attributes.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> is null.</exception>
+        /// <exception cref="Exception">
+        /// Thrown when the web resource cannot be retrieved, template syntax is invalid,
+        /// or record inputs are incomplete.
+        /// </exception>
+        public static Entity Parse(
+            IOrganizationService service,
+            string webResourceName,
+            string recordIdStr = null,
+            string recordType = null,
+            string additionalContext = null)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
+
+            var templateSource = service.GetWebResourceContent(webResourceName);
+            var parsedTemplate = GetFrontMatter.Parse(templateSource);
+            var templateBody = (string)parsedTemplate["body"];
+            var renderedTemplate = Render(service, templateBody, recordIdStr, recordType, additionalContext);
+
+            parsedTemplate["renderedTemplate"] = renderedTemplate;
+            return parsedTemplate;
         }
 
         /// <summary>

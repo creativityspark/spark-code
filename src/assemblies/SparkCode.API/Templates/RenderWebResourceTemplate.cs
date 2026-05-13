@@ -1,8 +1,6 @@
-using Fluid;
 using Microsoft.Xrm.Sdk;
 using SparkCode;
 using System;
-using System.Linq;
 
 namespace SparkCode.API.Templates
 {
@@ -37,39 +35,14 @@ namespace SparkCode.API.Templates
                 ? ctx.PluginContext.InputParameters["AdditionalContext"] as string
                 : null;
 
-            var hasRecordId = !string.IsNullOrWhiteSpace(recordIdStr);
-            var hasRecordType = !string.IsNullOrWhiteSpace(recordType);
-
-            if (hasRecordId != hasRecordType)
-            {
-                throw new Exception("RecordId and RecordType must both be provided together or both omitted.");
-            }
-
-            // Retrieve web resource template source.
-            var templateSource = ctx.Service.GetWebResourceContent(webResourceName);
-
-            // Split front matter and template body.
-            var frontMatterResults = SparkCode.Templates.GetFrontMatter.Parse(templateSource);
-            var frontMatter = (Entity)frontMatterResults["frontMatter"];
-            var templateBody = (string)frontMatterResults["body"];
-
-            // Run Logic
-            var parser = new FluidParser();
-            SparkCode.Templates.TemplateRenderer.RegisterCustomTags(parser, ctx.Service);
-            var parsedTemplate = SparkCode.Templates.TemplateRenderer.Parse(templateBody, parser);
-            var visitor = new SparkCode.Templates.IdentifierVisitor();
-            visitor.VisitTemplate(parsedTemplate);
-            var identifiers = visitor.Identifiers.ToArray();
-
-            var model = SparkCode.Templates.TemplateRenderer.BuildModel(
+            var parsedTemplate = SparkCode.Templates.TemplateRenderer.Parse(
                 ctx.Service,
-                recordType,
+                webResourceName,
                 recordIdStr,
-                additionalContext,
-                identifiers
-            );
-
-            string renderedTemplate = SparkCode.Templates.TemplateRenderer.Render(parsedTemplate, model);
+                recordType,
+                additionalContext);
+            var frontMatter = (Entity)parsedTemplate["frontMatter"];
+            var renderedTemplate = (string)parsedTemplate["renderedTemplate"];
 
             // API Outputs
             ctx.SetOutputParameter("Results", renderedTemplate);
