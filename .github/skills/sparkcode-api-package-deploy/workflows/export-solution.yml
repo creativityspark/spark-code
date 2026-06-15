@@ -1,0 +1,158 @@
+# Export solution from a DEV environment
+# Extracts, commits, and pushes to source control with the changes
+
+name: export-solution
+run-name: Export ${{ github.event.inputs.solution_name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      solution_name:
+        description: Solution to export.
+        required: true
+        default: MySolution
+      commit_message:
+        description: Commit Message. Include task IDs here.
+        required: true
+      create_tag:
+        type: boolean
+        description: Tick this box to create a tag after commit.
+        default: false
+
+env:
+  VERSION_UPDATE_STRATEGY: revision
+  EXPORT_FOLDER: out/export/
+  SOLUTIONS_FOLDER: PowerPlatform/solutions/
+  
+permissions:
+  contents: write
+  
+jobs:
+  export-and-save-solution:
+    environment: Dev
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Power Platform Tools
+      uses: microsoft/powerplatform-actions/actions-install@v1
+
+    - name: pac-authenticate
+      shell: pwsh
+      run: |
+        pac auth create --applicationId ${{vars.CLIENT_ID}} --clientSecret ${{ secrets.PowerPlatformSPN }} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
+        pac auth who
+
+    - name: who-am-i
+      uses: microsoft/powerplatform-actions/who-am-i@v1
+      with:
+        environment-url: ${{vars.ENVIRONMENT_URL}}
+        app-id: ${{vars.CLIENT_ID}}
+        client-secret: ${{ secrets.PowerPlatformSPN }}
+        tenant-id: ${{vars.TENANT_ID}}
+
+    - name: publish-all
+      uses: microsoft/powerplatform-actions/publish-solution@v1
+      with:
+        environment-url: ${{vars.ENVIRONMENT_URL}}
+        app-id: ${{vars.CLIENT_ID}}
+        client-secret: ${{ secrets.PowerPlatformSPN }}
+        tenant-id: ${{vars.TENANT_ID}}
+        run-asynchronously: true
+
+    - name: compute-next-version
+      shell: pwsh
+      run: |
+        $output = pac solution list --json
+        $solutionList = ConvertFrom-Json -InputObject $output
+        $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ github.event.inputs.solution_name }}" }
+        if (-not $solutionItem) {
+          throw "Solution not found: ${{ github.event.inputs.solution_name }}"
+        }
+        $version = $solutionItem.VersionNumber
+        Write-Output "Current version: $version"
+        $versionParts = $version.Split('.')
+        $strategy = "${{ env.VERSION_UPDATE_STRATEGY }}"
+        switch ($strategy) {
+          "major"    { $versionParts[0] = [int]$versionParts[0] + 1 }
+          "minor"    { $versionParts[1] = [int]$versionParts[1] + 1 }
+          "build"    { $versionParts[2] = [int]$versionParts[2] + 1 }
+          "revision" { $versionParts[3] = [int]$versionParts[3] + 1 }
+          default    { throw "Invalid version strategy: $strategy" }
+        }
+        $newVersion = "{0}.{1}.{2}.{3}" -f $versionParts[0], $versionParts[1], $versionParts[2], $versionParts[3]
+        Write-Output "New version: $newVersion"
+        echo "VERSION=$newVersion" >> $env:GITHUB_ENV
+
+    - name: set-online-solution-version
+      uses: microsoft/powerplatform-actions/set-online-solution-version@v1
+      with:
+        environment-url: ${{vars.ENVIRONMENT_URL}}
+        app-id: ${{vars.CLIENT_ID}}
+        client-secret: ${{ secrets.PowerPlatformSPN }}
+        tenant-id: ${{vars.TENANT_ID}}
+        name: ${{ github.event.inputs.solution_name }}
+        version: ${{ env.VERSION }}
+
+    - name: export-solution-unmanaged
+      uses: microsoft/powerplatform-actions/export-solution@v1
+      with:
+        environment-url: ${{vars.ENVIRONMENT_URL}}
+        app-id: ${{vars.CLIENT_ID}}
+        client-secret: ${{ secrets.PowerPlatformSPN }}
+        tenant-id: ${{vars.TENANT_ID}}
+        solution-name: ${{ github.event.inputs.solution_name }}
+        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
+
+    - name: export-solution-managed
+      uses: microsoft/powerplatform-actions/export-solution@v1
+      with:
+        managed: true
+        environment-url: ${{vars.ENVIRONMENT_URL}}
+        app-id: ${{vars.CLIENT_ID}}
+        client-secret: ${{ secrets.PowerPlatformSPN }}
+        tenant-id: ${{vars.TENANT_ID}}
+        solution-name: ${{ github.event.inputs.solution_name }}
+        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
+
+    - name: unpack-solution
+      uses: microsoft/powerplatform-actions/unpack-solution@v1
+      with:
+        solution-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
+        solution-folder: ${{ env.SOLUTIONS_FOLDER}}/${{ github.event.inputs.solution_name }}
+        solution-type: 'Unmanaged'
+        overwrite-files: true
+          
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ github.event.inputs.solution_name }}
+        path: |
+          ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
+          ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
+
+    - name: Config commit and push to git
+      shell: pwsh
+      run: |
+        git config --global user.name '${{github.actor}}'
+        git config --global user.email '${{github.actor}}@users.noreply.github.com'
+        git add ${{ env.SOLUTIONS_FOLDER}}/\**
+
+        $commitMsg = "${{ github.event.inputs.commit_message }}"
+        $commitMsg = $commitMsg -replace '%s', '${{ github.event.inputs.solution_name }}'
+        $commitMsg = $commitMsg -replace '%v', '${{ env.VERSION }}'
+
+        git commit -m "$commitMsg"
+
+        git push origin
+
+    - name: Tag release
+      if: ${{ github.event.inputs.create_tag == 'true' }}
+      run: |
+        git tag v${{ env.VERSION }}
+        git push origin v${{ env.VERSION }}
+
+    - name: pac-auth-clear
+      if: always()
+      shell: pwsh
+      run: pac auth clear
