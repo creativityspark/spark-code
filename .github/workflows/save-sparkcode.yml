@@ -20,9 +20,21 @@ permissions:
   contents: write
 
 jobs:
+setup:
+  runs-on: ubuntu-latest
+  outputs:
+    var1: ${{ steps.set-output.outputs.var1 }}
+    var2: ${{ steps.set-output.outputs.var2 }}
+  steps:
+    - name: Set Outputs
+    id: set-output
+    run: |
+    echo "CLIENT_ID=${{ vars.CLIENT_ID }}" >> $GITHUB_OUTPUT
+    echo "TENANT_ID=${{ vars.TENANT_ID }}" >> $GITHUB_OUTPUT 
+    echo "ENVIRONMENT_URL=${{ vars.ENVIRONMENT_URL }}" >> $GITHUB_OUTPUT 
+
   export-and-save-solution:
-    environment: Dev
-    runs-on: windows-latest
+    needs: setup
     uses: ./.github/workflows/export-and-save-solution.yml
     with:
       solution_name: SparkCode
@@ -31,6 +43,6 @@ jobs:
       solutions_folder: PowerPlatform/solutions/
       commit_message: ${{ github.event.inputs.commit_message }}
       create_tag: ${{ github.event.inputs.create_tag == 'true'}}
-      client_id: ${{ vars.CLIENT_ID }}
-      tenant_id: ${{ vars.TENANT_ID }}
-      environment_url: ${{ vars.ENVIRONMENT_URL }}
+      client_id: ${{ needs.setup.outputs.CLIENT_ID }}
+      tenant_id: ${{ needs.setup.outputs.TENANT_ID }}
+      environment_url: ${{ needs.setup.outputs.ENVIRONMENT_URL }}
