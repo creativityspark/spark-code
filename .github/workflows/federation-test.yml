@@ -10,7 +10,7 @@ on:
 jobs:
   deploy:
     runs-on: windows-latest
-    
+
     steps:
       # 1️⃣ Checkout your repository
       - name: Checkout repository
@@ -51,7 +51,7 @@ jobs:
       - name: Authenticate with Power Platform
         shell: pwsh
         run: |
-          & "$env:PAC_PATH" auth create --githubFederated example --environment ${{vars.ENVIRONMENT_URL}}
+          & "$env:PAC_PATH" auth create --githubFederated --environment ${{vars.ENVIRONMENT_ID}}
 
       # 4️⃣ Example: List solutions
       - name: List solutions
