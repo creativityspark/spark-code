@@ -95,8 +95,19 @@ jobs:
     - name: compute-next-version
       shell: pwsh
       run: |
-        $output = (& "$env:PAC_PATH" solution list --json) -join ""
-        $solutionList = ConvertFrom-Json -InputObject $output
+        $outputLines = & "$env:PAC_PATH" solution list --json 2>&1
+        Write-Output "pac solution list --json raw output (line by line):"
+        $outputLines | ForEach-Object { Write-Output "  $_" }
+
+        $output = ($outputLines | ForEach-Object { "$_" }) -join ""
+        Write-Output "pac solution list --json joined output: $output"
+
+        try {
+          $solutionList = ConvertFrom-Json -InputObject $output
+        }
+        catch {
+          throw "Failed to parse JSON from pac solution list --json. Raw output: $output"
+        }
         $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ github.event.inputs.solution_name }}" }
         if (-not $solutionItem) {
           throw "Solution not found: ${{ github.event.inputs.solution_name }}"
