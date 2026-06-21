@@ -18,20 +18,18 @@ on:
 permissions:
   id-token: write   # Required for OIDC authentication
   contents: write
-  
+
 jobs:
-  deploy:
-    environment: Dev
+  export-and-save-solution:
     runs-on: windows-latest
-    
     steps:
-    - name: Expose env vars
+    - name: Expose input vars
       id: vars
       shell: pwsh
       run: |
-        Write-Output "Exposing env vars"
-        Write-Output "commit_message=${{ github.event.inputs.commit_message }}"
-        Write-Output "create_tag=${{ github.event.inputs.create_tag }}"
+        Write-Output "Exposing input vars"
+        echo "COMMIT_MESSAGE=${{ github.event.inputs.commit_message }}" >> $env:GITHUB_ENV
+        echo "CREATE_TAG=${{ github.event.inputs.create_tag }}" >> $env:GITHUB_ENV
       outputs:
         commit_message: ${{ github.event.inputs.commit_message }}
         create_tag: ${{ github.event.inputs.create_tag }}
@@ -43,5 +41,5 @@ jobs:
         version_update_strategy: revision
         export_folder: out/export/
         solutions_folder: PowerPlatform/solutions/
-        commit_message: ${{ needs.vars.outputs.commit_message }}
-        create_tag: ${{ needs.vars.outputs.create_tag }}
+        commit_message: ${{ env.COMMIT_MESSAGE }}
+        create_tag: ${{ env.CREATE_TAG }}
