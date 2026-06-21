@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="JSON representation of the XML payload.">
+    <label description="JSON representation of the XML payload." languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Data.XmlToJson-out-Results</name>
+  <type>10</type>
+</customapiresponseproperty>

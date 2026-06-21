@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="ResultsJson">
+  <description default="Records returned by the view FetchXML.">
+    <label description="Records returned by the view FetchXML." languagecode="1033" />
+  </description>
+  <displayname default="Results (JSON)">
+    <label description="Results (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Dataverse.GetViewData-out-ResultsJson</name>
+  <type>10</type>
+</customapiresponseproperty>

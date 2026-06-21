@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Context">
+  <description default="JSON string with values used by the template.">
+    <label description="JSON string with values used by the template." languagecode="1033" />
+  </description>
+  <displayname default="Context">
+    <label description="Context" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Templates.RenderTemplate-in-Context</name>
+  <type>10</type>
+</customapirequestparameter>

@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="Parsed CSV result including rows and rowCount.">
+    <label description="Parsed CSV result including rows and rowCount." languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Data.ParseCsv-out-Results</name>
+  <type>3</type>
+</customapiresponseproperty>

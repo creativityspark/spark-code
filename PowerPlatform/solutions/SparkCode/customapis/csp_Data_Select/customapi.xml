@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Data_Select">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Performs a JSONQuery select on the specified data and returns the results">
+    <label description="Performs a JSONQuery select on the specified data and returns the results" languagecode="1033" />
+  </description>
+  <displayname default="Select">
+    <label description="Select" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Data.Select</name>
+  <plugintypeid>
+    <plugintypeexportkey>CF3160A3E62B059B0E796AE1852002B902044BAFBA5297D015821680A22875B3</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

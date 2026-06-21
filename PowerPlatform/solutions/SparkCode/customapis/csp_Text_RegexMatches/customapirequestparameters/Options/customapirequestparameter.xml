@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Options">
+  <description default="Regex options bitmask. Defaults to 0 when omitted.">
+    <label description="Regex options bitmask. Defaults to 0 when omitted." languagecode="1033" />
+  </description>
+  <displayname default="Options">
+    <label description="Options" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Text.RegexMatches-in-Options</name>
+  <type>7</type>
+</customapirequestparameter>

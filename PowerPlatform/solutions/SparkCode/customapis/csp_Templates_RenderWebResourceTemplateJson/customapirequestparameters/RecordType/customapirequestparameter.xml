@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="RecordType">
+  <description default="Optional logical name of the table the record belongs to. Must be provided together with RecordId.">
+    <label description="Optional logical name of the table the record belongs to. Must be provided together with RecordId." languagecode="1033" />
+  </description>
+  <displayname default="RecordType">
+    <label description="RecordType" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Templates.RenderWebResourceTemplate-in-RecordType</name>
+  <type>10</type>
+</customapirequestparameter>

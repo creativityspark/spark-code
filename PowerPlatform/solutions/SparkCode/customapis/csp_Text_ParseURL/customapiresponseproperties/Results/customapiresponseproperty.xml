@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="All the parts contained in the Url">
+    <label description="All the parts contained in the Url" languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Text.ParseURL-out-Results</name>
+  <type>3</type>
+</customapiresponseproperty>

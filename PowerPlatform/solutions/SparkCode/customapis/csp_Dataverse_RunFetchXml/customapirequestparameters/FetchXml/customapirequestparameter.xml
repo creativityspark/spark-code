@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="FetchXml">
+  <description default="The FetchXML query to execute.">
+    <label description="The FetchXML query to execute." languagecode="1033" />
+  </description>
+  <displayname default="FetchXml">
+    <label description="FetchXml" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Dataverse.RunFetchXml-in-FetchXml</name>
+  <type>10</type>
+</customapirequestparameter>

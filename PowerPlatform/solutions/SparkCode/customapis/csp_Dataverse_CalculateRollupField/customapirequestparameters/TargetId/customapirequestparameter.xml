@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="TargetId">
+  <description default="Record ID of the target row as a GUID string.">
+    <label description="Record ID of the target row as a GUID string." languagecode="1033" />
+  </description>
+  <displayname default="TargetId">
+    <label description="TargetId" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Dataverse.CalculateRollupField-in-TargetId</name>
+  <type>10</type>
+</customapirequestparameter>

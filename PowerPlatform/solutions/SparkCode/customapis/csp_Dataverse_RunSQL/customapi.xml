@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Dataverse_RunSQL">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Executes a SQL query against the Dataverse TDS endpoint and returns the results.">
+    <label description="Executes a SQL query against the Dataverse TDS endpoint and returns the results." languagecode="1033" />
+  </description>
+  <displayname default="RunSQL">
+    <label description="RunSQL" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Dataverse.RunSQL</name>
+  <plugintypeid>
+    <plugintypeexportkey>39DCFFC8D8BAEE6C9B922EB4DF69E5F59B2B94943C7217EDC8E70353EAF309AC</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

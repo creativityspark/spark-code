@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Data">
+  <description default="Json string containing the data to be selected.">
+    <label description="Json string containing the data to be selected." languagecode="1033" />
+  </description>
+  <displayname default="Data">
+    <label description="Data" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Data.Select-in-Data</name>
+  <type>10</type>
+</customapirequestparameter>

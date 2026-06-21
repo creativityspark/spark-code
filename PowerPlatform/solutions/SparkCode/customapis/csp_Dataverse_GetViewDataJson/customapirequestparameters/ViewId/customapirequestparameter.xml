@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="ViewId">
+  <description default="Saved query identifier. Optional when TableName and ViewName are provided.">
+    <label description="Saved query identifier. Optional when TableName and ViewName are provided." languagecode="1033" />
+  </description>
+  <displayname default="ViewId">
+    <label description="ViewId" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Dataverse.GetViewData-in-ViewId</name>
+  <type>12</type>
+</customapirequestparameter>

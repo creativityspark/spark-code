@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Dataverse_CalculateRollupField">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Triggers Dataverse rollup field recalculation for a target record.">
+    <label description="Triggers Dataverse rollup field recalculation for a target record." languagecode="1033" />
+  </description>
+  <displayname default="Calculate Rollup Field">
+    <label description="Calculate Rollup Field" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Dataverse.CalculateRollupField</name>
+  <plugintypeid>
+    <plugintypeexportkey>DAB15C57E3F29EC3791A3B89F3A744F4D36B9F71C6A06E2C45F190D39A14B18A</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Text_Parse">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Converts a text value to diferent data types">
+    <label description="Converts a text value to diferent data types" languagecode="1033" />
+  </description>
+  <displayname default="Parse">
+    <label description="Parse" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Text.Parse</name>
+  <plugintypeid>
+    <plugintypeexportkey>F87BA3B3E6C8419E5BDF71723452093FEFAF7F4F77CA33AB028376F5C1CF00EB</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

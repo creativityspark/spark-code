@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Other_RunCSharp">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Compiles and executes C# 4.0 code at runtime, passing optional input JSON and custom assembly/usings.">
+    <label description="Compiles and executes C# 4.0 code at runtime, passing optional input JSON and custom assembly/usings." languagecode="1033" />
+  </description>
+  <displayname default="Run CSharp">
+    <label description="Run CSharp" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Other.RunCSharp</name>
+  <plugintypeid>
+    <plugintypeexportkey>5E53AEEF0AA7C4004018BA5B97AC994335CAC425CF469B20454A529029826512</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

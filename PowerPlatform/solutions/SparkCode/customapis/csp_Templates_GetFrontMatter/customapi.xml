@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Templates_GetFrontMatter">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Extracts YAML front matter from a text input and returns it together with the remaining body.">
+    <label description="Extracts YAML front matter from a text input and returns it together with the remaining body." languagecode="1033" />
+  </description>
+  <displayname default="Get Front Matter">
+    <label description="Get Front Matter" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Templates.GetFrontMatter</name>
+  <plugintypeid>
+    <plugintypeexportkey>1C613CCF9C0F164431FEF1D220A5359EC73D05C08723BF8ACD3FB8D8EE3CBBC0</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

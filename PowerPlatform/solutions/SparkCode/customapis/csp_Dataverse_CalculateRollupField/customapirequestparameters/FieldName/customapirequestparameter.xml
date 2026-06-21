@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="FieldName">
+  <description default="Logical name of the rollup field to calculate.">
+    <label description="Logical name of the rollup field to calculate." languagecode="1033" />
+  </description>
+  <displayname default="FieldName">
+    <label description="FieldName" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Dataverse.CalculateRollupField-in-FieldName</name>
+  <type>10</type>
+</customapirequestparameter>

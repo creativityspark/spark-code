@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Url">
+  <description default="Url to be parsed">
+    <label description="Url to be parsed" languagecode="1033" />
+  </description>
+  <displayname default="Url">
+    <label description="Url" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Text.ParseURL-in-Url</name>
+  <type>10</type>
+</customapirequestparameter>

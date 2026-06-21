@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Replacement">
+  <description default="Replacement text used for matching occurrences.">
+    <label description="Replacement text used for matching occurrences." languagecode="1033" />
+  </description>
+  <displayname default="Replacement">
+    <label description="Replacement" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Text.RegexReplace-in-Replacement</name>
+  <type>10</type>
+</customapirequestparameter>

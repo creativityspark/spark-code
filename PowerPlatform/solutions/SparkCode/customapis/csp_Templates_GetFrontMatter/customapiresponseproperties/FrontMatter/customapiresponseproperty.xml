@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="FrontMatter">
+  <description default="Front matter content as an expando object where each YAML key becomes an attribute.">
+    <label description="Front matter content as an expando object where each YAML key becomes an attribute." languagecode="1033" />
+  </description>
+  <displayname default="FrontMatter">
+    <label description="FrontMatter" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Templates.GetFrontMatter-out-FrontMatter</name>
+  <type>3</type>
+</customapiresponseproperty>

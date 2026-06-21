@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="SQLQuery">
+  <description default="The SQL query to execute.">
+    <label description="The SQL query to execute." languagecode="1033" />
+  </description>
+  <displayname default="SQLQuery">
+    <label description="SQLQuery" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Dataverse.RunSQL-in-SQLQuery</name>
+  <type>10</type>
+</customapirequestparameter>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Text_Base64Encode">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Converts a UTF8 string into a Base64 encoded string.">
+    <label description="Converts a UTF8 string into a Base64 encoded string." languagecode="1033" />
+  </description>
+  <displayname default="Base64 Encode">
+    <label description="Base64 Encode" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Text.Base64Encode</name>
+  <plugintypeid>
+    <plugintypeexportkey>9E7B9B747C91166A3899283E7F18C61836B9964F2073567653C1FEFF4FB31617</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

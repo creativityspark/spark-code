@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Xml">
+  <description default="XML payload to convert.">
+    <label description="XML payload to convert." languagecode="1033" />
+  </description>
+  <displayname default="Xml">
+    <label description="Xml" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Data.XmlToJson-in-Xml</name>
+  <type>10</type>
+</customapirequestparameter>

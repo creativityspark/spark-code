@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Param9">
+  <description default="Value for Param9">
+    <label description="Value for Param9" languagecode="1033" />
+  </description>
+  <displayname default="Param 9">
+    <label description="Param 9" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Text.ReplaceParams-in-Param9</name>
+  <type>10</type>
+</customapirequestparameter>

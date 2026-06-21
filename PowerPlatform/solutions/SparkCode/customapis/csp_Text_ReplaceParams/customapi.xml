@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Text_ReplaceParams">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Replaces parameter placeholders in text with provided values.">
+    <label description="Replaces parameter placeholders in text with provided values." languagecode="1033" />
+  </description>
+  <displayname default="Replace Params">
+    <label description="Replace Params" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Text.ReplaceParams</name>
+  <plugintypeid>
+    <plugintypeexportkey>2AB3680934E898B60056B146B56CE03F13F961496DBAA73E0D53037C9C2C0EBF</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

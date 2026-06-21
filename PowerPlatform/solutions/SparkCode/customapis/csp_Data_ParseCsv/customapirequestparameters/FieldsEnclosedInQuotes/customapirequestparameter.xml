@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="FieldsEnclosedInQuotes">
+  <description default="Indicates whether fields can be enclosed in quotes. Defaults to true when omitted.">
+    <label description="Indicates whether fields can be enclosed in quotes. Defaults to true when omitted." languagecode="1033" />
+  </description>
+  <displayname default="FieldsEnclosedInQuotes">
+    <label description="FieldsEnclosedInQuotes" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Data.ParseCsv-in-FieldsEnclosedInQuotes</name>
+  <type>0</type>
+</customapirequestparameter>

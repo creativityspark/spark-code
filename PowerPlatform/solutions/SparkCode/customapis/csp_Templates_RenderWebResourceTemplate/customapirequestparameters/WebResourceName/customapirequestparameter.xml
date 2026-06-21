@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="WebResourceName">
+  <description default="Unique name of the web resource containing the template text.">
+    <label description="Unique name of the web resource containing the template text." languagecode="1033" />
+  </description>
+  <displayname default="WebResourceName">
+    <label description="WebResourceName" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Templates.RenderWebResourceTemplate-in-WebResourceName</name>
+  <type>10</type>
+</customapirequestparameter>

@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="ReferencedAssemblies">
+  <description default="Optional comma-separated assembly list added as compiler references.">
+    <label description="Optional comma-separated assembly list added as compiler references." languagecode="1033" />
+  </description>
+  <displayname default="ReferencedAssemblies">
+    <label description="ReferencedAssemblies" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.RunCSharp-in-ReferencedAssemblies</name>
+  <type>10</type>
+</customapirequestparameter>

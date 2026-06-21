@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Text_ParseURLJson">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Parses a URL and returns its parts">
+    <label description="Parses a URL and returns its parts" languagecode="1033" />
+  </description>
+  <displayname default="Parse URL (JSON)">
+    <label description="Parse URL (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Text.ParseURLJson</name>
+  <plugintypeid>
+    <plugintypeexportkey>E6198112C3C30B4F9F0BA6E60C417E309F96899383C660C8AFE9A796D7535C5F</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

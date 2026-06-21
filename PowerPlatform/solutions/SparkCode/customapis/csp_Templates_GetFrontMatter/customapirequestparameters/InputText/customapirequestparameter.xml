@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="InputText">
+  <description default="Text that may start with YAML front matter delimited by --- markers.">
+    <label description="Text that may start with YAML front matter delimited by --- markers." languagecode="1033" />
+  </description>
+  <displayname default="InputText">
+    <label description="InputText" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Templates.GetFrontMatter-in-InputText</name>
+  <type>10</type>
+</customapirequestparameter>
