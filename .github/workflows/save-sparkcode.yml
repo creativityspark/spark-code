@@ -1,0 +1,31 @@
+# Export, extracts, commits, and pushes to source control the solution called SparkCode.
+# Generates an artifact with the exported solution zip file
+
+name: Export Solution
+run-name: Export SparkCode
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_message:
+        description: Commit Message. Include task IDs here.
+        required: true
+      create_tag:
+        type: boolean
+        description: Tick this box to create a tag after commit.
+        default: false
+  
+permissions:
+  id-token: write   # Required for OIDC authentication
+  contents: write
+  
+jobs:
+  export-and-save-solution:
+    uses: ./GitHub/templates/export-and-save-solution.yaml
+    with:
+      solution_name: SparkCode
+      version_update_strategy: revision
+      export_folder: out/export/
+      solutions_folder: PowerPlatform/solutions/
+      commit_message: ${{ github.event.inputs.commit_message }}
+      create_tag: ${{ github.event.inputs.create_tag }}

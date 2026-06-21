@@ -1,4 +1,4 @@
-# Export solution from a DEV environment
+# Export solution from an environment
 # Extracts, commits, and pushes to source control with the changes
 # More info:
 # - https://www.azureguru.net/configuring-federated-credentials-in-microsoft-azure-using-github-actions
@@ -6,33 +6,41 @@
 # - https://github.com/microsoft/powerplatform-build-tools/tree/main
 # - https://github.com/marketplace/actions/powerplatform-actions
 
-name: Export Solution
-run-name: Export ${{ github.event.inputs.solution_name }}
+name: Export and Save Solution
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       solution_name:
         description: Solution to export.
         required: true
-        default: SparkCode
+        type: string
       commit_message:
-        description: Commit Message. Include task IDs here.
+        description: Commit message. Supports %s for solution name and %v for version.
         required: true
+        type: string
+      version_update_strategy:
+        description: Version segment to increment (major, minor, build, revision).
+        required: true
+        type: string
+      export_folder:
+        description: Folder where solution zip files are exported.
+        required: true
+        type: string
+      solutions_folder:
+        description: Folder where unmanaged solution is unpacked.
+        required: true
+        type: string
       create_tag:
+        description: Create a git tag after commit.
+        required: false
         type: boolean
-        description: Tick this box to create a tag after commit.
         default: false
 
-env:
-  VERSION_UPDATE_STRATEGY: revision
-  EXPORT_FOLDER: out/export/
-  SOLUTIONS_FOLDER: PowerPlatform/solutions/
-  
 permissions:
   id-token: write   # Required for OIDC authentication
   contents: write
-  
+
 jobs:
   export-and-save-solution:
     environment: Dev
@@ -90,14 +98,14 @@ jobs:
         $outputLines = pac solution list --json
 
         $solutionList = ConvertFrom-Json -InputObject $outputLines
-        $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ github.event.inputs.solution_name }}" }
+        $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ inputs.solution_name }}" }
         if (-not $solutionItem) {
-          throw "Solution not found: ${{ github.event.inputs.solution_name }}"
+          throw "Solution not found: ${{ inputs.solution_name }}"
         }
         $version = $solutionItem.VersionNumber
         Write-Output "Current version: $version"
         $versionParts = $version.Split('.')
-        $strategy = "${{ env.VERSION_UPDATE_STRATEGY }}"
+        $strategy = "${{ inputs.version_update_strategy }}"
         switch ($strategy) {
           "major"    { $versionParts[0] = [int]$versionParts[0] + 1 }
           "minor"    { $versionParts[1] = [int]$versionParts[1] + 1 }
@@ -115,7 +123,7 @@ jobs:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
-        name: ${{ github.event.inputs.solution_name }}
+        name: ${{ inputs.solution_name }}
         version: ${{ env.VERSION }}
 
     - name: export-solution-unmanaged
@@ -124,8 +132,8 @@ jobs:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
-        solution-name: ${{ github.event.inputs.solution_name }}
-        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
+        solution-name: ${{ inputs.solution_name }}
+        solution-output-file: ${{ inputs.export_folder}}/${{ inputs.solution_name }}.zip
 
     - name: export-solution-managed
       uses: microsoft/powerplatform-actions/export-solution@v1
@@ -134,33 +142,33 @@ jobs:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
-        solution-name: ${{ github.event.inputs.solution_name }}
-        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
+        solution-name: ${{ inputs.solution_name }}
+        solution-output-file: ${{ inputs.export_folder}}/${{ inputs.solution_name }}_managed.zip
 
     - name: unpack-solution
       uses: microsoft/powerplatform-actions/unpack-solution@v1
       with:
-        solution-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
-        solution-folder: ${{ env.SOLUTIONS_FOLDER}}/${{ github.event.inputs.solution_name }}
+        solution-file: ${{ inputs.export_folder}}/${{ inputs.solution_name }}.zip
+        solution-folder: ${{ inputs.solutions_folder}}/${{ inputs.solution_name }}
         solution-type: 'Unmanaged'
         overwrite-files: true
-          
+
     - uses: actions/upload-artifact@v4
       with:
-        name: ${{ github.event.inputs.solution_name }}
+        name: ${{ inputs.solution_name }}
         path: |
-          ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
-          ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
+          ${{ inputs.export_folder}}/${{ inputs.solution_name }}.zip
+          ${{ inputs.export_folder}}/${{ inputs.solution_name }}_managed.zip
 
     - name: Config commit and push to git
       shell: pwsh
       run: |
         git config --global user.name '${{github.actor}}'
         git config --global user.email '${{github.actor}}@users.noreply.github.com'
-        git add ${{ env.SOLUTIONS_FOLDER}}/\**
+        git add ${{ inputs.solutions_folder}}/\**
 
-        $commitMsg = "${{ github.event.inputs.commit_message }}"
-        $commitMsg = $commitMsg -replace '%s', '${{ github.event.inputs.solution_name }}'
+        $commitMsg = "${{ inputs.commit_message }}"
+        $commitMsg = $commitMsg -replace '%s', '${{ inputs.solution_name }}'
         $commitMsg = $commitMsg -replace '%v', '${{ env.VERSION }}'
 
         git commit -m "$commitMsg"
@@ -168,7 +176,7 @@ jobs:
         git push origin
 
     - name: Tag release
-      if: ${{ github.event.inputs.create_tag == 'true' }}
+      if: ${{ inputs.create_tag }}
       run: |
         git tag v${{ env.VERSION }}
         git push origin v${{ env.VERSION }}
@@ -176,5 +184,5 @@ jobs:
     - name: pac-auth-clear
       if: always()
       shell: pwsh
-      run: | 
+      run: |
         pac auth clear
