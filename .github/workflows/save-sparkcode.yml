@@ -20,21 +20,21 @@ permissions:
   contents: write
 
 jobs:
-setup:
-  environment: Dev
-  runs-on: ubuntu-latest
-  steps:
-    - name: Set Outputs
-    id: set-output
-    run: |
-    echo "CLIENT_ID=${{ vars.CLIENT_ID }}" >> $GITHUB_OUTPUT
-    echo "TENANT_ID=${{ vars.TENANT_ID }}" >> $GITHUB_OUTPUT 
-    echo "ENVIRONMENT_URL=${{ vars.ENVIRONMENT_URL }}" >> $GITHUB_OUTPUT 
-  outputs:
-    CLIENT_ID: ${{ steps.set-output.outputs.CLIENT_ID }}
-    TENANT_ID: ${{ steps.set-output.outputs.TENANT_ID }}
-    ENVIRONMENT_URL: ${{ steps.set-output.outputs.ENVIRONMENT_URL }}
-    
+  setup:
+    environment: Dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Outputs
+      id: set-output
+      run: |
+      echo "CLIENT_ID=${{ vars.CLIENT_ID }}" >> $GITHUB_OUTPUT
+      echo "TENANT_ID=${{ vars.TENANT_ID }}" >> $GITHUB_OUTPUT 
+      echo "ENVIRONMENT_URL=${{ vars.ENVIRONMENT_URL }}" >> $GITHUB_OUTPUT 
+    outputs:
+      CLIENT_ID: ${{ steps.set-output.outputs.CLIENT_ID }}
+      TENANT_ID: ${{ steps.set-output.outputs.TENANT_ID }}
+      ENVIRONMENT_URL: ${{ steps.set-output.outputs.ENVIRONMENT_URL }}
+
   export-and-save-solution:
     needs: setup
     uses: ./.github/workflows/export-and-save-solution.yml
