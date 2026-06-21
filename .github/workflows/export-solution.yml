@@ -95,7 +95,7 @@ jobs:
     - name: compute-next-version
       shell: pwsh
       run: |
-        $output = & "$env:PAC_PATH" solution list --json
+        $output = (& "$env:PAC_PATH" solution list --json) -join ""
         $solutionList = ConvertFrom-Json -InputObject $output
         $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ github.event.inputs.solution_name }}" }
         if (-not $solutionItem) {
