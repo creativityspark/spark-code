@@ -17,46 +17,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install NuGet
-        uses: NuGet/setup-nuget@v2
-
-      - name: Install Power Platform CLI
-        shell: pwsh
-        run: nuget install Microsoft.PowerApps.CLI -OutputDirectory pac
-
-      - name: resolve-pac-path
-        shell: pwsh
-        run: |
-          $pacNugetFolder = Get-ChildItem -Path "pac" -Directory -ErrorAction SilentlyContinue |
-            Where-Object { $_.Name -match '^Microsoft\.PowerApps\.CLI\.' } |
-            Sort-Object -Property Name -Descending |
-            Select-Object -First 1
-
-          if (-not $pacNugetFolder) {
-            throw "Unable to locate the Microsoft.PowerApps.CLI package under the pac directory."
-          }
-
-          $pacDir = Join-Path -Path $pacNugetFolder.FullName -ChildPath "tools"
-          $pacPath = Join-Path -Path $pacDir -ChildPath "pac.exe"
-
-          if (-not (Test-Path -Path $pacPath)) {
-            throw "Unable to locate pac.exe under $pacDir"
-          }
-
-          "PAC_PATH=$pacPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          "PAC_DIR=$pacDir" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          $pacDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          Write-Output "Resolved pac path: $pacPath"
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+        with:
+          AddToolsToPath: true
 
       # 3️⃣ Authenticate using GitHub Federated Identity
       - name: Authenticate with Power Platform
         shell: pwsh
         run: |
-          & "$env:PAC_PATH" auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
+          pac auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
 
       # 4️⃣ Example: List solutions
       - name: List solutions
         shell: pwsh
         run: |
-          & "$env:PAC_PATH" solution list --json
+          pac solution list --json
 
