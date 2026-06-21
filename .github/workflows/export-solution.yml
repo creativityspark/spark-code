@@ -1,7 +1,7 @@
 # Export solution from a DEV environment
 # Extracts, commits, and pushes to source control with the changes
 
-name: export-solution
+name: Export Solution
 run-name: Export ${{ github.event.inputs.solution_name }}
 
 on:
@@ -60,7 +60,7 @@ jobs:
     - name: Authenticate with Power Platform
       shell: pwsh
       run: |
-      pac auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
+        pac auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
 
     - name: who-am-i
       uses: microsoft/powerplatform-actions/who-am-i@v1
