@@ -20,6 +20,14 @@ permissions:
   contents: write
   
 jobs:
+  vars:
+    runs-on: ubuntu-22.04
+    outputs:
+      commit_message: ${{ github.event.inputs.commit_message }}
+      create_tag: ${{ github.event.inputs.create_tag }}
+    steps:
+      - run: echo "Exposing env vars"
+
   export-and-save-solution:
     uses: ./.github/workflows/export-and-save-solution.yml
     with:
@@ -27,5 +35,5 @@ jobs:
       version_update_strategy: revision
       export_folder: out/export/
       solutions_folder: PowerPlatform/solutions/
-      commit_message: ${{ github.event.inputs.commit_message }}
-      create_tag: ${{ github.event.inputs.create_tag }}
+      commit_message: ${{ needs.vars.outputs.commit_message }}
+      create_tag: ${{ needs.vars.outputs.create_tag }}
