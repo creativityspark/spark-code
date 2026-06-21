@@ -36,6 +36,18 @@ on:
         required: false
         type: boolean
         default: false
+      client_id:
+        description: Azure AD application (client) ID.
+        required: true
+        type: string
+      tenant_id:
+        description: Azure AD tenant ID.
+        required: true
+        type: string
+      environment_url:
+        description: Power Platform environment URL.
+        required: true
+        type: string
 
 permissions:
   id-token: write   # Required for OIDC authentication
