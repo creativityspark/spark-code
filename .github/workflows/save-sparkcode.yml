@@ -21,6 +21,8 @@ permissions:
 
 jobs:
   export-and-save-solution:
+    environment: Dev
+    runs-on: windows-latest
     uses: ./.github/workflows/export-and-save-solution.yml
     with:
       solution_name: SparkCode
