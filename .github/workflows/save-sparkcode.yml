@@ -20,25 +20,29 @@ permissions:
   contents: write
   
 jobs:
-  steps:
-  - name: Expose env vars
-    id: vars
-    shell: pwsh
-    run: |
-      Write-Output "Exposing env vars"
-      Write-Output "commit_message=${{ github.event.inputs.commit_message }}"
-      Write-Output "create_tag=${{ github.event.inputs.create_tag }}"
-    outputs:
-      commit_message: ${{ github.event.inputs.commit_message }}
-      create_tag: ${{ github.event.inputs.create_tag }}
+  deploy:
+    environment: Dev
+    runs-on: windows-latest
+    
+    steps:
+    - name: Expose env vars
+      id: vars
+      shell: pwsh
+      run: |
+        Write-Output "Exposing env vars"
+        Write-Output "commit_message=${{ github.event.inputs.commit_message }}"
+        Write-Output "create_tag=${{ github.event.inputs.create_tag }}"
+      outputs:
+        commit_message: ${{ github.event.inputs.commit_message }}
+        create_tag: ${{ github.event.inputs.create_tag }}
 
-  - name: Export and Save Solution
-    needs: vars
-    uses: ./.github/workflows/export-and-save-solution.yml
-    with:
-      solution_name: SparkCode
-      version_update_strategy: revision
-      export_folder: out/export/
-      solutions_folder: PowerPlatform/solutions/
-      commit_message: ${{ needs.vars.outputs.commit_message }}
-      create_tag: ${{ needs.vars.outputs.create_tag }}
+    - name: Export and Save Solution
+      needs: vars
+      uses: ./.github/workflows/export-and-save-solution.yml
+      with:
+        solution_name: SparkCode
+        version_update_strategy: revision
+        export_folder: out/export/
+        solutions_folder: PowerPlatform/solutions/
+        commit_message: ${{ needs.vars.outputs.commit_message }}
+        create_tag: ${{ needs.vars.outputs.create_tag }}
