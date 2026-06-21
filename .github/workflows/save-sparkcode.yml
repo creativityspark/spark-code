@@ -21,12 +21,14 @@ permissions:
   
 jobs:
   vars:
-    runs-on: ubuntu-22.04
     outputs:
       commit_message: ${{ github.event.inputs.commit_message }}
       create_tag: ${{ github.event.inputs.create_tag }}
     steps:
-      - run: echo "Exposing env vars"
+      - run: |
+        echo "Exposing env vars"
+        echo "commit_message=${{ github.event.inputs.commit_message }}" >> $GITHUB_ENV
+        echo "create_tag=${{ github.event.inputs.create_tag }}" >> $GITHUB_ENV
 
   export-and-save-solution:
     uses: ./.github/workflows/export-and-save-solution.yml
