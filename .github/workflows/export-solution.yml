@@ -134,7 +134,6 @@ jobs:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
-        tenant-id: ${{vars.TENANT_ID}}
         solution-name: ${{ github.event.inputs.solution_name }}
         solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
 
