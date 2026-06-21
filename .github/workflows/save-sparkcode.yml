@@ -42,3 +42,6 @@ jobs:
         solutions_folder: PowerPlatform/solutions/
         commit_message: ${{ env.COMMIT_MESSAGE }}
         create_tag: ${{ env.CREATE_TAG }}
+        client_id: ${{ vars.CLIENT_ID }}
+        tenant_id: ${{ vars.TENANT_ID }}
+        environment_url: ${{ vars.ENVIRONMENT_URL }}

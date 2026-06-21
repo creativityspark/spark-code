@@ -72,27 +72,27 @@ jobs:
     - name: Authenticate with Power Platform
       shell: pwsh
       run: |
-        pac auth create --githubFederated --applicationId ${{inputs.CLIENT_ID}} --tenant ${{inputs.TENANT_ID}} --environment ${{inputs.ENVIRONMENT_URL}}
+        pac auth create --githubFederated --applicationId ${{inputs.client_id}} --tenant ${{inputs.tenant_id}} --environment ${{inputs.environment_url}}
 
     - name: who-am-i
       uses: microsoft/powerplatform-actions/who-am-i@v1
       with:
-        environment-url: ${{inputs.ENVIRONMENT_URL}}
-        app-id: ${{inputs.CLIENT_ID}}
-        tenant-id: ${{inputs.TENANT_ID}}
+        environment-url: ${{inputs.environment_url}}
+        app-id: ${{inputs.client_id}}
+        tenant-id: ${{inputs.tenant_id}}
 
     - name: publish-all
       uses: microsoft/powerplatform-actions/publish-solution@v1
       with:
-        environment-url: ${{inputs.ENVIRONMENT_URL}}
-        app-id: ${{inputs.CLIENT_ID}}
-        tenant-id: ${{inputs.TENANT_ID}}
+        environment-url: ${{inputs.environment_url}}
+        app-id: ${{inputs.client_id}}
+        tenant-id: ${{inputs.tenant_id}}
         run-asynchronously: true
 
     - name: compute-next-version
       shell: pwsh
       run: |
-        pac auth create --githubFederated --applicationId ${{inputs.CLIENT_ID}} --tenant ${{inputs.TENANT_ID}} --environment ${{inputs.ENVIRONMENT_URL}}
+        pac auth create --githubFederated --applicationId ${{inputs.client_id}} --tenant ${{inputs.tenant_id}} --environment ${{inputs.environment_url}}
         $outputLines = pac solution list --json
 
         $solutionList = ConvertFrom-Json -InputObject $outputLines
@@ -118,18 +118,18 @@ jobs:
     - name: set-online-solution-version
       uses: microsoft/powerplatform-actions/set-online-solution-version@v1
       with:
-        environment-url: ${{inputs.ENVIRONMENT_URL}}
-        app-id: ${{inputs.CLIENT_ID}}
-        tenant-id: ${{inputs.TENANT_ID}}
+        environment-url: ${{inputs.environment_url}}
+        app-id: ${{inputs.client_id}}
+        tenant-id: ${{inputs.tenant_id}}
         name: ${{ inputs.solution_name }}
         version: ${{ env.VERSION }}
 
     - name: export-solution-unmanaged
       uses: microsoft/powerplatform-actions/export-solution@v1
       with:
-        environment-url: ${{inputs.ENVIRONMENT_URL}}
-        app-id: ${{inputs.CLIENT_ID}}
-        tenant-id: ${{inputs.TENANT_ID}}
+        environment-url: ${{inputs.environment_url}}
+        app-id: ${{inputs.client_id}}
+        tenant-id: ${{inputs.tenant_id}}
         solution-name: ${{ inputs.solution_name }}
         solution-output-file: ${{ inputs.export_folder}}/${{ inputs.solution_name }}.zip
 
@@ -137,9 +137,9 @@ jobs:
       uses: microsoft/powerplatform-actions/export-solution@v1
       with:
         managed: true
-        environment-url: ${{inputs.ENVIRONMENT_URL}}
-        app-id: ${{inputs.CLIENT_ID}}
-        tenant-id: ${{inputs.TENANT_ID}}
+        environment-url: ${{inputs.environment_url}}
+        app-id: ${{inputs.client_id}}
+        tenant-id: ${{inputs.tenant_id}}
         solution-name: ${{ inputs.solution_name }}
         solution-output-file: ${{ inputs.export_folder}}/${{ inputs.solution_name }}_managed.zip
 
