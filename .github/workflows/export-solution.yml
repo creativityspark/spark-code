@@ -95,7 +95,7 @@ jobs:
     - name: compute-next-version
       shell: pwsh
       run: |
-        $outputLines = & "$env:PAC_PATH" solution list --json 2>&1
+        $outputLines = & "$env:PAC_PATH" solution list --json
         Write-Output "pac solution list --json raw output (line by line):"
         $outputLines | ForEach-Object { Write-Output "  $_" }
 
