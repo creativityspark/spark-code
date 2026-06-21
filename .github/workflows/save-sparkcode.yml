@@ -1,8 +1,8 @@
 # Export, extracts, commits, and pushes to source control the solution called SparkCode.
 # Generates an artifact with the exported solution zip file
 
-name: Export Solution
-run-name: Export SparkCode
+name: Save SparkCode
+run-name: Save SparkCode ${{ env.VERSION }} ${{ inputs.commit_message }}
 
 on:
   workflow_dispatch:
