@@ -1,0 +1,35 @@
+name: Power Platform Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write   # Required for OIDC authentication
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout your repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Install Microsoft Power Platform CLI
+      - name: Install Power Platform CLI
+        run: |
+          npm install -g pac-cli
+
+      # 3️⃣ Authenticate using GitHub Federated Identity
+      - name: Authenticate with Power Platform
+        run: |
+          pac auth create --githubFederated example --environment ${{vars.ENVIRONMENT_URL}}
+
+      # 4️⃣ Example: List solutions
+      - name: List solutions
+        run: |
+          pac solution list --json
+
