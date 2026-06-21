@@ -26,15 +26,34 @@ jobs:
         with:
           AddToolsToPath: true
 
+      - name: resolve-pac-path
+        shell: pwsh
+        run: |
+          $pacExe = Get-ChildItem -Path $env:TEMP -Filter "pac.exe" -Recurse -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match 'powerplatform-actions' } |
+            Sort-Object -Property LastWriteTime -Descending |
+            Select-Object -First 1
+
+          if (-not $pacExe) {
+            throw "Unable to locate pac.exe under $env:TEMP\powerplatform-actions-*"
+          }
+
+          $pacPath = $pacExe.FullName
+          $pacDir  = $pacExe.DirectoryName
+          "PAC_PATH=$pacPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "PAC_DIR=$pacDir"   | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $pacDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Write-Output "Resolved pac path: $pacPath"
+
       # 3️⃣ Authenticate using GitHub Federated Identity
       - name: Authenticate with Power Platform
         shell: pwsh
         run: |
-          pac auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
+          & "$env:PAC_PATH" auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
 
       # 4️⃣ Example: List solutions
       - name: List solutions
         shell: pwsh
         run: |
-          pac solution list --json
+          & "$env:PAC_PATH" solution list --json
 
