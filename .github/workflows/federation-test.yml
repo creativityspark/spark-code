@@ -2,7 +2,7 @@
 # https://learn.microsoft.com/en-us/power-platform/alm/devops-github-actions
 # https://github.com/microsoft/powerplatform-build-tools/tree/main
 # https://github.com/marketplace/actions/powerplatform-actions
-name: Power Platform Deploy
+name: Federation Test
 
 permissions:
   id-token: write   # Required for OIDC authentication
