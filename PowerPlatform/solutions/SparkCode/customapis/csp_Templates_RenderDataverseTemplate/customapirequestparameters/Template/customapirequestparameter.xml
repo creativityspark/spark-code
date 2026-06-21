@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Template">
+  <description default="Liquid template text to render.">
+    <label description="Liquid template text to render." languagecode="1033" />
+  </description>
+  <displayname default="Template">
+    <label description="Template" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Templates.RenderDataverseTemplate-in-Template</name>
+  <type>10</type>
+</customapirequestparameter>

@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Outputs">
+  <description default="Execution result returned by the runtime Main method.">
+    <label description="Execution result returned by the runtime Main method." languagecode="1033" />
+  </description>
+  <displayname default="Outputs">
+    <label description="Outputs" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Other.RunCSharp-out-Outputs</name>
+  <type>10</type>
+</customapiresponseproperty>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Dataverse_PublishWebResource">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="A plugin that Publishes a webresource.">
+    <label description="A plugin that Publishes a webresource." languagecode="1033" />
+  </description>
+  <displayname default="Publish Web Resource">
+    <label description="Publish Web Resource" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Dataverse.PublishWebResource</name>
+  <plugintypeid>
+    <plugintypeexportkey>1B6E2118C7B8A459F1455F48331A850CF17773D4F1DACF5A9EC0017B20E4D5B0</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

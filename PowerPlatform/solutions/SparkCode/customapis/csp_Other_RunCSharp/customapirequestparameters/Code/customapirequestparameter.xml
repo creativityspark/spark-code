@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Code">
+  <description default="C# code to execute inside the generated Main method body.">
+    <label description="C# code to execute inside the generated Main method body." languagecode="1033" />
+  </description>
+  <displayname default="Code">
+    <label description="Code" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Other.RunCSharp-in-Code</name>
+  <type>10</type>
+</customapirequestparameter>

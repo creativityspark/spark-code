@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Delimiter">
+  <description default="Column delimiter to use while parsing. Defaults to comma when omitted.">
+    <label description="Column delimiter to use while parsing. Defaults to comma when omitted." languagecode="1033" />
+  </description>
+  <displayname default="Delimiter">
+    <label description="Delimiter" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Data.ParseCsv-in-Delimiter</name>
+  <type>10</type>
+</customapirequestparameter>

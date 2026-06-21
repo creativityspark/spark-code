@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="InputParameters">
+  <description default="Optional serialized JSON string passed to the runtime code.">
+    <label description="Optional serialized JSON string passed to the runtime code." languagecode="1033" />
+  </description>
+  <displayname default="InputParameters">
+    <label description="InputParameters" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.RunCSharp-in-InputParameters</name>
+  <type>10</type>
+</customapirequestparameter>

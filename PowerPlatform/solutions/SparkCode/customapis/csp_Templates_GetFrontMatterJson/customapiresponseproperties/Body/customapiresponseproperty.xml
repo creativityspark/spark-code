@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Body">
+  <description default="Input text without the front matter block.">
+    <label description="Input text without the front matter block." languagecode="1033" />
+  </description>
+  <displayname default="Body">
+    <label description="Body" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Templates.GetFrontMatter-out-Body</name>
+  <type>10</type>
+</customapiresponseproperty>

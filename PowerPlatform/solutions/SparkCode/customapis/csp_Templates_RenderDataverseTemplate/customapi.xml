@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Templates_RenderDataverseTemplate">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Renders a Liquid template by sourcing context values from a Dataverse record.">
+    <label description="Renders a Liquid template by sourcing context values from a Dataverse record." languagecode="1033" />
+  </description>
+  <displayname default="Render Dataverse Template">
+    <label description="Render Dataverse Template" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Templates.RenderDataverseTemplate</name>
+  <plugintypeid>
+    <plugintypeexportkey>C7233B2BB6CB1F3E35E96B356B533D23EF7DF592B9DCF594F5BF60E590D80072</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Data_XmlToJson">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Converts an XML string to JSON.">
+    <label description="Converts an XML string to JSON." languagecode="1033" />
+  </description>
+  <displayname default="XML To JSON">
+    <label description="XML To JSON" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Data.XmlToJson</name>
+  <plugintypeid>
+    <plugintypeexportkey>039C80463195B2572A01394437D5C772D951A51FEFCDC9196BD0C21E9445EF4B</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

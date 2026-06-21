@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="UsingStatements">
+  <description default="Optional raw C# using statements appended before compilation.">
+    <label description="Optional raw C# using statements appended before compilation." languagecode="1033" />
+  </description>
+  <displayname default="UsingStatements">
+    <label description="UsingStatements" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.RunCSharp-in-UsingStatements</name>
+  <type>10</type>
+</customapirequestparameter>

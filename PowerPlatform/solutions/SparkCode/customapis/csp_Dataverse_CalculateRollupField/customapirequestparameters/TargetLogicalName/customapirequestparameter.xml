@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="TargetLogicalName">
+  <description default="Logical name of the target table.">
+    <label description="Logical name of the target table." languagecode="1033" />
+  </description>
+  <displayname default="TargetLogicalName">
+    <label description="TargetLogicalName" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Dataverse.CalculateRollupField-in-TargetLogicalName</name>
+  <type>10</type>
+</customapirequestparameter>

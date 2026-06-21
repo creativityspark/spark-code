@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="AdditionalContext">
+  <description default="Optional JSON object merged into the template model before rendering.">
+    <label description="Optional JSON object merged into the template model before rendering." languagecode="1033" />
+  </description>
+  <displayname default="AdditionalContext">
+    <label description="AdditionalContext" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Templates.RenderDataverseTemplate-in-AdditionalContext</name>
+  <type>10</type>
+</customapirequestparameter>

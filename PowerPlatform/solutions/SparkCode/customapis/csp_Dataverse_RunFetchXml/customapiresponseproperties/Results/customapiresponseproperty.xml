@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="The results of the FetchXML query.">
+    <label description="The results of the FetchXML query." languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Dataverse.RunFetchXml-out-Results</name>
+  <type>4</type>
+</customapiresponseproperty>

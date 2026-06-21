@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Dataverse_GetViewData">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Retrieves records from a Dataverse saved view by ViewId or by TableName and ViewName.">
+    <label description="Retrieves records from a Dataverse saved view by ViewId or by TableName and ViewName." languagecode="1033" />
+  </description>
+  <displayname default="Get View Data">
+    <label description="Get View Data" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Dataverse.GetViewData</name>
+  <plugintypeid>
+    <plugintypeexportkey>C916B2A39D9EE0257530094556DD3FCEB30B86E898A627A05FCAFECE6DD51F03</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

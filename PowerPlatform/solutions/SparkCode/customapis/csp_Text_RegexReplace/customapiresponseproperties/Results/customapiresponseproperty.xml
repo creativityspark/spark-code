@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="Input text after applying the regex replacement.">
+    <label description="Input text after applying the regex replacement." languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Text.RegexReplace-out-Results</name>
+  <type>10</type>
+</customapiresponseproperty>

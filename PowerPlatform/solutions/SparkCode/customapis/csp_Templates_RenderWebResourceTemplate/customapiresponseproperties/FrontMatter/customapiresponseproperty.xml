@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="FrontMatter">
+  <description default="Front matter extracted from the web resource template.">
+    <label description="Front matter extracted from the web resource template." languagecode="1033" />
+  </description>
+  <displayname default="FrontMatter">
+    <label description="FrontMatter" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Templates.RenderWebResourceTemplate-out-FrontMatter</name>
+  <type>3</type>
+</customapiresponseproperty>

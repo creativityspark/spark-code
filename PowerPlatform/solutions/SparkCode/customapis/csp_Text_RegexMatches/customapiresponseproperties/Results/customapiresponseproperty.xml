@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="Collection of matches with value, index, and length attributes.">
+    <label description="Collection of matches with value, index, and length attributes." languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Text.RegexMatches-out-Results</name>
+  <type>4</type>
+</customapiresponseproperty>

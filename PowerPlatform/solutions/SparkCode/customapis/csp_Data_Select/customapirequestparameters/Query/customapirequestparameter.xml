@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Query">
+  <description default="Json Query select string.">
+    <label description="Json Query select string." languagecode="1033" />
+  </description>
+  <displayname default="Query">
+    <label description="Query" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Data.Select-in-Query</name>
+  <type>10</type>
+</customapirequestparameter>

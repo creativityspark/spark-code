@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Csv">
+  <description default="CSV content including a header row.">
+    <label description="CSV content including a header row." languagecode="1033" />
+  </description>
+  <displayname default="Csv">
+    <label description="Csv" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Data.ParseCsv-in-Csv</name>
+  <type>10</type>
+</customapirequestparameter>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Templates_RenderWebResourceTemplateJson">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Renders a Liquid template stored in a Dataverse web resource by sourcing context values&#xA;            from an optional Dataverse record and optional additional context.">
+    <label description="Renders a Liquid template stored in a Dataverse web resource by sourcing context values&#xA;            from an optional Dataverse record and optional additional context." languagecode="1033" />
+  </description>
+  <displayname default="Render Web Resource Template (JSON)">
+    <label description="Render Web Resource Template (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Templates.RenderWebResourceTemplateJson</name>
+  <plugintypeid>
+    <plugintypeexportkey>27ACCF3317A44A66953BAE6ECA832FE0DEC22FE006FCF0761C6E4D268AD9DE5F</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

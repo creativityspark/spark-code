@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="Text with parameters replaced">
+    <label description="Text with parameters replaced" languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Text.ReplaceParams-out-Results</name>
+  <type>10</type>
+</customapiresponseproperty>

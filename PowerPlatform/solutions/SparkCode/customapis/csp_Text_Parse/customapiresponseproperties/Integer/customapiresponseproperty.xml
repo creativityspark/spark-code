@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Integer">
+  <description default="Text converted to integer">
+    <label description="Text converted to integer" languagecode="1033" />
+  </description>
+  <displayname default="Integer">
+    <label description="Integer" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Text.Parse-out-Integer</name>
+  <type>7</type>
+</customapiresponseproperty>

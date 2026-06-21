@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="WebResourceName">
+  <description default="The Web Resource id to Publish.">
+    <label description="The Web Resource id to Publish." languagecode="1033" />
+  </description>
+  <displayname default="WebResourceName">
+    <label description="WebResourceName" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Dataverse.PublishWebResource-in-WebResourceName</name>
+  <type>10</type>
+</customapirequestparameter>

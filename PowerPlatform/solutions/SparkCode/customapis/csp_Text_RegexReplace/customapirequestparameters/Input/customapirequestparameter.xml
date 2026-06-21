@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Input">
+  <description default="Text where the regular expression pattern will be applied.">
+    <label description="Text where the regular expression pattern will be applied." languagecode="1033" />
+  </description>
+  <displayname default="Input">
+    <label description="Input" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Text.RegexReplace-in-Input</name>
+  <type>10</type>
+</customapirequestparameter>

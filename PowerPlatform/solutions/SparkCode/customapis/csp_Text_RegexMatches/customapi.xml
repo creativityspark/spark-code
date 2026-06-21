@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Text_RegexMatches">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Captures all matches of a regular expression over an input text.">
+    <label description="Captures all matches of a regular expression over an input text." languagecode="1033" />
+  </description>
+  <displayname default="Regex Matches">
+    <label description="Regex Matches" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Text.RegexMatches</name>
+  <plugintypeid>
+    <plugintypeexportkey>C43B3E688E78C5FB0519A320AF14AE0ED65B8B2030C33421F6DFBC2FD11FC6AD</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

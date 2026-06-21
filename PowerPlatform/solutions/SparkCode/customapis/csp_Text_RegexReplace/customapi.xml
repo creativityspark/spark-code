@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Text_RegexReplace">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Runs a regular expression replacement over the provided input text.">
+    <label description="Runs a regular expression replacement over the provided input text." languagecode="1033" />
+  </description>
+  <displayname default="Regex Replace">
+    <label description="Regex Replace" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Text.RegexReplace</name>
+  <plugintypeid>
+    <plugintypeexportkey>6079A7E68421E75217115010793152A836530F8CB7753F350CDEEC5EE6574962</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

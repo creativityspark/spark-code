@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Dataverse_RunFetchXmlJson">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="A plugin that executes a FetchXML query and returns the results.">
+    <label description="A plugin that executes a FetchXML query and returns the results." languagecode="1033" />
+  </description>
+  <displayname default="Run FetchXML (JSON)">
+    <label description="Run FetchXML (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Dataverse.RunFetchXmlJson</name>
+  <plugintypeid>
+    <plugintypeexportkey>ABF23CA59CC70D40401AAD401C75E2FCD39D20CFE97ABE2306E5E8CEC5E46C75</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Templates_RenderTemplate">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Renders a Liquid template using the provided JSON context data.">
+    <label description="Renders a Liquid template using the provided JSON context data." languagecode="1033" />
+  </description>
+  <displayname default="Render Template">
+    <label description="Render Template" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Templates.RenderTemplate</name>
+  <plugintypeid>
+    <plugintypeexportkey>6FE18907DA402CEBBCE4A51CBD238EE6E98A828CF3B529D68A3FF538E7944B64</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Output">
+  <description default="Base64 encoded string">
+    <label description="Base64 encoded string" languagecode="1033" />
+  </description>
+  <displayname default="Output">
+    <label description="Output" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Text.Base64Encode-out-Output</name>
+  <type>10</type>
+</customapiresponseproperty>

@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Input">
+  <description default="Base64 text to be converted">
+    <label description="Base64 text to be converted" languagecode="1033" />
+  </description>
+  <displayname default="Input">
+    <label description="Input" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Text.Base64Decode-in-Input</name>
+  <type>10</type>
+</customapirequestparameter>

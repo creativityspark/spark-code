@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="ResultsJson">
+  <description default="The results of the query as a DataSet.">
+    <label description="The results of the query as a DataSet." languagecode="1033" />
+  </description>
+  <displayname default="Results (JSON)">
+    <label description="Results (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Dataverse.RunSQL-out-ResultsJson</name>
+  <type>10</type>
+</customapiresponseproperty>

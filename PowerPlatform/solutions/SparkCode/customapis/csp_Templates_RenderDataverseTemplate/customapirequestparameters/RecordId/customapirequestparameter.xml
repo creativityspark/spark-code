@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="RecordId">
+  <description default="Optional GUID of the Dataverse record to use as context. Must be provided together with RecordType.">
+    <label description="Optional GUID of the Dataverse record to use as context. Must be provided together with RecordType." languagecode="1033" />
+  </description>
+  <displayname default="RecordId">
+    <label description="RecordId" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Templates.RenderDataverseTemplate-in-RecordId</name>
+  <type>10</type>
+</customapirequestparameter>

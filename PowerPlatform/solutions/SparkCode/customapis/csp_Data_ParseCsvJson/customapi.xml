@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Data_ParseCsvJson">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Parses CSV data and returns rows as an expando object.">
+    <label description="Parses CSV data and returns rows as an expando object." languagecode="1033" />
+  </description>
+  <displayname default="Parse CSV (JSON)">
+    <label description="Parse CSV (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Data.ParseCsvJson</name>
+  <plugintypeid>
+    <plugintypeexportkey>D381BC48F6D85D458135F4598F6BED48A3B4444659A34D606C6A8DD4CCF24947</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

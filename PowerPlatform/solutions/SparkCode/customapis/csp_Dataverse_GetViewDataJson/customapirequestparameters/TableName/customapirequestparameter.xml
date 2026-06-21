@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="TableName">
+  <description default="Logical name of the table that owns the view. Required when ViewId is not provided.">
+    <label description="Logical name of the table that owns the view. Required when ViewId is not provided." languagecode="1033" />
+  </description>
+  <displayname default="TableName">
+    <label description="TableName" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Dataverse.GetViewData-in-TableName</name>
+  <type>10</type>
+</customapirequestparameter>

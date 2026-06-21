@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="Data returned by the query in JSON format.">
+    <label description="Data returned by the query in JSON format." languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Data.Select-out-Results</name>
+  <type>10</type>
+</customapiresponseproperty>
