@@ -21,7 +21,7 @@ permissions:
   
 jobs:
   export-and-save-solution:
-    uses: ./.github/workflows/templates/export-and-save-solution.yaml
+    uses: ./.github/workflows/templates/export-and-save-solution.yml
     with:
       solution_name: SparkCode
       version_update_strategy: revision
