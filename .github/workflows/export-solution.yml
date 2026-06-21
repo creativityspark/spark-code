@@ -1,5 +1,10 @@
 # Export solution from a DEV environment
 # Extracts, commits, and pushes to source control with the changes
+# More info:
+# - https://www.azureguru.net/configuring-federated-credentials-in-microsoft-azure-using-github-actions
+# - https://learn.microsoft.com/en-us/power-platform/alm/devops-github-actions
+# - https://github.com/microsoft/powerplatform-build-tools/tree/main
+# - https://github.com/marketplace/actions/powerplatform-actions
 
 name: Export Solution
 run-name: Export ${{ github.event.inputs.solution_name }}
@@ -68,17 +73,15 @@ jobs:
       with:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
-        client-secret: ${{ secrets.PowerPlatformSPN }}
         tenant-id: ${{vars.TENANT_ID}}
 
-    #- name: publish-all
-    #  uses: microsoft/powerplatform-actions/publish-solution@v1
-    #  with:
-    #    environment-url: ${{vars.ENVIRONMENT_URL}}
-    #    app-id: ${{vars.CLIENT_ID}}
-    #    client-secret: ${{ secrets.PowerPlatformSPN }}
-    #    tenant-id: ${{vars.TENANT_ID}}
-    #    run-asynchronously: true
+    - name: publish-all
+      uses: microsoft/powerplatform-actions/publish-solution@v1
+      with:
+        environment-url: ${{vars.ENVIRONMENT_URL}}
+        app-id: ${{vars.CLIENT_ID}}
+        tenant-id: ${{vars.TENANT_ID}}
+        run-asynchronously: true
 
     - name: compute-next-version
       shell: pwsh
@@ -111,7 +114,6 @@ jobs:
       with:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
-        client-secret: ${{ secrets.PowerPlatformSPN }}
         tenant-id: ${{vars.TENANT_ID}}
         name: ${{ github.event.inputs.solution_name }}
         version: ${{ env.VERSION }}
@@ -121,7 +123,6 @@ jobs:
       with:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
-        client-secret: ${{ secrets.PowerPlatformSPN }}
         tenant-id: ${{vars.TENANT_ID}}
         solution-name: ${{ github.event.inputs.solution_name }}
         solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
@@ -132,7 +133,7 @@ jobs:
         managed: true
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
-        client-secret: ${{ secrets.PowerPlatformSPN }}
+        tenant-id: ${{vars.TENANT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
         solution-name: ${{ github.event.inputs.solution_name }}
         solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
