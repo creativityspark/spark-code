@@ -49,11 +49,11 @@ jobs:
       - name: Authenticate with Power Platform
         shell: pwsh
         run: |
-          & "$env:PAC_PATH" auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
+          pac auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
 
       # 4️⃣ Example: List solutions
       - name: List solutions
         shell: pwsh
         run: |
-          & "$env:PAC_PATH" solution list --json
+          pac solution list --json
 
