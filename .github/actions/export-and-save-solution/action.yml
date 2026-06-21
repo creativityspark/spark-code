@@ -84,38 +84,38 @@ jobs:
     - name: Authenticate with Power Platform
       shell: pwsh
       run: |
-        pac auth create --githubFederated --applicationId ${{ inputs.client_id }} --tenant ${{ inputs.tenant_id }} --environment ${{ inputs.environment_url }}
+        pac auth create --githubFederated --applicationId ${{ github.event.inputs.client_id }} --tenant ${{ github.event.inputs.tenant_id }} --environment ${{ github.event.inputs.environment_url }}
 
     - name: who-am-i
       uses: microsoft/powerplatform-actions/who-am-i@v1
       with:
-        environment-url: ${{ inputs.environment_url }}
-        app-id: ${{ inputs.client_id }}
-        tenant-id: ${{ inputs.tenant_id }}
+        environment-url: ${{ github.event.inputs.environment_url }}
+        app-id: ${{ github.event.inputs.client_id }}
+        tenant-id: ${{ github.event.inputs.tenant_id }}
 
     - name: publish-all
       uses: microsoft/powerplatform-actions/publish-solution@v1
       with:
-        environment-url: ${{ inputs.environment_url }}
-        app-id: ${{ inputs.client_id }}
-        tenant-id: ${{ inputs.tenant_id }}
+        environment-url: ${{ github.event.inputs.environment_url }}
+        app-id: ${{ github.event.inputs.client_id }}
+        tenant-id: ${{ github.event.inputs.tenant_id }}
         run-asynchronously: true
 
     - name: compute-next-version
       shell: pwsh
       run: |
-        pac auth create --githubFederated --applicationId ${{ inputs.client_id }} --tenant ${{ inputs.tenant_id }} --environment ${{ inputs.environment_url }}
+        pac auth create --githubFederated --applicationId ${{ github.event.inputs.client_id }} --tenant ${{ github.event.inputs.tenant_id }} --environment ${{ github.event.inputs.environment_url }}
         $outputLines = pac solution list --json
 
         $solutionList = ConvertFrom-Json -InputObject $outputLines
-        $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ inputs.solution_name }}" }
+        $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ github.event.inputs.solution_name }}" }
         if (-not $solutionItem) {
-          throw "Solution not found: ${{ inputs.solution_name }}"
+          throw "Solution not found: ${{ github.event.inputs.solution_name }}"
         }
         $version = $solutionItem.VersionNumber
         Write-Output "Current version: $version"
         $versionParts = $version.Split('.')
-        $strategy = "${{ inputs.version_update_strategy }}"
+        $strategy = "${{ github.event.inputs.version_update_strategy }}"
         switch ($strategy) {
           "major"    { $versionParts[0] = [int]$versionParts[0] + 1 }
           "minor"    { $versionParts[1] = [int]$versionParts[1] + 1 }
@@ -130,55 +130,55 @@ jobs:
     - name: set-online-solution-version
       uses: microsoft/powerplatform-actions/set-online-solution-version@v1
       with:
-        environment-url: ${{ inputs.environment_url }}
-        app-id: ${{ inputs.client_id }}
-        tenant-id: ${{ inputs.tenant_id }}
-        name: ${{ inputs.solution_name }}
+        environment-url: ${{ github.event.inputs.environment_url }}
+        app-id: ${{ github.event.inputs.client_id }}
+        tenant-id: ${{ github.event.inputs.tenant_id }}
+        name: ${{ github.event.inputs.solution_name }}
         version: ${{ env.VERSION }}
 
     - name: export-solution-unmanaged
       uses: microsoft/powerplatform-actions/export-solution@v1
       with:
-        environment-url: ${{ inputs.environment_url }}
-        app-id: ${{ inputs.client_id }}
-        tenant-id: ${{ inputs.tenant_id }}
-        solution-name: ${{ inputs.solution_name }}
-        solution-output-file: ${{ inputs.export_folder}}/${{ inputs.solution_name }}.zip
+        environment-url: ${{ github.event.inputs.environment_url }}
+        app-id: ${{ github.event.inputs.client_id }}
+        tenant-id: ${{ github.event.inputs.tenant_id }}
+        solution-name: ${{ github.event.inputs.solution_name }}
+        solution-output-file: ${{ github.event.inputs.export_folder}}/${{ github.event.inputs.solution_name }}.zip
 
     - name: export-solution-managed
       uses: microsoft/powerplatform-actions/export-solution@v1
       with:
         managed: true
-        environment-url: ${{ inputs.environment_url }}
-        app-id: ${{ inputs.client_id }}
-        tenant-id: ${{ inputs.tenant_id }}
-        solution-name: ${{ inputs.solution_name }}
-        solution-output-file: ${{ inputs.export_folder}}/${{ inputs.solution_name }}_managed.zip
+        environment-url: ${{ github.event.inputs.environment_url }}
+        app-id: ${{ github.event.inputs.client_id }}
+        tenant-id: ${{ github.event.inputs.tenant_id }}
+        solution-name: ${{ github.event.inputs.solution_name }}
+        solution-output-file: ${{ github.event.inputs.export_folder}}/${{ github.event.inputs.solution_name }}_managed.zip
 
     - name: unpack-solution
       uses: microsoft/powerplatform-actions/unpack-solution@v1
       with:
-        solution-file: ${{ inputs.export_folder}}/${{ inputs.solution_name }}.zip
-        solution-folder: ${{ inputs.solutions_folder}}/${{ inputs.solution_name }}
+        solution-file: ${{ github.event.inputs.export_folder}}/${{ github.event.inputs.solution_name }}.zip
+        solution-folder: ${{ github.event.inputs.solutions_folder}}/${{ github.event.inputs.solution_name }}
         solution-type: 'Unmanaged'
         overwrite-files: true
 
     - uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.solution_name }}
+        name: ${{ github.event.inputs.solution_name }}
         path: |
-          ${{ inputs.export_folder}}/${{ inputs.solution_name }}.zip
-          ${{ inputs.export_folder}}/${{ inputs.solution_name }}_managed.zip
+          ${{ github.event.inputs.export_folder}}/${{ github.event.inputs.solution_name }}.zip
+          ${{ github.event.inputs.export_folder}}/${{ github.event.inputs.solution_name }}_managed.zip
 
     - name: Config commit and push to git
       shell: pwsh
       run: |
         git config --global user.name '${{github.actor}}'
         git config --global user.email '${{github.actor}}@users.noreply.github.com'
-        git add ${{ inputs.solutions_folder}}/\**
+        git add ${{ github.event.inputs.solutions_folder}}/\**
 
-        $commitMsg = "${{ inputs.commit_message }}"
-        $commitMsg = $commitMsg -replace '%s', '${{ inputs.solution_name }}'
+        $commitMsg = "${{ github.event.inputs.commit_message }}"
+        $commitMsg = $commitMsg -replace '%s', '${{ github.event.inputs.solution_name }}'
         $commitMsg = $commitMsg -replace '%v', '${{ env.VERSION }}'
 
         git commit -m "$commitMsg"
@@ -186,7 +186,7 @@ jobs:
         git push origin
 
     - name: Tag release
-      if: ${{ inputs.create_tag }}
+      if: ${{ github.event.inputs.create_tag }}
       run: |
         git tag v${{ env.VERSION }}
         git push origin v${{ env.VERSION }}
