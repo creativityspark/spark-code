@@ -33,8 +33,7 @@ jobs:
         echo "COMMIT_MESSAGE=${{ github.event.inputs.commit_message }}" >> $env:GITHUB_ENV
         echo "CREATE_TAG=${{ github.event.inputs.create_tag }}" >> $env:GITHUB_ENV
 
-    - name: Export and Save Solution
-      uses: ./.github/actions/export-and-save-solution
+    - uses: ./.github/workflows/export-and-save-solution.yml
       with:
         solution_name: SparkCode
         version_update_strategy: revision
