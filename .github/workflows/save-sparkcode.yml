@@ -20,27 +20,15 @@ permissions:
   contents: write
 
 jobs:
-
   export-and-save-solution:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Expose input vars
-      shell: pwsh
-      run: |
-        Write-Output "Exposing input vars"
-        echo "COMMIT_MESSAGE=${{ github.event.inputs.commit_message }}" >> $env:GITHUB_ENV
-        echo "CREATE_TAG=${{ github.event.inputs.create_tag }}" >> $env:GITHUB_ENV
-
-    - uses: ./.github/workflows/export-and-save-solution.yml
-      with:
-        solution_name: SparkCode
-        version_update_strategy: revision
-        export_folder: out/export/
-        solutions_folder: PowerPlatform/solutions/
-        commit_message: ${{ env.COMMIT_MESSAGE }}
-        create_tag: ${{ env.CREATE_TAG }}
-        client_id: ${{ vars.CLIENT_ID }}
-        tenant_id: ${{ vars.TENANT_ID }}
-        environment_url: ${{ vars.ENVIRONMENT_URL }}
+    uses: ./.github/workflows/export-and-save-solution.yml
+    with:
+      solution_name: SparkCode
+      version_update_strategy: revision
+      export_folder: out/export/
+      solutions_folder: PowerPlatform/solutions/
+      commit_message: ${{ github.event.inputs.commit_message }}
+      create_tag: ${{ github.event.inputs.create_tag }}
+      client_id: ${{ vars.CLIENT_ID }}
+      tenant_id: ${{ vars.TENANT_ID }}
+      environment_url: ${{ vars.ENVIRONMENT_URL }}
