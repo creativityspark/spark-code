@@ -38,11 +38,34 @@ jobs:
     - name: Install Power Platform Tools
       uses: microsoft/powerplatform-actions/actions-install@v1
 
+    - name: resolve-pac-path
+      shell: pwsh
+      run: |
+        $pacCommand = Get-Command pac -ErrorAction SilentlyContinue
+        if ($pacCommand) {
+          $pacPath = $pacCommand.Source
+        }
+        else {
+          $pacPath = Get-ChildItem -Path $env:RUNNER_TOOL_CACHE -Recurse -Filter pac.exe -ErrorAction SilentlyContinue |
+            Sort-Object -Property LastWriteTime -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+        }
+
+        if (-not $pacPath) {
+          throw "Unable to locate pac.exe after installing Power Platform Tools."
+        }
+
+        $pacDir = Split-Path -Path $pacPath -Parent
+        "PAC_PATH=$pacPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "PAC_DIR=$pacDir" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        $pacDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        Write-Output "Resolved pac path: $pacPath"
+
     - name: pac-authenticate
       shell: pwsh
       run: |
-        pac auth create --applicationId ${{vars.CLIENT_ID}} --clientSecret ${{ secrets.PowerPlatformSPN }} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
-        pac auth who
+        & "$env:PAC_PATH" auth create --applicationId ${{vars.CLIENT_ID}} --clientSecret ${{ secrets.PowerPlatformSPN }} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
+        & "$env:PAC_PATH" auth who
 
     - name: who-am-i
       uses: microsoft/powerplatform-actions/who-am-i@v1
@@ -64,7 +87,7 @@ jobs:
     - name: compute-next-version
       shell: pwsh
       run: |
-        $output = pac solution list --json
+        $output = & "$env:PAC_PATH" solution list --json
         $solutionList = ConvertFrom-Json -InputObject $output
         $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ github.event.inputs.solution_name }}" }
         if (-not $solutionItem) {
@@ -155,4 +178,4 @@ jobs:
     - name: pac-auth-clear
       if: always()
       shell: pwsh
-      run: pac auth clear
+      run: & "$env:PAC_PATH" auth clear
