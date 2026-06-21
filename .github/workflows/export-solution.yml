@@ -10,7 +10,7 @@ on:
       solution_name:
         description: Solution to export.
         required: true
-        default: MySolution
+        default: SparkCode
       commit_message:
         description: Commit Message. Include task IDs here.
         required: true
