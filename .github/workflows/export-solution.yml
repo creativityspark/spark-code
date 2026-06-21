@@ -178,4 +178,5 @@ jobs:
     - name: pac-auth-clear
       if: always()
       shell: pwsh
-      run: & "$env:PAC_PATH" auth clear
+      run: | 
+        & "$env:PAC_PATH" auth clear
