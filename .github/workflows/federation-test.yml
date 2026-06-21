@@ -9,6 +9,7 @@ on:
 
 jobs:
   deploy:
+    environment: Dev
     runs-on: windows-latest
 
     steps:
