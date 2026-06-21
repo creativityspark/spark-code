@@ -28,7 +28,7 @@ jobs:
       export_folder: out/export/
       solutions_folder: PowerPlatform/solutions/
       commit_message: ${{ github.event.inputs.commit_message }}
-      create_tag: ${{ github.event.inputs.create_tag }}
+      create_tag: ${{ github.event.inputs.create_tag == 'true'}}
       client_id: ${{ vars.CLIENT_ID }}
       tenant_id: ${{ vars.TENANT_ID }}
       environment_url: ${{ vars.ENVIRONMENT_URL }}
