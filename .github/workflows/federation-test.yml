@@ -4,6 +4,9 @@ permissions:
   id-token: write   # Required for OIDC authentication
   contents: read
 
+on:
+  workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
