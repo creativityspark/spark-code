@@ -30,9 +30,6 @@ jobs:
         Write-Output "Exposing input vars"
         echo "COMMIT_MESSAGE=${{ github.event.inputs.commit_message }}" >> $env:GITHUB_ENV
         echo "CREATE_TAG=${{ github.event.inputs.create_tag }}" >> $env:GITHUB_ENV
-      outputs:
-        commit_message: ${{ github.event.inputs.commit_message }}
-        create_tag: ${{ github.event.inputs.create_tag }}
 
     - name: Export and Save Solution
       uses: ./.github/workflows/export-and-save-solution.yml
