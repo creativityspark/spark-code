@@ -2,7 +2,7 @@
 # Generates an artifact with the exported solution zip file
 
 name: Save SparkCode
-run-name: Save SparkCode ${{ env.VERSION }} ${{ inputs.commit_message }}
+run-name: Save SparkCode ${{ github.event.inputs.commit_message }}
 
 on:
   workflow_dispatch:
