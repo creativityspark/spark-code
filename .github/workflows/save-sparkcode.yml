@@ -20,9 +20,12 @@ permissions:
   contents: write
 
 jobs:
+
   export-and-save-solution:
     runs-on: windows-latest
     steps:
+    - uses: actions/checkout@v4
+
     - name: Expose input vars
       shell: pwsh
       run: |
