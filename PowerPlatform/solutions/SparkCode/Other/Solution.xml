@@ -8,7 +8,7 @@
     <Descriptions>
       <Description description="Custom APIs and other code for Power Apps, Dataverse and Dynamics 365" languagecode="1033" />
     </Descriptions>
-    <Version>1.0.0.18</Version>
+    <Version>1.0.0.19</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>CreativitySpark</UniqueName>
