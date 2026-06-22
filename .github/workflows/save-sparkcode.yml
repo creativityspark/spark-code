@@ -19,9 +19,9 @@ on:
       commit_message:
         description: Commit Message. Include task IDs here.
         required: true
-      create_tag:
+      create_release:
         type: boolean
-        description: Tick this box to create a tag after commit.
+        description: Tick this box to tag the commit and create a draft GitHub release with the managed solution attached.
         default: false
 
 env:
@@ -199,13 +199,25 @@ jobs:
 
         git push origin
 
-    # Creates and pushes a version tag (e.g. v1.0.0.5) when the create_tag input
-    # is checked. Useful for marking deployable release points.
+    # Creates and pushes a version tag (e.g. v1.0.0.5) when create_release is checked.
+    # The tag is pushed first so the subsequent release step can reference it.
     - name: Tag release
-      if: ${{ github.event.inputs.create_tag == 'true' }}
+      if: ${{ github.event.inputs.create_release == 'true' }}
       run: |
         git tag v${{ env.VERSION }}
         git push origin v${{ env.VERSION }}
+
+    # Creates a draft GitHub release for the new tag and attaches the managed
+    # solution zip as a release asset. Draft mode lets you review and publish manually.
+    - name: Create draft release
+      if: ${{ github.event.inputs.create_release == 'true' }}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create v${{ env.VERSION }} \
+          --draft \
+          --title "v${{ env.VERSION }}" \
+          "${{ env.EXPORT_FOLDER }}/${{ github.event.inputs.solution_name }}_managed.zip"
 
     # Always clears stored pac authentication profiles at the end of the job,
     # even if a previous step failed, to avoid leaving credentials on the runner.
