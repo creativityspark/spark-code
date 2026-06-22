@@ -215,11 +215,7 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release create v${{ env.VERSION }} \
-          --draft \
-          --title "v${{ env.VERSION }}" \
-          --generate-notes
-          "${{ env.EXPORT_FOLDER }}/${{ github.event.inputs.solution_name }}_managed.zip"
+        gh release create "v${{ env.VERSION }}" --draft --title "v${{ env.VERSION }}" --generate-notes "${{ env.EXPORT_FOLDER }}${{ github.event.inputs.solution_name }}_managed.zip"
 
     # Always clears stored pac authentication profiles at the end of the job,
     # even if a previous step failed, to avoid leaving credentials on the runner.
