@@ -39,31 +39,43 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    # Check out the repository so subsequent steps can access source files.
     - uses: actions/checkout@v4
 
+    # Installs the Power Platform CLI (pac) and related build tools into the runner.
+    # Sets POWERPLATFORMTOOLS_PACPATH and POWERPLATFORMTOOLS_PACINSTALLED environment variables.
     - name: Install Power Platform Tools
       uses: microsoft/powerplatform-actions/actions-install@v1
 
+    # Reads the pac.exe path from the environment variable set by the installer,
+    # validates it exists, then exposes PAC_PATH / PAC_DIR as env vars and adds
+    # the directory to PATH so subsequent steps can call 'pac' directly.
     - name: resolve-pac-path
       shell: pwsh
       run: |
         $pacPath = $env:POWERPLATFORMTOOLS_PACPATH
 
+        # Fail fast if the installer did not set the path or the binary is missing.
         if (-not $pacPath -or -not (Test-Path $pacPath)) {
           throw "pac.exe not found. Ensure Power Platform Tools are installed (POWERPLATFORMTOOLS_PACPATH=$pacPath)"
         }
 
         $pacDir = Split-Path $pacPath -Parent
+        # Persist path variables for later steps.
         "PAC_PATH=$pacPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         "PAC_DIR=$pacDir"   | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        # Add the pac directory to the runner PATH so 'pac' can be called without a full path.
         $pacDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         Write-Output "Resolved pac path: $pacPath"
 
+    # Creates a federated (OIDC) auth profile for the target environment.
+    # Uses GitHub-federated credentials — no client secret required.
     - name: Authenticate with Power Platform
       shell: pwsh
       run: |
         pac auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
 
+    # Verifies connectivity and authentication by printing the current user/app identity.
     - name: who-am-i
       uses: microsoft/powerplatform-actions/who-am-i@v1
       with:
@@ -71,6 +83,8 @@ jobs:
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
 
+    # Publishes all pending customizations in the environment before exporting,
+    # ensuring the exported solution contains the latest changes.
     - name: publish-all
       uses: microsoft/powerplatform-actions/publish-solution@v1
       with:
@@ -79,12 +93,17 @@ jobs:
         tenant-id: ${{vars.TENANT_ID}}
         run-asynchronously: true
 
+    # Determines the next solution version by incrementing the component specified
+    # by VERSION_UPDATE_STRATEGY (major / minor / build / revision).
+    # Writes the new version to the VERSION environment variable.
     - name: compute-next-version
       shell: pwsh
       run: |
+        # Re-authenticate as pac auth state is not shared across script steps.
         pac auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
         $outputLines = pac solution list --json
 
+        # Parse the JSON response and find the target solution.
         $solutionList = ConvertFrom-Json -InputObject $outputLines
         $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ github.event.inputs.solution_name }}" }
         if (-not $solutionItem) {
@@ -92,6 +111,8 @@ jobs:
         }
         $version = $solutionItem.VersionNumber
         Write-Output "Current version: $version"
+
+        # Split the version into its four numeric parts (major.minor.build.revision).
         $versionParts = $version.Split('.')
         $strategy = "${{ env.VERSION_UPDATE_STRATEGY }}"
         switch ($strategy) {
@@ -103,8 +124,11 @@ jobs:
         }
         $newVersion = "{0}.{1}.{2}.{3}" -f $versionParts[0], $versionParts[1], $versionParts[2], $versionParts[3]
         Write-Output "New version: $newVersion"
+        # Expose the computed version to subsequent steps.
         echo "VERSION=$newVersion" >> $env:GITHUB_ENV
 
+    # Updates the solution version in the online environment before exporting,
+    # so the exported zip and unpacked files carry the new version number.
     - name: set-online-solution-version
       uses: microsoft/powerplatform-actions/set-online-solution-version@v1
       with:
@@ -114,6 +138,8 @@ jobs:
         name: ${{ github.event.inputs.solution_name }}
         version: ${{ env.VERSION }}
 
+    # Exports the unmanaged solution zip. This is the editable version used for
+    # source control and local development.
     - name: export-solution-unmanaged
       uses: microsoft/powerplatform-actions/export-solution@v1
       with:
@@ -123,6 +149,8 @@ jobs:
         solution-name: ${{ github.event.inputs.solution_name }}
         solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
 
+    # Exports the managed solution zip. This is the deployable version intended
+    # for non-development (test / production) environments.
     - name: export-solution-managed
       uses: microsoft/powerplatform-actions/export-solution@v1
       with:
@@ -133,6 +161,8 @@ jobs:
         solution-name: ${{ github.event.inputs.solution_name }}
         solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
 
+    # Unpacks the unmanaged zip into individual source files under SOLUTIONS_FOLDER
+    # so changes are diff-friendly in source control.
     - name: unpack-solution
       uses: microsoft/powerplatform-actions/unpack-solution@v1
       with:
@@ -140,7 +170,9 @@ jobs:
         solution-folder: ${{ env.SOLUTIONS_FOLDER}}/${{ github.event.inputs.solution_name }}
         solution-type: 'Unmanaged'
         overwrite-files: true
-          
+
+    # Uploads both solution zips as a workflow artifact for manual download or
+    # use by downstream workflows.
     - uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.inputs.solution_name }}
@@ -148,6 +180,9 @@ jobs:
           ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
           ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
 
+    # Stages the unpacked solution files, builds the commit message (supporting
+    # %s and %v placeholders for solution name and version), and pushes to the
+    # current branch.
     - name: Config commit and push to git
       shell: pwsh
       run: |
@@ -155,6 +190,7 @@ jobs:
         git config --global user.email '${{github.actor}}@users.noreply.github.com'
         git add ${{ env.SOLUTIONS_FOLDER}}/\**
 
+        # Replace placeholders: %s → solution name, %v → new version.
         $commitMsg = "${{ github.event.inputs.commit_message }}"
         $commitMsg = $commitMsg -replace '%s', '${{ github.event.inputs.solution_name }}'
         $commitMsg = $commitMsg -replace '%v', '${{ env.VERSION }}'
@@ -163,12 +199,16 @@ jobs:
 
         git push origin
 
+    # Creates and pushes a version tag (e.g. v1.0.0.5) when the create_tag input
+    # is checked. Useful for marking deployable release points.
     - name: Tag release
       if: ${{ github.event.inputs.create_tag == 'true' }}
       run: |
         git tag v${{ env.VERSION }}
         git push origin v${{ env.VERSION }}
 
+    # Always clears stored pac authentication profiles at the end of the job,
+    # even if a previous step failed, to avoid leaving credentials on the runner.
     - name: pac-auth-clear
       if: always()
       shell: pwsh
