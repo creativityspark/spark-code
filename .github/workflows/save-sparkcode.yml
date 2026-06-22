@@ -211,12 +211,14 @@ jobs:
     # solution zip as a release asset. Draft mode lets you review and publish manually.
     - name: Create draft release
       if: ${{ github.event.inputs.create_release == 'true' }}
+      shell: bash
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh release create v${{ env.VERSION }} \
           --draft \
           --title "v${{ env.VERSION }}" \
+          --generate-notes
           "${{ env.EXPORT_FOLDER }}/${{ github.event.inputs.solution_name }}_managed.zip"
 
     # Always clears stored pac authentication profiles at the end of the job,
