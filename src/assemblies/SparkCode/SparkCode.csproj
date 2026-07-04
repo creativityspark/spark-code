@@ -171,6 +171,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Join.cs" />
     <Compile Include="Data\ParseCsv.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="DatasetExtensions.cs" />
