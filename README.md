@@ -65,7 +65,7 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 - **XmlToJson**: Converts an XML string to JSON.
 
 ### Other
-- **RunCSharp**: Compiles and executes C# 4.0 code at runtime, passing optional input JSON and custom assembly/usings.
+- **RunCSharp**: Compiles and executes C# 4.0 code at runtime, supporting optional custom type definitions (`Types`), typed input/output conversion (`InputTypeName` / `OutputTypeName`), input payloads, and custom assembly/usings.
 
 ### Templates
 - **GetFrontMatter**: Extracts YAML front matter from a text input and returns it together with the remaining body.

@@ -45,11 +45,19 @@ namespace SparkCode
             Trace("Created CRM Service from context");
         }
 
-        public T GetInputParameter<T>(string parameterName, bool required) { 
-            if(required && !PluginContext.InputParameters.Contains(parameterName))
+        public T GetInputParameter<T>(string parameterName, bool required, T defaultValue = default(T))
+        {
+            if (!PluginContext.InputParameters.Contains(parameterName))
             {
-                throw new ArgumentNullException($"{parameterName} is required");
+                if (required)
+                {
+                    throw new ArgumentNullException($"{parameterName} is required");
+                }
+
+                Trace($"{parameterName}:{defaultValue}");
+                return defaultValue;
             }
+
             var value = (T)PluginContext.InputParameters[parameterName];
             Trace($"{parameterName}:{value}");
             return value;
