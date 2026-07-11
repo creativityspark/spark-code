@@ -14,7 +14,7 @@ namespace SparkCode.API.Other
     /// <param name="UsingStatements" type="string" optional="true">Optional raw C# using statements appended before compilation.</param>
     /// <param name="Outputs" type="string" direction="output">Execution result returned by the runtime Main method.</param>
     /// <example>
-    /// Legacy mode: set Code to "output = \"hello\";" and optionally read input from variable input.
+    /// Untyped mode: set Code to "output = \"hello\";" and optionally read input from variable input.
     /// Typed mode: set Types to class declarations, InputTypeName to your input class, and OutputTypeName to your output class.
     /// InputParameters "{\"MyProperty\":123,\"MyValue\":\"abc\"}" with InputTypeName="InputType" will deserialize into InputType before code execution.
     /// OutputTypeName="OutputType" returns Outputs as serialized JSON for custom types.
