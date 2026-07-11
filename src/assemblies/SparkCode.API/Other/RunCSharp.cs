@@ -18,6 +18,14 @@ namespace SparkCode.API.Other
     /// Typed mode: set Types to class declarations, InputTypeName to your input class, and OutputTypeName to your output class.
     /// InputParameters "{\"MyProperty\":123,\"MyValue\":\"abc\"}" with InputTypeName="InputType" will deserialize into InputType before code execution.
     /// OutputTypeName="OutputType" returns Outputs as serialized JSON for custom types.
+    ///
+    /// Additional guidance: a local tester is available at src/assemblies/SparkCode.RunCSharpTester/Program.cs.
+    /// Use it to prototype your script and then copy each part to the custom API parameters:
+    /// Step 1 (optional): add additional using statements in the tester; copy them to UsingStatements.
+    /// Step 2 (optional): define custom classes in the tester; copy them to Types.
+    /// Step 3 (optional): set inputType/outputType aliases in the tester; use matching values in InputTypeName and OutputTypeName.
+    /// Step 4: write your runtime logic inside CSharpRunner.Run and assign output; copy that logic to Code.
+    /// InputParameters provides the runtime input value for input.
     /// </example>
     public class RunCSharp : IPlugin
     {
@@ -35,15 +43,14 @@ namespace SparkCode.API.Other
             string usingStatements = ctx.GetInputParameter<string>("UsingStatements", false, null);
 
             // Run Logic
-            string outputs = SparkCode.Other.RunCSharp.Execute(
-                                                                        code,
-                                                                        inputParameters,
-                                                                        types,
-                                                                        inputTypeName,
-                                                                        outputTypeName,
-                                                                        referencedAssemblies,
-                                                                        usingStatements
-                                                                      );
+                string outputs = SparkCode.Other.RunCSharp.Execute(
+                code,
+                inputParameters,
+                types,
+                inputTypeName,
+                outputTypeName,
+                referencedAssemblies,
+                usingStatements);
 
             // API Outputs
             ctx.SetOutputParameter("Outputs", outputs);
