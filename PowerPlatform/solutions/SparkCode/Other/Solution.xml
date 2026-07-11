@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml version="9.2.26054.147" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26054.147" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26054.00147">
+<ImportExportXml version="9.2.26062.155" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26062.155" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26062.00155">
   <SolutionManifest>
     <UniqueName>SparkCode</UniqueName>
     <LocalizedNames>
@@ -8,7 +8,7 @@
     <Descriptions>
       <Description description="Custom APIs and other code for Power Apps, Dataverse and Dynamics 365" languagecode="1033" />
     </Descriptions>
-    <Version>1.0.0.22</Version>
+    <Version>1.0.0.23</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>CreativitySpark</UniqueName>

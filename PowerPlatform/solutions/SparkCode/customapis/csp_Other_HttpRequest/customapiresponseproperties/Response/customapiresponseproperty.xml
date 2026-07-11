@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Response">
+  <description default="HTTP response body as a string.">
+    <label description="HTTP response body as a string." languagecode="1033" />
+  </description>
+  <displayname default="Response">
+    <label description="Response" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Other.HttpRequest-out-Response</name>
+  <type>10</type>
+</customapiresponseproperty>

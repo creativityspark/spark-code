@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Data_Join">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Joins two JSON arrays by matching key fields and returns a merged result collection.">
+    <label description="Joins two JSON arrays by matching key fields and returns a merged result collection." languagecode="1033" />
+  </description>
+  <displayname default="Join">
+    <label description="Join" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Data.Join</name>
+  <plugintypeid>
+    <plugintypeexportkey>B7A70CB34877F30D405F76EB1485BBAC8B7DB82442AABB9CF752E7FAE2918FDF</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

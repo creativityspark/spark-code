@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="OutputTypeName">
+  <description default="Optional runtime output type name. Defaults to string. Native types return Convert.ToString(result); custom types return JSON.">
+    <label description="Optional runtime output type name. Defaults to string. Native types return Convert.ToString(result); custom types return JSON." languagecode="1033" />
+  </description>
+  <displayname default="OutputTypeName">
+    <label description="OutputTypeName" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.RunCSharp-in-OutputTypeName</name>
+  <type>10</type>
+</customapirequestparameter>

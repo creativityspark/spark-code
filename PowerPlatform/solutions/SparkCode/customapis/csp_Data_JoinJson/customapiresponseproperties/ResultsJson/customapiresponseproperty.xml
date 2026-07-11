@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="ResultsJson">
+  <description default="Joined rows with List2 fields prefixed using Field1.">
+    <label description="Joined rows with List2 fields prefixed using Field1." languagecode="1033" />
+  </description>
+  <displayname default="Results (JSON)">
+    <label description="Results (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Data.Join-out-ResultsJson</name>
+  <type>10</type>
+</customapiresponseproperty>

@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="TimeoutSeconds">
+  <description default="Request timeout in seconds. Defaults to 30 when omitted. Allowed range is 1 to 60.">
+    <label description="Request timeout in seconds. Defaults to 30 when omitted. Allowed range is 1 to 60." languagecode="1033" />
+  </description>
+  <displayname default="TimeoutSeconds">
+    <label description="TimeoutSeconds" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.HttpRequest-in-TimeoutSeconds</name>
+  <type>7</type>
+</customapirequestparameter>

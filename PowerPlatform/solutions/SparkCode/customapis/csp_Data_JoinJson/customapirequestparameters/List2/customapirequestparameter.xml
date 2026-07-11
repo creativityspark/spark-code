@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="List2">
+  <description default="Json string containing the second array of objects to join.">
+    <label description="Json string containing the second array of objects to join." languagecode="1033" />
+  </description>
+  <displayname default="List2">
+    <label description="List2" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Data.Join-in-List2</name>
+  <type>10</type>
+</customapirequestparameter>

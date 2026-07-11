@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Url">
+  <description default="Target request URL. Supports {{param1}} to {{param5}} placeholders.">
+    <label description="Target request URL. Supports {{param1}} to {{param5}} placeholders." languagecode="1033" />
+  </description>
+  <displayname default="Url">
+    <label description="Url" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Other.HttpRequest-in-Url</name>
+  <type>10</type>
+</customapirequestparameter>

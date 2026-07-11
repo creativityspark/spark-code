@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Field2">
+  <description default="Field name on List2 used as the join key.">
+    <label description="Field name on List2 used as the join key." languagecode="1033" />
+  </description>
+  <displayname default="Field2">
+    <label description="Field2" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Data.Join-in-Field2</name>
+  <type>10</type>
+</customapirequestparameter>

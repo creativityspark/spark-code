@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Method">
+  <description default="HTTP method to use (GET, POST, PUT, PATCH, DELETE, etc.).">
+    <label description="HTTP method to use (GET, POST, PUT, PATCH, DELETE, etc.)." languagecode="1033" />
+  </description>
+  <displayname default="Method">
+    <label description="Method" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Other.HttpRequest-in-Method</name>
+  <type>10</type>
+</customapirequestparameter>

@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Types">
+  <description default="Optional C# type declarations available to the runtime code and conversion pipeline.">
+    <label description="Optional C# type declarations available to the runtime code and conversion pipeline." languagecode="1033" />
+  </description>
+  <displayname default="Types">
+    <label description="Types" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.RunCSharp-in-Types</name>
+  <type>10</type>
+</customapirequestparameter>

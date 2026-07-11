@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Other_HttpRequest">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Performs an HTTP request with optional body and parameter replacement using {{paramN}} placeholders.">
+    <label description="Performs an HTTP request with optional body and parameter replacement using {{paramN}} placeholders." languagecode="1033" />
+  </description>
+  <displayname default="Http Request">
+    <label description="Http Request" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Other.HttpRequest</name>
+  <plugintypeid>
+    <plugintypeexportkey>FF3D1ADA3C533189CE4FE666ACA3C93E4EE0817602750F1E92DB58E1A8649402</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

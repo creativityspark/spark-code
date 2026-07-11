@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="InputTypeName">
+  <description default="Optional runtime input type name. Defaults to string. Supports simple or namespace-qualified names.">
+    <label description="Optional runtime input type name. Defaults to string. Supports simple or namespace-qualified names." languagecode="1033" />
+  </description>
+  <displayname default="InputTypeName">
+    <label description="InputTypeName" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.RunCSharp-in-InputTypeName</name>
+  <type>10</type>
+</customapirequestparameter>

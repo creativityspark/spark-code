@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Param2">
+  <description default="Optional replacement value for {{param2}}.">
+    <label description="Optional replacement value for {{param2}}." languagecode="1033" />
+  </description>
+  <displayname default="Param2">
+    <label description="Param2" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.HttpRequest-in-Param2</name>
+  <type>10</type>
+</customapirequestparameter>

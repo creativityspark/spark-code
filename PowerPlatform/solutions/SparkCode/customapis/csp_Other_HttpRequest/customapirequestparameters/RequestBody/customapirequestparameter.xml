@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="RequestBody">
+  <description default="Optional request body. Supports {{param1}} to {{param5}} placeholders.">
+    <label description="Optional request body. Supports {{param1}} to {{param5}} placeholders." languagecode="1033" />
+  </description>
+  <displayname default="RequestBody">
+    <label description="RequestBody" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>Other.HttpRequest-in-RequestBody</name>
+  <type>10</type>
+</customapirequestparameter>
