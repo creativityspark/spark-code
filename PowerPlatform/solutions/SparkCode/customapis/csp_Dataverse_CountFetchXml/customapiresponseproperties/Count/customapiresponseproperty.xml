@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Count">
+  <description default="The total number of records returned by the query.">
+    <label description="The total number of records returned by the query." languagecode="1033" />
+  </description>
+  <displayname default="Count">
+    <label description="Count" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Dataverse.CountFetchXml-out-Count</name>
+  <type>7</type>
+</customapiresponseproperty>
