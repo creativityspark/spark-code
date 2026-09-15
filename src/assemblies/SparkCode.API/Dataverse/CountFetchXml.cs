@@ -9,7 +9,8 @@ namespace SparkCode.API.Dataverse
     /// A plugin that executes a FetchXML query and returns the number of records it matches.
     /// </summary>
     /// <displayName>Count FetchXML Records</displayName>
-    /// <param name="FetchXml" type="string">The FetchXML query to count records for.</param>
+    /// <param name="FetchXml" type="string">The FetchXML query to count records for. Supports {param1} as a placeholder.</param>
+    /// <param name="Param1" type="string" optional="true">Optional replacement value for {param1}.</param>
     /// <param name="Count" type="integer" direction="output">The total number of records returned by the query.</param>
     /// <example>
     /// To count the number of active accounts, pass the FetchXml parameter as
@@ -30,6 +31,14 @@ namespace SparkCode.API.Dataverse
 
             // API Inputs
             string fetchXml = ctx.GetInputParameter<string>("FetchXml", true);
+            string param1 = ctx.PluginContext.InputParameters.Contains("Param1")
+                ? ctx.PluginContext.InputParameters["Param1"] as string
+                : null;
+
+            if (param1 != null)
+            {
+                fetchXml = fetchXml.Replace("{param1}", param1);
+            }
 
             // Run Logic
             var count = CountRecords(ctx, fetchXml);

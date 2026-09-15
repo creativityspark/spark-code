@@ -10,7 +10,8 @@ namespace SparkCode.API.Tests.Text
         public void ParseURL_ValidUrl_Returns_Parsed_Components()
         {
             var service = new Context().Service;
-            var url = "https://example.com:8080/path/to/resource?query=param#fragment";
+            var expectedId = Guid.NewGuid().ToString();
+            var url = $"https://example.com:8080/path/to/resource?query=param&id={expectedId}&etn=account#fragment";
             var output = service.Execute(new OrganizationRequest("csp_Text_ParseURL")
             {
                 Parameters = new ParameterCollection
@@ -23,6 +24,30 @@ namespace SparkCode.API.Tests.Text
             var query = (Entity)results["query"];
             Assert.NotNull(results);
             Assert.NotNull(query);
+            Assert.Equal(expectedId, (string)results["id"]);
+            Assert.Equal("account", (string)results["etn"]);
+            Assert.Equal(expectedId, (string)output["Id"]);
+            Assert.Equal("account", (string)output["Etn"]);
+        }
+
+        [Fact]
+        public void ParseURL_WithoutIdAndEtn_DoesNotReturn_ThoseOutputs()
+        {
+            var service = new Context().Service;
+            var url = "https://example.com:8080/path/to/resource?query=param#fragment";
+            var output = service.Execute(new OrganizationRequest("csp_Text_ParseURL")
+            {
+                Parameters = new ParameterCollection
+                {
+                    { "Url", url }
+                }
+            });
+            var results = (Entity)output["Results"];
+
+            Assert.False(results.Attributes.Contains("id"));
+            Assert.False(results.Attributes.Contains("etn"));
+            Assert.False(output.Results.Contains("Id"));
+            Assert.False(output.Results.Contains("Etn"));
         }
 
         [Fact]

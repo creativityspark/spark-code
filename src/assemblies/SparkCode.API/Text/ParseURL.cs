@@ -7,6 +7,8 @@ namespace SparkCode.API.Text
     /// <summary>Parses a URL and returns its parts</summary>
     /// <param name="Url" type="string">Url to be parsed</param>
     /// <param name="Results" type="expando" direction="output">All the parts contained in the Url</param>
+    /// <param name="Id" type="string" direction="output">The id query string value when present.</param>
+    /// <param name="Etn" type="string" direction="output">The etn query string value when present.</param>
     public class ParseURL : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
@@ -22,6 +24,15 @@ namespace SparkCode.API.Text
             // API Outputs
             ctx.SetOutputParameter("Results", results);
             ctx.SetOutputParameter("ResultsJson", results.ToJson());
+            if (results.Attributes.Contains("id"))
+            {
+                ctx.SetOutputParameter("Id", results["id"]);
+            }
+
+            if (results.Attributes.Contains("etn"))
+            {
+                ctx.SetOutputParameter("Etn", results["etn"]);
+            }
         }
     }
 }

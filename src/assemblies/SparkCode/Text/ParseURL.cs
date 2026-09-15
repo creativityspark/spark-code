@@ -30,6 +30,18 @@ namespace SparkCode.Text
                     query[key] = queryParameters[key];
                 }
                 results["query"] = query;
+
+                var id = queryParameters["id"];
+                if (id != null)
+                {
+                    results["id"] = id;
+                }
+
+                var etn = queryParameters["etn"];
+                if (etn != null)
+                {
+                    results["etn"] = etn;
+                }
             }
 
             return results;
