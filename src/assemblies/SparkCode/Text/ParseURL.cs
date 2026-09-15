@@ -10,11 +10,11 @@ namespace SparkCode.Text
             var results = new Entity();
             Uri uri = new Uri(url);
 
-            results = new Entity();
             results["scheme"] = uri.Scheme;
             results["host"] = uri.Host;
             results["port"] = uri.Port;
             results["absolutePath"] = uri.AbsolutePath;
+
             if (uri.Fragment.Length > 0)
             {
                 results["fragment"] = uri.Fragment.Substring(1);

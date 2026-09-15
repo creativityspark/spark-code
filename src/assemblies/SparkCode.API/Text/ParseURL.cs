@@ -24,14 +24,17 @@ namespace SparkCode.API.Text
             // API Outputs
             ctx.SetOutputParameter("Results", results);
             ctx.SetOutputParameter("ResultsJson", results.ToJson());
-            if (results.Attributes.Contains("id"))
+
+            var query = (Entity)results["query"];
+
+            if (query.Attributes.Contains("id"))
             {
-                ctx.SetOutputParameter("Id", results["id"]);
+                ctx.SetOutputParameter("Id", query["id"]);
             }
 
-            if (results.Attributes.Contains("etn"))
+            if (query.Attributes.Contains("etn"))
             {
-                ctx.SetOutputParameter("Etn", results["etn"]);
+                ctx.SetOutputParameter("Etn", query["etn"]);
             }
         }
     }

@@ -24,8 +24,8 @@ namespace SparkCode.API.Tests.Text
             var query = (Entity)results["query"];
             Assert.NotNull(results);
             Assert.NotNull(query);
-            Assert.Equal(expectedId, (string)results["id"]);
-            Assert.Equal("account", (string)results["etn"]);
+            Assert.Equal(expectedId, (string)query["id"]);
+            Assert.Equal("account", (string)query["etn"]);
             Assert.Equal(expectedId, (string)output["Id"]);
             Assert.Equal("account", (string)output["Etn"]);
         }
@@ -43,11 +43,13 @@ namespace SparkCode.API.Tests.Text
                 }
             });
             var results = (Entity)output["Results"];
-
-            Assert.False(results.Attributes.Contains("id"));
-            Assert.False(results.Attributes.Contains("etn"));
-            Assert.False(output.Results.Contains("Id"));
-            Assert.False(output.Results.Contains("Etn"));
+            var query = (Entity)results["query"];
+            Assert.NotNull(results);
+            Assert.NotNull(query);
+            Assert.False(query.Attributes.Contains("id"));
+            Assert.False(query.Attributes.Contains("etn"));
+            Assert.False(results.Contains("Id"));
+            Assert.False(results.Contains("Etn"));
         }
 
         [Fact]
