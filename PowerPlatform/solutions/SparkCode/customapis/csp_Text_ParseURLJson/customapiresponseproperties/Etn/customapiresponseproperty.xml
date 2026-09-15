@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Etn">
+  <description default="The etn query string value when present.">
+    <label description="The etn query string value when present." languagecode="1033" />
+  </description>
+  <displayname default="Etn">
+    <label description="Etn" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Text.ParseURL-out-Etn</name>
+  <type>10</type>
+</customapiresponseproperty>

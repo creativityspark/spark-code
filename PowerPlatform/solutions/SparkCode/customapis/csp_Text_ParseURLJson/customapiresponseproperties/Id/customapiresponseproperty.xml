@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Id">
+  <description default="The id query string value when present.">
+    <label description="The id query string value when present." languagecode="1033" />
+  </description>
+  <displayname default="Id">
+    <label description="Id" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Text.ParseURL-out-Id</name>
+  <type>10</type>
+</customapiresponseproperty>

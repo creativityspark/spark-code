@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Dataverse_CountFetchXml">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="A plugin that executes a FetchXML query and returns the number of records it matches.">
+    <label description="A plugin that executes a FetchXML query and returns the number of records it matches." languagecode="1033" />
+  </description>
+  <displayname default="Count FetchXML Records">
+    <label description="Count FetchXML Records" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Dataverse.CountFetchXml</name>
+  <plugintypeid>
+    <plugintypeexportkey>00614B694CA890674F7A6EA00FA22100579061289A58FE5333D2358EF66FFC54</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>
