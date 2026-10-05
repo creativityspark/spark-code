@@ -1,7 +1,7 @@
 using Microsoft.Xrm.Sdk;
 using System;
 
-namespace SparkCode.API.PDF
+namespace SparkCode.API.Pdf
 {
     /// <displayName>Extract PDF Images</displayName>
     /// <summary>Extracts embedded JPEG images from a Base64-encoded PDF.</summary>
@@ -18,7 +18,7 @@ namespace SparkCode.API.PDF
             ctx.Trace(
                 $"PdfBase64 received: isNull={pdfBase64 == null}, length={pdfBase64?.Length ?? 0}, containsWhitespace={ContainsWhitespace(pdfBase64)}, preview=\"{preview}\"");
 
-            string[] images = SparkCode.PDF.ExtractImages.Extract(pdfBase64);
+            string[] images = SparkCode.Pdf.ExtractImages.Extract(pdfBase64);
 
             ctx.SetOutputParameter("Images", images);
         }

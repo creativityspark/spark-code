@@ -197,15 +197,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\PDFTestSupport\PdfTestDocument.pdf">
-      <Link>PdfTestDocument.pdf</Link>
+    <Content Include="..\TestSupport\Document.pdf">
+      <Link>Document.pdf</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Compile Include="Data\JoinTests.cs" />
     <Compile Include="Dataverse\PublishWebResourceTests.cs" />
     <Compile Include="Other\HttpRequestTests.cs" />
     <Compile Include="Other\RunCSharpTests.cs" />
-    <Compile Include="..\PDFTestSupport\PdfTestDocument.cs" />
+    <Compile Include="..\TestSupport\Pdf.cs" />
     <Compile Include="PDF\ExtractImagesTests.cs" />
     <Compile Include="Text\Base64EncodeTests.cs" />
     <Compile Include="Text\Base64DecodeTests.cs" />

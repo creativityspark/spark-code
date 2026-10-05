@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace SparkCode.PDF.TestSupport
+namespace SparkCode.TestSupport
 {
     internal sealed class PdfImageTestPayload
     {
@@ -14,11 +14,11 @@ namespace SparkCode.PDF.TestSupport
         public string[] JpegImagesBase64 { get; set; }
     }
 
-    internal static class PdfTestDocument
+    internal static class Pdf
     {
         public static PdfImageTestPayload LoadSamplePdf()
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PdfTestDocument.pdf");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Document.pdf");
             byte[] pdfBytes = File.ReadAllBytes(path);
 
             return new PdfImageTestPayload

@@ -280,6 +280,11 @@ Entity Upsert(ServiceClient client, Guid assemblyId, Member api, string solution
 {
     Entity existingAPI = GetApi(client, api.UniqueName);
     Entity pluginType = GetPluginType(client, assemblyId, api.TypeName);
+    if (pluginType == null)
+    {
+        throw new InvalidOperationException($"Plug-in type {api.TypeName} was not found in the registered assembly.");
+    }
+
     if (existingAPI == null)
     {
         existingAPI = CreateApi(client, pluginType, api);
@@ -525,7 +530,7 @@ Entity GetPluginType(ServiceClient client, Guid pluginAssemblyId, string name)
     // query the plugintype to retrieve the api assembly
     var query = new Microsoft.Xrm.Sdk.Query.QueryExpression("plugintype")
     {
-        ColumnSet = new Microsoft.Xrm.Sdk.Query.ColumnSet("plugintypeid"),
+        ColumnSet = new Microsoft.Xrm.Sdk.Query.ColumnSet("plugintypeid", "typename"),
         Criteria =
         {
             Conditions =
@@ -536,5 +541,6 @@ Entity GetPluginType(ServiceClient client, Guid pluginAssemblyId, string name)
         }
     };
     var results = client.RetrieveMultiple(query);
-    return results.Entities.FirstOrDefault();
+    return results.Entities.FirstOrDefault(entity =>
+        string.Equals(entity.GetAttributeValue<string>("typename"), name, StringComparison.Ordinal));
 }

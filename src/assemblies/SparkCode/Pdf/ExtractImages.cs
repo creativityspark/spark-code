@@ -5,10 +5,28 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SparkCode.PDF
+namespace SparkCode.Pdf
 {
+    /// <summary>
+    /// Extracts embedded JPEG images from Base64-encoded PDF documents.
+    /// </summary>
     public static class ExtractImages
     {
+        /// <summary>
+        /// Extracts each unique embedded JPEG image from a PDF and returns its bytes as Base64.
+        /// </summary>
+        /// <param name="pdfBase64">The PDF document encoded as a Base64 string.</param>
+        /// <returns>
+        /// Base64-encoded JPEG image data in document order, or an empty array when the document
+        /// contains no JPEG images.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="pdfBase64"/> is missing, is not valid Base64, or does not
+        /// contain a valid PDF document.
+        /// </exception>
+        /// <exception cref="InvalidDataException">
+        /// Thrown when a JPEG image resource in the PDF has no image data.
+        /// </exception>
         public static string[] Extract(string pdfBase64)
         {
             if (string.IsNullOrWhiteSpace(pdfBase64))

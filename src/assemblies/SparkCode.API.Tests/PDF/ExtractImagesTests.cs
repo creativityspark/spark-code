@@ -1,5 +1,6 @@
 using Microsoft.Xrm.Sdk;
-using SparkCode.PDF.TestSupport;
+using PdfTestData = SparkCode.TestSupport.Pdf;
+using PdfTestPayload = SparkCode.TestSupport.PdfImageTestPayload;
 using System;
 using System.Drawing.Imaging;
 using Xunit;
@@ -11,10 +12,10 @@ namespace SparkCode.API.Tests.PDF
         [Fact]
         public void ExtractImages_SamplePdfFile_ReturnsJpegStringArray()
         {
-            PdfImageTestPayload payload = PdfTestDocument.LoadSamplePdf();
+            PdfTestPayload payload = PdfTestData.LoadSamplePdf();
             var service = new Context().Service;
 
-            OrganizationResponse response = service.Execute(new OrganizationRequest("csp_PDF_ExtractImages")
+            OrganizationResponse response = service.Execute(new OrganizationRequest("csp_Pdf_ExtractImages")
             {
                 Parameters = new ParameterCollection
                 {
@@ -37,10 +38,10 @@ namespace SparkCode.API.Tests.PDF
         [Fact]
         public void ExtractImages_JpegAndPngImages_ReturnsJpegStringArray()
         {
-            PdfImageTestPayload payload = PdfTestDocument.Create(ImageFormat.Jpeg, ImageFormat.Png, ImageFormat.Jpeg);
+            PdfTestPayload payload = PdfTestData.Create(ImageFormat.Jpeg, ImageFormat.Png, ImageFormat.Jpeg);
             var service = new Context().Service;
 
-            OrganizationResponse response = service.Execute(new OrganizationRequest("csp_PDF_ExtractImages")
+            OrganizationResponse response = service.Execute(new OrganizationRequest("csp_Pdf_ExtractImages")
             {
                 Parameters = new ParameterCollection
                 {
@@ -55,10 +56,10 @@ namespace SparkCode.API.Tests.PDF
         [Fact]
         public void ExtractImages_PdfWithoutImages_ReturnsEmptyArray()
         {
-            PdfImageTestPayload payload = PdfTestDocument.CreateWithoutImages();
+            PdfTestPayload payload = PdfTestData.CreateWithoutImages();
             var service = new Context().Service;
 
-            OrganizationResponse response = service.Execute(new OrganizationRequest("csp_PDF_ExtractImages")
+            OrganizationResponse response = service.Execute(new OrganizationRequest("csp_Pdf_ExtractImages")
             {
                 Parameters = new ParameterCollection
                 {
@@ -76,7 +77,7 @@ namespace SparkCode.API.Tests.PDF
 
             Exception exception = Assert.ThrowsAny<Exception>(() =>
             {
-                service.Execute(new OrganizationRequest("csp_PDF_ExtractImages")
+                service.Execute(new OrganizationRequest("csp_Pdf_ExtractImages")
                 {
                     Parameters = new ParameterCollection
                     {
