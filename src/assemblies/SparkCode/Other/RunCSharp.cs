@@ -63,6 +63,9 @@ namespace SparkCode.Other
             string referencedAssemblies,
             string usingStatements)
         {
+            inputTypeName = string.IsNullOrWhiteSpace(inputTypeName) ? "string" : inputTypeName;
+            outputTypeName = string.IsNullOrWhiteSpace(outputTypeName) ? "string" : outputTypeName;
+
             EnsureCustomTypeDefinitionsProvided(inputTypeName, types, "InputTypeName");
             EnsureCustomTypeDefinitionsProvided(outputTypeName, types, "OutputTypeName");
 

@@ -216,6 +216,7 @@
     <Compile Include="Data\SelectTests.cs" />
     <Compile Include="Data\XmlToJsonTests.cs" />
     <Compile Include="EntityExtensionTests.cs" />
+    <Compile Include="Other\RunCSharpTests.cs" />
     <Compile Include="ServiceExtensionsTests.cs" />
     <Compile Include="Templates\GetFrontMatterTests.cs" />
     <Compile Include="Templates\TemplateRendererTests.cs" />
