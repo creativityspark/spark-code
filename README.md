@@ -49,6 +49,9 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 - **HttpRequest**: Performs an HTTP request with optional body and `{{paramN}}` placeholder replacement.
 - **RunCSharp**: Compiles and executes C# 4.0 code at runtime, supporting optional custom type definitions (`Types`), typed input/output conversion (`InputTypeName` / `OutputTypeName`), input payloads, and custom assembly/usings.
 
+## PDF
+- **ExtractImages**: Extracts embedded JPEG images from a Base64-encoded PDF and returns each unique image as Base64.
+
 ## Templates
 - **GetFrontMatter**: Extracts YAML front matter from a text input and returns it together with the remaining body.
 - **RenderDataverseTemplate**: Renders a [Liquid](https://github.com/sebastienros/fluid) template by sourcing context values from an optional Dataverse record and optional additional context.

@@ -110,6 +110,9 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PdfSharp">
+      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Parlot, Version=1.0.2.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
       <HintPath>..\packages\Parlot.1.0.2\lib\netstandard2.0\Parlot.dll</HintPath>
     </Reference>
@@ -211,12 +214,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\PDFTestSupport\PdfTestDocument.pdf">
+      <Link>PdfTestDocument.pdf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="Data\JoinTests.cs" />
     <Compile Include="Data\ParseCsvTests.cs" />
     <Compile Include="Data\SelectTests.cs" />
     <Compile Include="Data\XmlToJsonTests.cs" />
     <Compile Include="EntityExtensionTests.cs" />
     <Compile Include="Other\RunCSharpTests.cs" />
+    <Compile Include="..\PDFTestSupport\PdfTestDocument.cs" />
+    <Compile Include="PDF\ExtractImagesTests.cs" />
     <Compile Include="ServiceExtensionsTests.cs" />
     <Compile Include="Templates\GetFrontMatterTests.cs" />
     <Compile Include="Templates\TemplateRendererTests.cs" />

@@ -99,6 +99,7 @@ void NormalizeSpecification(APISpecification spec, string apiPrefix, string memb
         member.EnabledForWorkflow = true;
 
         var hasEpando = false;
+        var hasStringArray = false;
         if (member.Parameters != null)
         {
             foreach (var param in member.Parameters)
@@ -121,8 +122,17 @@ void NormalizeSpecification(APISpecification spec, string apiPrefix, string memb
                     {
                         hasEpando = true;
                     }
+                    else if (type == "stringarray")
+                    {
+                        hasStringArray = true;
+                    }
                 }
             }
+        }
+
+        if (hasStringArray)
+        {
+            member.EnabledForWorkflow = false;
         }
 
         if (hasEpando)
@@ -136,7 +146,7 @@ void NormalizeSpecification(APISpecification spec, string apiPrefix, string memb
                 UniqueName = member.UniqueName + "Json",
                 DisplayName = member.DisplayName + " (JSON)",
                 Description = member.Description,
-                EnabledForWorkflow = true
+                EnabledForWorkflow = !hasStringArray
             };
 
             if (member.Parameters != null)
@@ -278,6 +288,12 @@ Entity Upsert(ServiceClient client, Guid assemblyId, Member api, string solution
     else
     {
         Console.WriteLine($"Custom API already exists: {api.Name}");
+        if (existingAPI.GetAttributeValue<bool>("workflowsdkstepenabled") != api.EnabledForWorkflow)
+        {
+            throw new InvalidOperationException(
+                $"Custom API {api.Name} workflow availability is immutable after creation. "
+                + "Recreate the API with the updated workflow setting before registering its parameters.");
+        }
     }
     UpsertParameters(client, api, existingAPI, solutionName);
     return existingAPI;
@@ -415,7 +431,7 @@ Entity GetApi(ServiceClient client, string apiName)
     // Searches for an existing Custom API by uniquename
     var query = new Microsoft.Xrm.Sdk.Query.QueryExpression("customapi")
     {
-        ColumnSet = new Microsoft.Xrm.Sdk.Query.ColumnSet("customapiid"),
+        ColumnSet = new Microsoft.Xrm.Sdk.Query.ColumnSet("customapiid", "workflowsdkstepenabled"),
         Criteria =
         {
             Conditions =
