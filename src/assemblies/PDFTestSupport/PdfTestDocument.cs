@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace SparkCode.PDF.TestSupport
+namespace SparkCode.Pdf.TestSupport
 {
     internal sealed class PdfImageTestPayload
     {
@@ -25,6 +25,30 @@ namespace SparkCode.PDF.TestSupport
             {
                 PdfBase64 = System.Convert.ToBase64String(pdfBytes)
             };
+        }
+
+        public static string CreatePageRangeTestPdf(int pageCount)
+        {
+            if (pageCount < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageCount));
+            }
+
+            using (var document = new PdfDocument())
+            {
+                for (int pageNumber = 1; pageNumber <= pageCount; pageNumber++)
+                {
+                    PdfPage page = document.AddPage();
+                    page.Width = XUnit.FromPoint(100 + pageNumber);
+                    page.Height = XUnit.FromPoint(200 + pageNumber);
+                }
+
+                using (var pdfStream = new MemoryStream())
+                {
+                    document.Save(pdfStream, false);
+                    return System.Convert.ToBase64String(pdfStream.ToArray());
+                }
+            }
         }
 
         public static PdfImageTestPayload Create(params ImageFormat[] imageFormats)
