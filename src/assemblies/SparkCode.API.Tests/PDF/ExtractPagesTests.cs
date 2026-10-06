@@ -1,6 +1,7 @@
 using Microsoft.Xrm.Sdk;
 using PdfSharp.Pdf.IO;
-using SparkCode.Pdf.TestSupport;
+using PdfTestDocument = SparkCode.Pdf.TestSupport.Pdf;
+using PdfImageTestPayload = SparkCode.Pdf.TestSupport.PdfImageTestPayload;
 using System;
 using System.IO;
 using Xunit;

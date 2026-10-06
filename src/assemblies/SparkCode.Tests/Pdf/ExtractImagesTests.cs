@@ -1,4 +1,5 @@
-using SparkCode.Pdf.TestSupport;
+using PdfTestData = SparkCode.Pdf.TestSupport.Pdf;
+using PdfTestPayload = SparkCode.Pdf.TestSupport.PdfImageTestPayload;
 using System;
 using System.Drawing.Imaging;
 using System.IO;
