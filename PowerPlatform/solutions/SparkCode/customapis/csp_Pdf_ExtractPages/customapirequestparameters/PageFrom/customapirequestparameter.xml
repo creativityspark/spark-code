@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="PageFrom">
+  <description default="One-based number of the first page to extract, inclusive.">
+    <label description="One-based number of the first page to extract, inclusive." languagecode="1033" />
+  </description>
+  <displayname default="PageFrom">
+    <label description="PageFrom" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Pdf.ExtractPages-in-PageFrom</name>
+  <type>7</type>
+</customapirequestparameter>

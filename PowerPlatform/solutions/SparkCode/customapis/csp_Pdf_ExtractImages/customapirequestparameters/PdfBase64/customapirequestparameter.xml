@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="PdfBase64">
+  <description default="PDF file contents encoded as Base64.">
+    <label description="PDF file contents encoded as Base64." languagecode="1033" />
+  </description>
+  <displayname default="PdfBase64">
+    <label description="PdfBase64" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Pdf.ExtractImages-in-PdfBase64</name>
+  <type>10</type>
+</customapirequestparameter>

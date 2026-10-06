@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Images">
+  <description default="Base64-encoded contents of each unique embedded JPEG image, in document order.">
+    <label description="Base64-encoded contents of each unique embedded JPEG image, in document order." languagecode="1033" />
+  </description>
+  <displayname default="Images">
+    <label description="Images" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Pdf.ExtractImages-out-Images</name>
+  <type>11</type>
+</customapiresponseproperty>

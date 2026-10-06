@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Results">
+  <description default="Base64-encoded PDF containing the extracted pages.">
+    <label description="Base64-encoded PDF containing the extracted pages." languagecode="1033" />
+  </description>
+  <displayname default="Results">
+    <label description="Results" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Pdf.ExtractPages-out-Results</name>
+  <type>10</type>
+</customapiresponseproperty>

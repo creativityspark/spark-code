@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Pdf_ExtractImages">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Extracts embedded JPEG images from a Base64-encoded PDF.">
+    <label description="Extracts embedded JPEG images from a Base64-encoded PDF." languagecode="1033" />
+  </description>
+  <displayname default="Extract PDF Images">
+    <label description="Extract PDF Images" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Pdf.ExtractImages</name>
+  <plugintypeid>
+    <plugintypeexportkey>F37DD8F92C1EDBCDEE71F1258B889E3F7535C7D16902176FC672E043AAC4AF33</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Pdf_ExtractPages">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Extracts an inclusive range of pages from a Base64-encoded PDF.">
+    <label description="Extracts an inclusive range of pages from a Base64-encoded PDF." languagecode="1033" />
+  </description>
+  <displayname default="Extract PDF Pages">
+    <label description="Extract PDF Pages" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Pdf.ExtractPages</name>
+  <plugintypeid>
+    <plugintypeexportkey>3867EBFDA23ACC3329A28BD1D8FA29FD87BCEC4407EB90B2335585CE10B29F0B</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

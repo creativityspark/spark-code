@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="InputPdf">
+  <description default="PDF file contents encoded as Base64.">
+    <label description="PDF file contents encoded as Base64." languagecode="1033" />
+  </description>
+  <displayname default="InputPdf">
+    <label description="InputPdf" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Pdf.ExtractPages-in-InputPdf</name>
+  <type>10</type>
+</customapirequestparameter>
