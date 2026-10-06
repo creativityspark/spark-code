@@ -50,7 +50,8 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 - **RunCSharp**: Compiles and executes C# 4.0 code at runtime, supporting optional custom type definitions (`Types`), typed input/output conversion (`InputTypeName` / `OutputTypeName`), input payloads, and custom assembly/usings.
 
 ## PDF
-- **ExtractImages** (`csp_Pdf_ExtractImages`): Extracts embedded JPEG images from a Base64-encoded PDF and returns each unique image as Base64.
+- **ExtractImages**: Extracts embedded JPEG images from a Base64-encoded PDF and returns each unique image as Base64.
+- **ExtractPages**: Accepts a Base64-encoded PDF (`InputPdf`) and one-based `PageFrom` / `PageTo` values, extracts that inclusive page range, and returns the resulting PDF as Base64 in `Results`.
 
 ## Templates
 - **GetFrontMatter**: Extracts YAML front matter from a text input and returns it together with the remaining body.

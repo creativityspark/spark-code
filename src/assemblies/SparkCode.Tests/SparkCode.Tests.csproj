@@ -226,6 +226,7 @@
     <Compile Include="Other\RunCSharpTests.cs" />
     <Compile Include="..\TestSupport\Pdf.cs" />
     <Compile Include="PDF\ExtractImagesTests.cs" />
+    <Compile Include="Pdf\ExtractPagesTests.cs" />
     <Compile Include="ServiceExtensionsTests.cs" />
     <Compile Include="Templates\GetFrontMatterTests.cs" />
     <Compile Include="Templates\TemplateRendererTests.cs" />

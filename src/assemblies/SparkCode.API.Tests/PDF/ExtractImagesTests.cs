@@ -1,11 +1,10 @@
 using Microsoft.Xrm.Sdk;
-using PdfTestData = SparkCode.TestSupport.Pdf;
-using PdfTestPayload = SparkCode.TestSupport.PdfImageTestPayload;
+using SparkCode.Pdf.TestSupport;
 using System;
 using System.Drawing.Imaging;
 using Xunit;
 
-namespace SparkCode.API.Tests.PDF
+namespace SparkCode.API.Tests.Pdf
 {
     public class ExtractImagesTests
     {

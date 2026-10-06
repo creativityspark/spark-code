@@ -183,6 +183,7 @@
     <Compile Include="EntityExtensions.cs" />
     <Compile Include="Other\RunCSharp.cs" />
     <Compile Include="PDF\ExtractImages.cs" />
+    <Compile Include="Pdf\ExtractPages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceExtensions.cs" />
     <Compile Include="Templates\GetFrontMatter.cs" />

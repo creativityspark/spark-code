@@ -1,12 +1,11 @@
-using PdfTestData = SparkCode.TestSupport.Pdf;
-using PdfTestPayload = SparkCode.TestSupport.PdfImageTestPayload;
+using SparkCode.Pdf.TestSupport;
 using System;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using Xunit;
 
-namespace SparkCode.Tests.PDF
+namespace SparkCode.Tests.Pdf
 {
     public class ExtractImagesTests
     {
