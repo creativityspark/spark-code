@@ -52,6 +52,7 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 ## PDF
 - **ExtractImages**: Extracts embedded JPEG images from a Base64-encoded PDF and returns each unique image as Base64.
 - **ExtractPages**: Accepts a Base64-encoded PDF (`InputPdf`) and one-based `PageFrom` / `PageTo` values, extracts that inclusive page range, and returns the resulting PDF as Base64 in `Results`.
+- **Info**: Returns the page count, PDF version, and available document metadata from a Base64-encoded PDF.
 
 ## Templates
 - **GetFrontMatter**: Extracts YAML front matter from a text input and returns it together with the remaining body.

@@ -208,6 +208,7 @@
     <Compile Include="..\TestSupport\Pdf.cs" />
     <Compile Include="PDF\ExtractImagesTests.cs" />
     <Compile Include="PDF\ExtractPagesTests.cs" />
+    <Compile Include="PDF\InfoTests.cs" />
     <Compile Include="Text\Base64EncodeTests.cs" />
     <Compile Include="Text\Base64DecodeTests.cs" />
     <Compile Include="Dataverse\CalculateRollupFieldTests.cs" />

@@ -14,7 +14,7 @@ namespace SparkCode.Tests.Pdf
         {
             PdfImageTestPayload sample = PdfTestDocument.LoadSamplePdf();
 
-            string result = SparkCode.PDF.ExtractPages.Extract(sample.PdfBase64, 1, 1);
+            string result = SparkCode.Pdf.ExtractPages.Extract(sample.PdfBase64, 1, 1);
 
             Assert.Equal(1, GetPageCount(result));
         }
@@ -24,7 +24,7 @@ namespace SparkCode.Tests.Pdf
         {
             string inputPdf = PdfTestDocument.CreatePageRangeTestPdf(4);
 
-            string result = SparkCode.PDF.ExtractPages.Extract(inputPdf, 2, 3);
+            string result = SparkCode.Pdf.ExtractPages.Extract(inputPdf, 2, 3);
 
             using (var document = PdfReader.Open(
                 new MemoryStream(Convert.FromBase64String(result)),
@@ -40,7 +40,7 @@ namespace SparkCode.Tests.Pdf
         public void Extract_EmptyInput_ThrowsClearArgumentException()
         {
             ArgumentException exception = Assert.Throws<ArgumentException>(
-                () => SparkCode.PDF.ExtractPages.Extract(string.Empty, 1, 1));
+                () => SparkCode.Pdf.ExtractPages.Extract(string.Empty, 1, 1));
 
             Assert.Contains("required", exception.Message);
         }
@@ -49,7 +49,7 @@ namespace SparkCode.Tests.Pdf
         public void Extract_InvalidBase64_ThrowsClearArgumentException()
         {
             ArgumentException exception = Assert.Throws<ArgumentException>(
-                () => SparkCode.PDF.ExtractPages.Extract("not base64!", 1, 1));
+                () => SparkCode.Pdf.ExtractPages.Extract("not base64!", 1, 1));
 
             Assert.Contains("valid Base64", exception.Message);
         }
@@ -60,7 +60,7 @@ namespace SparkCode.Tests.Pdf
             string invalidPdf = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("not a PDF"));
 
             ArgumentException exception = Assert.Throws<ArgumentException>(
-                () => SparkCode.PDF.ExtractPages.Extract(invalidPdf, 1, 1));
+                () => SparkCode.Pdf.ExtractPages.Extract(invalidPdf, 1, 1));
 
             Assert.Contains("valid PDF", exception.Message);
         }
@@ -77,7 +77,7 @@ namespace SparkCode.Tests.Pdf
             string inputPdf = PdfTestDocument.CreatePageRangeTestPdf(3);
 
             ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => SparkCode.PDF.ExtractPages.Extract(inputPdf, pageFrom, pageTo));
+                () => SparkCode.Pdf.ExtractPages.Extract(inputPdf, pageFrom, pageTo));
 
             Assert.Equal(parameterName, exception.ParamName);
         }
@@ -88,7 +88,7 @@ namespace SparkCode.Tests.Pdf
             string inputPdf = PdfTestDocument.CreatePageRangeTestPdf(3);
 
             ArgumentException exception = Assert.Throws<ArgumentException>(
-                () => SparkCode.PDF.ExtractPages.Extract(inputPdf, 3, 2));
+                () => SparkCode.Pdf.ExtractPages.Extract(inputPdf, 3, 2));
 
             Assert.Contains("less than or equal", exception.Message);
         }
@@ -99,7 +99,7 @@ namespace SparkCode.Tests.Pdf
             string inputPdf = PdfTestDocument.CreatePageRangeTestPdf(3);
 
             ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => SparkCode.PDF.ExtractPages.Extract(inputPdf, 4, 4));
+                () => SparkCode.Pdf.ExtractPages.Extract(inputPdf, 4, 4));
 
             Assert.Equal("pageFrom", exception.ParamName);
         }

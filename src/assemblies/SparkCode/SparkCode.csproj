@@ -182,6 +182,7 @@
     <Compile Include="Data\XmlToJson.cs" />
     <Compile Include="EntityExtensions.cs" />
     <Compile Include="Other\RunCSharp.cs" />
+    <Compile Include="Pdf\Info.cs" />
     <Compile Include="PDF\ExtractImages.cs" />
     <Compile Include="Pdf\ExtractPages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

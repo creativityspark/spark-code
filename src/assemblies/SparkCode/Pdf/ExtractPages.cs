@@ -3,7 +3,7 @@ using PdfSharp.Pdf.IO;
 using System;
 using System.IO;
 
-namespace SparkCode.PDF
+namespace SparkCode.Pdf
 {
     /// <summary>
     /// Extracts an inclusive range of pages from a Base64-encoded PDF document.

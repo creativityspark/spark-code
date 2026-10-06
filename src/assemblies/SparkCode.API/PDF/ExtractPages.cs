@@ -23,7 +23,7 @@ namespace SparkCode.API.Pdf
             string results;
             try
             {
-                results = SparkCode.PDF.ExtractPages.Extract(inputPdf, pageFrom, pageTo);
+                results = SparkCode.Pdf.ExtractPages.Extract(inputPdf, pageFrom, pageTo);
             }
             catch (Exception exception)
             {
