@@ -83,6 +83,97 @@ jobs:
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
 
+    # The registration tool and tests use Dataverse ServiceClient connection
+    # strings, which cannot reuse the PAC GitHub-federated authentication profile.
+    # Build a client-secret connection string for both consumers without logging it.
+    - name: Configure Dataverse SDK connection strings
+      shell: pwsh
+      env:
+        ENVIRONMENT_URL: ${{ vars.ENVIRONMENT_URL }}
+        CLIENT_ID: ${{ vars.CLIENT_ID }}
+        TENANT_ID: ${{ vars.TENANT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      run: |
+        $requiredVariables = @('ENVIRONMENT_URL', 'CLIENT_ID', 'TENANT_ID', 'CLIENT_SECRET')
+        foreach ($name in $requiredVariables) {
+          if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+            throw "Required GitHub Actions variable or secret is missing: $name"
+          }
+        }
+
+        $connectionString = "AuthType=ClientSecret;Url=$env:ENVIRONMENT_URL;ClientId=$env:CLIENT_ID;ClientSecret=$env:CLIENT_SECRET;TenantId=$env:TENANT_ID"
+        "DATAVERSE_CONNECTION_STRING_SPARK_CODE=$connectionString" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "DATAVERSE_CONNECTION_STRING_TESTS=$connectionString" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+    # Restore packages.config dependencies used by the legacy .NET Framework projects.
+    - name: Install NuGet CLI
+      uses: NuGet/setup-nuget@v2
+
+    - name: Restore SparkCode solution dependencies
+      shell: pwsh
+      run: nuget restore src/assemblies/SparkCode.sln
+
+    # Build the API assemblies and register the custom APIs before exercising them.
+    - name: Build and deploy SparkCode APIs
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $configuration = 'Release'
+        $apiProject = 'src/assemblies/SparkCode.API/SparkCode.API.csproj'
+        $registrationToolProject = 'src/assemblies/SparkCode.APIRegistrationTool/SparkCode.APIRegistrationTool.csproj'
+
+        if ([string]::IsNullOrWhiteSpace($env:DATAVERSE_CONNECTION_STRING_SPARK_CODE)) {
+          throw 'DATAVERSE_CONNECTION_STRING_SPARK_CODE is not set.'
+        }
+
+        Write-Output "Building SparkCode.API ($configuration)"
+        dotnet build $apiProject --configuration $configuration
+        if ($LASTEXITCODE -ne 0) {
+          throw "SparkCode.API build failed with exit code $LASTEXITCODE."
+        }
+
+        Write-Output "Building SparkCode.APIRegistrationTool ($configuration)"
+        dotnet build $registrationToolProject --configuration $configuration
+        if ($LASTEXITCODE -ne 0) {
+          throw "SparkCode.APIRegistrationTool build failed with exit code $LASTEXITCODE."
+        }
+
+        Write-Output 'Registering SparkCode APIs'
+        $registrationOutput = dotnet run --project $registrationToolProject --configuration $configuration --no-build 2>&1
+        $registrationExitCode = $LASTEXITCODE
+        $registrationOutput | ForEach-Object { Write-Output $_ }
+        if ($registrationExitCode -ne 0) {
+          throw "SparkCode.APIRegistrationTool failed with exit code $registrationExitCode."
+        }
+
+        if (($registrationOutput | Out-String) -match '(?i)\berror\b|\bexception\b|\bfailed\b') {
+          throw 'SparkCode.APIRegistrationTool output contains an error indicator.'
+        }
+
+        $package = Get-ChildItem -Path "src/assemblies/SparkCode.API/bin/$configuration" -Filter 'SparkCode.API.*.nupkg' -Recurse |
+          Sort-Object LastWriteTime -Descending |
+          Select-Object -First 1
+        if (-not $package) {
+          throw "No SparkCode.API NuGet package found under src/assemblies/SparkCode.API/bin/$configuration."
+        }
+
+        Write-Output "SparkCode.API package: $($package.FullName)"
+
+    # Both test projects include Dataverse-backed tests and use
+    # DATAVERSE_CONNECTION_STRING_TESTS configured above.
+    - name: Run SparkCode tests
+      shell: pwsh
+      run: |
+        dotnet test src/assemblies/SparkCode.Tests/SparkCode.Tests.csproj --configuration Release
+        if ($LASTEXITCODE -ne 0) {
+          throw "SparkCode.Tests failed with exit code $LASTEXITCODE."
+        }
+
+        dotnet test src/assemblies/SparkCode.API.Tests/SparkCode.API.Tests.csproj --configuration Release
+        if ($LASTEXITCODE -ne 0) {
+          throw "SparkCode.API.Tests failed with exit code $LASTEXITCODE."
+        }
+
     # Publishes all pending customizations in the environment before exporting,
     # ensuring the exported solution contains the latest changes.
     - name: publish-all
