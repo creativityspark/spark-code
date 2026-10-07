@@ -60,6 +60,8 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 - **RenderTemplate**: Renders a [Liquid](https://github.com/sebastienros/fluid) template using the provided JSON context data.
 - **RenderWebResourceTemplate**: Renders a [Liquid](https://github.com/sebastienros/fluid) template stored in a Dataverse web resource by sourcing context values from an optional Dataverse record and optional additional context.
 
+See [Liquid Templates](./templates.md) for a full explanation of Liquid templates, how to use them with these APIs, and the special tags they support.
+
 ## Text
 - **Base64Decode**: Converts a Base64 encoded string into a UTF8 string.
 - **Base64Encode**: Converts a UTF8 string into a Base64 encoded string.
