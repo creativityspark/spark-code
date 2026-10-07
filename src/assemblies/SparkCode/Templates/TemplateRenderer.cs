@@ -78,6 +78,7 @@ namespace SparkCode.Templates
         {
             var parser = new FluidParser();
             RegisterCustomTags(parser, service);
+            RegisterCustomBlocks(parser, service);
 
             var parsedTemplate = Parse(templateSource, parser);
             var visitor = new IdentifierVisitor();
@@ -303,6 +304,84 @@ namespace SparkCode.Templates
             });
         }
 
+
+        /// <summary>
+        /// Registers custom Fluid blocks supported by SparkCode templates.
+        /// Supported blocks: <c>fetchxml</c>.
+        /// </summary>
+        /// <param name="parser">The Fluid parser where custom blocks are registered.</param>
+        /// <param name="service">The Dataverse organization service used by block resolvers.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="parser"/> or <paramref name="service"/> is null.
+        /// </exception>
+        public static void RegisterCustomBlocks(FluidParser parser, IOrganizationService service)
+        {
+            if (parser == null)
+            {
+                throw new ArgumentNullException(nameof(parser));
+            }
+
+            if (service == null)
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
+
+            // Mirrors the Power Pages `fetchxml` Liquid tag:
+            // {% fetchxml resultVariable %}
+            // <fetch>...</fetch>
+            // {% endfetchxml %}
+            // The block body is rendered first (so Liquid expressions inside the query, e.g.
+            // {{ recordId }}, are resolved), then executed as a FetchXML query, and the
+            // resulting model is assigned to the identifier so it can be used later in the template.
+            parser.RegisterIdentifierBlock("fetchxml", async (identifier, statements, writer, encoder, ctx) =>
+            {
+                string fetchXml;
+                using (var bodyWriter = new System.IO.StringWriter())
+                {
+                    await statements.RenderStatementsAsync(bodyWriter, encoder, ctx);
+                    fetchXml = bodyWriter.ToString().Trim();
+                }
+
+                var fetchExpression = new FetchExpression(fetchXml);
+                var results = service.RetrieveMultiple(fetchExpression);
+
+                var resultModel = BuildFetchXmlResultModel(fetchXml, results);
+                ctx.SetValue(identifier, resultModel);
+
+                return Completion.Normal;
+            });
+        }
+
+        /// <summary>
+        /// Builds the model assigned to a <c>fetchxml</c> block's result variable, mirroring the
+        /// attributes exposed by the Power Pages <c>fetchxml</c> Liquid tag.
+        /// </summary>
+        /// <param name="fetchXml">The FetchXML query text that was executed.</param>
+        /// <param name="results">The <see cref="EntityCollection"/> returned by the query.</param>
+        /// <returns>
+        /// An <see cref="ExpandoObject"/> with an <c>xml</c> property containing the executed query,
+        /// and a <c>results</c> property exposing <c>entities</c>, <c>entityName</c>,
+        /// <c>totalRecordCount</c>, <c>totalRecordCountLimitExceeded</c>, <c>moreRecords</c>,
+        /// <c>pagingCookie</c>, and <c>minActiveRowVersion</c>.
+        /// </returns>
+        private static ExpandoObject BuildFetchXmlResultModel(string fetchXml, EntityCollection results)
+        {
+            dynamic resultsModel = new ExpandoObject();
+            resultsModel.entities = JsonConvert.DeserializeObject<List<ExpandoObject>>(results.ToJson())
+                ?? new List<ExpandoObject>();
+            resultsModel.entityName = results.EntityName;
+            resultsModel.totalRecordCount = results.TotalRecordCount;
+            resultsModel.totalRecordCountLimitExceeded = results.TotalRecordCountLimitExceeded;
+            resultsModel.moreRecords = results.MoreRecords;
+            resultsModel.pagingCookie = results.PagingCookie;
+            resultsModel.minActiveRowVersion = results.MinActiveRowVersion;
+
+            dynamic model = new ExpandoObject();
+            model.xml = fetchXml;
+            model.results = resultsModel;
+
+            return (ExpandoObject)model;
+        }
 
         /// <summary>
         /// Builds a template model by retrieving a Dataverse record and merging additional context values.

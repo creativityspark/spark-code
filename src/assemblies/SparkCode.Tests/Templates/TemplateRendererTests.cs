@@ -594,5 +594,143 @@ namespace SparkCode.Tests.Templates
 
             Assert.ThrowsAny<Exception>(() => TemplateRenderer.Render(template, model));
         }
+
+        [Fact]
+        public void RegisterCustomBlocks_NullParser_ThrowsArgumentNullException()
+        {
+            var service = new Context().Service;
+
+            Assert.Throws<ArgumentNullException>(() => TemplateRenderer.RegisterCustomBlocks(null, service));
+        }
+
+        [Fact]
+        public void RegisterCustomBlocks_NullService_ThrowsArgumentNullException()
+        {
+            var parser = new FluidParser();
+
+            Assert.Throws<ArgumentNullException>(() => TemplateRenderer.RegisterCustomBlocks(parser, null));
+        }
+
+        [Fact]
+        public void RegisterCustomBlocks_WithFetchXml_SetsResultVariableEntitiesAndCount()
+        {
+            var service = new Context().Service;
+            var accountName = $"TemplateRendererTests_{Guid.NewGuid():N}";
+            var accountId = service.Create(new Entity("account") { ["name"] = accountName });
+
+            try
+            {
+                var templateSource =
+@"{%- fetchxml resultVariable -%}
+<fetch top='50'>
+  <entity name='account'>
+    <attribute name='name' />
+    <filter>
+      <condition attribute='accountid' operator='eq' value='{{ accountId }}' />
+    </filter>
+  </entity>
+</fetch>
+{%- endfetchxml -%}
+{{ resultVariable.results.entities.size }}|{{ resultVariable.results.entities.first.name }}";
+
+                var parser = new FluidParser();
+                TemplateRenderer.RegisterCustomBlocks(parser, service);
+                var template = TemplateRenderer.Parse(templateSource, parser);
+
+                dynamic model = new ExpandoObject();
+                model.accountId = accountId.ToString();
+
+                var result = TemplateRenderer.Render(template, (ExpandoObject)model);
+
+                Assert.Equal($"1|{accountName}", result.Trim());
+            }
+            finally
+            {
+                service.Delete("account", accountId);
+            }
+        }
+
+        [Fact]
+        public void RegisterCustomBlocks_WithFetchXml_SupportsIteratingEntitiesInFor()
+        {
+            var service = new Context().Service;
+            var accountNamePrefix = $"TemplateRendererTests_{Guid.NewGuid():N}";
+            var firstAccountId = service.Create(new Entity("account") { ["name"] = $"{accountNamePrefix}_1" });
+            var secondAccountId = service.Create(new Entity("account") { ["name"] = $"{accountNamePrefix}_2" });
+
+            try
+            {
+                var templateSource =
+$@"{{%- fetchxml resultVariable -%}}
+<fetch top='50'>
+  <entity name='account'>
+    <attribute name='name' />
+    <filter>
+      <condition attribute='name' operator='like' value='{accountNamePrefix}%' />
+    </filter>
+    <order attribute='name' />
+  </entity>
+</fetch>
+{{%- endfetchxml -%}}
+{{%- for entity in resultVariable.results.entities -%}}{{{{ entity.name }}}};{{%- endfor -%}}";
+
+                var parser = new FluidParser();
+                TemplateRenderer.RegisterCustomBlocks(parser, service);
+                var template = TemplateRenderer.Parse(templateSource, parser);
+
+                var result = TemplateRenderer.Render(template, new ExpandoObject());
+
+                Assert.Equal($"{accountNamePrefix}_1;{accountNamePrefix}_2;", result.Trim());
+            }
+            finally
+            {
+                service.Delete("account", firstAccountId);
+                service.Delete("account", secondAccountId);
+            }
+        }
+
+        [Fact]
+        public void RegisterCustomBlocks_WithFetchXml_ExposesXmlAttribute()
+        {
+            var service = new Context().Service;
+            var templateSource =
+@"{%- fetchxml resultVariable -%}
+<fetch top='1'>
+  <entity name='account'>
+    <attribute name='accountid' />
+  </entity>
+</fetch>
+{%- endfetchxml -%}
+{{ resultVariable.xml }}";
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomBlocks(parser, service);
+            var template = TemplateRenderer.Parse(templateSource, parser);
+
+            var result = TemplateRenderer.Render(template, new ExpandoObject());
+
+            Assert.Contains("<fetch top='1'>", result);
+            Assert.Contains("<entity name='account'>", result);
+        }
+
+        [Fact]
+        public void RegisterCustomBlocks_WithInvalidFetchXml_ThrowsException()
+        {
+            var service = new Context().Service;
+            var templateSource =
+@"{% fetchxml resultVariable %}
+<fetch>
+  <entity name='csp_non_existing_table'>
+    <attribute name='name' />
+  </entity>
+</fetch>
+{% endfetchxml %}";
+
+            var parser = new FluidParser();
+            TemplateRenderer.RegisterCustomBlocks(parser, service);
+            var template = TemplateRenderer.Parse(templateSource, parser);
+
+            Assert.ThrowsAny<Exception>(() => TemplateRenderer.Render(template, new ExpandoObject()));
+        }
     }
 }
