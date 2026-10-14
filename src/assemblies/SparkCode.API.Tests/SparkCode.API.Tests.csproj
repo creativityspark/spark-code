@@ -228,6 +228,7 @@
     <Compile Include="Text\RegexMatchesTests.cs" />
     <Compile Include="Text\RegexReplaceTests.cs" />
     <Compile Include="Text\ReplaceParamsTests.cs" />
+    <Compile Include="Zip\AppendFileTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

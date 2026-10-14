@@ -119,6 +119,7 @@
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.FileSystem.AccessControl, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.FileSystem.AccessControl.5.0.0\lib\net461\System.IO.FileSystem.AccessControl.dll</HintPath>
     </Reference>
@@ -192,6 +193,7 @@
     <Compile Include="Templates\TemplateRenderer.cs" />
     <Compile Include="Text\ParseURL.cs" />
     <Compile Include="Text\ReplaceParams.cs" />
+    <Compile Include="Zip\AppendFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
