@@ -178,6 +178,7 @@
     <Compile Include="Data\Join.cs" />
     <Compile Include="Data\ParseCsv.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="Conversions.cs" />
     <Compile Include="DatasetExtensions.cs" />
     <Compile Include="Data\Select.cs" />
     <Compile Include="Data\XmlToJson.cs" />
