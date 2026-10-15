@@ -206,8 +206,11 @@
     <Compile Include="Other\HttpRequestTests.cs" />
     <Compile Include="PowerApps\GetOrganizationUrlTests.cs" />
     <Compile Include="PowerApps\GetOrganizationDetailsTests.cs" />
+    <Compile Include="PowerApps\GetCanvasAppAttributeTests.cs" />
+    <Compile Include="PowerApps\GetMDAAttributeTests.cs" />
     <Compile Include="Other\RunCSharpTests.cs" />
     <Compile Include="..\TestSupport\Pdf.cs" />
+    <Compile Include="..\TestSupport\TemporaryWebResource.cs" />
     <Compile Include="PDF\ExtractImagesTests.cs" />
     <Compile Include="PDF\ExtractPagesTests.cs" />
     <Compile Include="PDF\InfoTests.cs" />

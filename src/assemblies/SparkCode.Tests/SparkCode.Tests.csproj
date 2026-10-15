@@ -225,6 +225,7 @@
     <Compile Include="EntityExtensionTests.cs" />
     <Compile Include="Other\RunCSharpTests.cs" />
     <Compile Include="..\TestSupport\Pdf.cs" />
+    <Compile Include="..\TestSupport\TemporaryWebResource.cs" />
     <Compile Include="PDF\ExtractImagesTests.cs" />
     <Compile Include="Pdf\ExtractPagesTests.cs" />
     <Compile Include="PDF\InfoTests.cs" />

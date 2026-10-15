@@ -2,6 +2,7 @@ using Fluid;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using SparkCode.Templates;
+using SparkCode.TestSupport;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -11,7 +12,7 @@ using Xunit;
 
 namespace SparkCode.Tests.Templates
 {
-    public class TemplateRendererTests
+    public class TemplateRendererTests : IDisposable
     {
         private static string GetFirstAccountId()
         {
@@ -105,43 +106,21 @@ namespace SparkCode.Tests.Templates
             return uniqueName;
         }
 
-        private static string GetRenderableWebResourceName(IOrganizationService service)
+        private readonly List<TemporaryWebResource> _temporaryWebResources = new List<TemporaryWebResource>();
+
+        public void Dispose()
         {
-            var query = new QueryExpression("webresource")
+            foreach (var webResource in _temporaryWebResources)
             {
-                ColumnSet = new ColumnSet("name", "content"),
-                Criteria = new FilterExpression
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression("name", ConditionOperator.NotNull),
-                        new ConditionExpression("content", ConditionOperator.NotNull),
-                        new ConditionExpression("webresourcetype", ConditionOperator.Equal, 1)
-                    }
-                },
-                TopCount = 50
-            };
-
-            var webResources = service.RetrieveMultiple(query);
-
-            foreach (var webResource in webResources.Entities)
-            {
-                var candidateName = webResource.GetAttributeValue<string>("name");
-                var encodedContent = webResource.GetAttributeValue<string>("content");
-
-                if (string.IsNullOrWhiteSpace(candidateName) || string.IsNullOrWhiteSpace(encodedContent))
-                {
-                    continue;
-                }
-
-                var decodedContent = Encoding.UTF8.GetString(Convert.FromBase64String(encodedContent));
-                if (decodedContent.Contains("{{"))
-                {
-                    return candidateName;
-                }
+                webResource.Dispose();
             }
+        }
 
-            throw new InvalidOperationException("No HTML web resource containing a Liquid template (with '{{') was found in the test environment.");
+        private string GetRenderableWebResourceName(IOrganizationService service)
+        {
+            var webResource = TemporaryWebResource.Create(service);
+            _temporaryWebResources.Add(webResource);
+            return webResource.Name;
         }
 
         [Fact]

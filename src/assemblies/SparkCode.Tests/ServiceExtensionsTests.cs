@@ -1,6 +1,8 @@
 using Microsoft.Xrm.Sdk;
 using SparkCode;
+using SparkCode.TestSupport;
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using Xunit;
 using Microsoft.Xrm.Sdk.Query;
@@ -8,7 +10,7 @@ using System.Text;
 
 namespace SparkCode.Tests
 {
-    public class ServiceExtensionsTests
+    public class ServiceExtensionsTests : IDisposable
     {
         [Fact]
         public void GetTableLogicalName_WithAccountEtc_ReturnsAccount()
@@ -421,30 +423,26 @@ namespace SparkCode.Tests
             return result.Entities[0];
         }
 
-        private static Entity GetExistingWebResource(IOrganizationService service)
+        private readonly List<TemporaryWebResource> _temporaryWebResources = new List<TemporaryWebResource>();
+
+        public void Dispose()
         {
-            var query = new QueryExpression("webresource")
+            foreach (var webResource in _temporaryWebResources)
             {
-                ColumnSet = new ColumnSet("webresourceid", "name", "content"),
-                Criteria = new FilterExpression
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression("name", ConditionOperator.NotNull),
-                        new ConditionExpression("content", ConditionOperator.NotNull)
-                    }
-                },
-                TopCount = 1
+                webResource.Dispose();
+            }
+        }
+
+        private Entity GetExistingWebResource(IOrganizationService service)
+        {
+            var temporaryWebResource = TemporaryWebResource.Create(service);
+            _temporaryWebResources.Add(temporaryWebResource);
+
+            return new Entity("webresource", temporaryWebResource.Id)
+            {
+                ["name"] = temporaryWebResource.Name,
+                ["content"] = temporaryWebResource.Content
             };
-
-            var result = service.RetrieveMultiple(query);
-            Assert.True(result.Entities.Count > 0, "No web resource records with content found in webresource.");
-
-            var webResource = result.Entities[0];
-            var rawContent = webResource.GetAttributeValue<string>("content");
-            Assert.False(string.IsNullOrWhiteSpace(rawContent), "The selected web resource has empty content.");
-
-            return webResource;
         }
     }
 }
