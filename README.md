@@ -34,9 +34,10 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 
 ## Dataverse
 - **CalculateRollupField**: Triggers Dataverse rollup field recalculation for a target record.
+- **CountFetchXml**: Executes a FetchXML query and returns the number of records it matches.
 - **GetViewData**: Retrieves records from a Dataverse saved view by ViewId or by TableName and ViewName.
 - **PublishWebResource**: Publishes a Dataverse web resource by name.
-- **RunFetchXml**: A plugin that executes a FetchXML query and returns the results.
+- **RunFetchXml**: Executes a FetchXML query and returns the results.
 - **RunSQL**: Executes a SQL query against the Dataverse TDS endpoint and returns the results.
 
 ## Data
@@ -54,6 +55,12 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 - **ExtractPages**: Accepts a Base64-encoded PDF (`InputPdf`) and one-based `PageFrom` / `PageTo` values, extracts that inclusive page range, and returns the resulting PDF as Base64 in `Results`.
 - **Info**: Returns the page count, PDF version, and available document metadata from a Base64-encoded PDF.
 
+## PowerApps
+- **GetCanvasAppAttribute**: Returns the string value of an attribute of a canvas app, given the app's unique name.
+- **GetMDAAttribute**: Returns the string value of an attribute of a model-driven app, given the app's unique name.
+- **GetOrganizationDetails**: Returns the details of the current organization, including its endpoints.
+- **GetOrganizationUrl**: Returns the URL of the current environment for a given endpoint type (`WebApplication` by default, `OrganizationService` or `OrganizationDataService`).
+
 ## Templates
 - **GetFrontMatter**: Extracts YAML front matter from a text input and returns it together with the remaining body.
 - **RenderDataverseTemplate**: Renders a [Liquid](https://github.com/sebastienros/fluid) template by sourcing context values from an optional Dataverse record and optional additional context.
@@ -70,6 +77,9 @@ See [Liquid Templates](./templates.md) for a full explanation of Liquid template
 - **RegexMatches**: Captures all matches of a regular expression over an input text.
 - **RegexReplace**: Runs a regular expression replacement over the provided input text.
 - **ReplaceParams**: Replaces parameter placeholders in text with provided values.
+
+## Zip
+- **AppendFile**: Adds a Base64 file to a zip file at the given path. If no zip file is provided, a new one is created.
 
 # Security Notes
 Take these recommendations into account when using the included custom APIs:
