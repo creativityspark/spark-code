@@ -204,6 +204,7 @@
     <Compile Include="Data\JoinTests.cs" />
     <Compile Include="Dataverse\PublishWebResourceTests.cs" />
     <Compile Include="Other\HttpRequestTests.cs" />
+    <Compile Include="PowerApps\GetOrganizationUrlTests.cs" />
     <Compile Include="Other\RunCSharpTests.cs" />
     <Compile Include="..\TestSupport\Pdf.cs" />
     <Compile Include="PDF\ExtractImagesTests.cs" />
