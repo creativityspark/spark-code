@@ -466,12 +466,12 @@ namespace SparkCode
         }
 
         /// <summary>
-        /// Retrieves all current organization details as a key-value dictionary.
+        /// Retrieves the details of the current organization.
         /// </summary>
         /// <param name="service">Dataverse organization service instance.</param>
-        /// <returns>A dictionary containing organization detail keys and values.</returns>
+        /// <returns>The <see cref="Microsoft.Xrm.Sdk.Organization.OrganizationDetail"/> of the current organization.</returns>
         /// <exception cref="Exception">Thrown when organization details cannot be retrieved from Dataverse.</exception>
-        private static Microsoft.Xrm.Sdk.Organization.OrganizationDetail GetOrganizationDetails(this IOrganizationService service)
+        public static Microsoft.Xrm.Sdk.Organization.OrganizationDetail GetOrganizationDetails(this IOrganizationService service)
         {
             var request = new RetrieveCurrentOrganizationRequest();
             var response = (RetrieveCurrentOrganizationResponse)service.Execute(request);
