@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Type">
+  <description default="Endpoint type. Any value of Microsoft.Xrm.Sdk.Organization.EndpointType (WebApplication, OrganizationService, OrganizationDataService). Defaults to WebApplication.">
+    <label description="Endpoint type. Any value of Microsoft.Xrm.Sdk.Organization.EndpointType (WebApplication, OrganizationService, OrganizationDataService). Defaults to WebApplication." languagecode="1033" />
+  </description>
+  <displayname default="Type">
+    <label description="Type" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>1</isoptional>
+  <name>PowerApps.GetOrganizationUrl-in-Type</name>
+  <type>10</type>
+</customapirequestparameter>

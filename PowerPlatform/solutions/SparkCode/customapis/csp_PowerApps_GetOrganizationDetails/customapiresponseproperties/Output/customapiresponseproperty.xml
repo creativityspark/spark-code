@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Output">
+  <description default="Details of the current organization, including its endpoints.">
+    <label description="Details of the current organization, including its endpoints." languagecode="1033" />
+  </description>
+  <displayname default="Output">
+    <label description="Output" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>PowerApps.GetOrganizationDetails-out-Output</name>
+  <type>3</type>
+</customapiresponseproperty>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_PowerApps_GetMDAAttribute">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="A plugin that returns the string value of an attribute of a model-driven app.">
+    <label description="A plugin that returns the string value of an attribute of a model-driven app." languagecode="1033" />
+  </description>
+  <displayname default="Get Model-Driven App Attribute">
+    <label description="Get Model-Driven App Attribute" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>PowerApps.GetMDAAttribute</name>
+  <plugintypeid>
+    <plugintypeexportkey>219A323AC3AF223568E88863EE92F90179AA5C80E239A432AEA5B280D7D75DB0</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

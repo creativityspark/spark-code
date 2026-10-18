@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Pdf_Info">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Extracts page count, PDF version, and available document metadata from a Base64-encoded PDF.">
+    <label description="Extracts page count, PDF version, and available document metadata from a Base64-encoded PDF." languagecode="1033" />
+  </description>
+  <displayname default="PDF Info">
+    <label description="PDF Info" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Pdf.Info</name>
+  <plugintypeid>
+    <plugintypeexportkey>DFF682BC35E1C21DA436E51108BFAAB7199CE54F28974F79929944CDC317EF5C</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

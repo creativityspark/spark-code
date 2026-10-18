@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="App">
+  <description default="Unique name of the model-driven app whose attribute needs to be retrieved.">
+    <label description="Unique name of the model-driven app whose attribute needs to be retrieved." languagecode="1033" />
+  </description>
+  <displayname default="App">
+    <label description="App" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>PowerApps.GetMDAAttribute-in-App</name>
+  <type>10</type>
+</customapirequestparameter>

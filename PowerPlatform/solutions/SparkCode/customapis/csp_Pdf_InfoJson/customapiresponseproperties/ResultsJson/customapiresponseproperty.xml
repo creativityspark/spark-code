@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="ResultsJson">
+  <description default="PDF page count, version, and available document metadata.">
+    <label description="PDF page count, version, and available document metadata." languagecode="1033" />
+  </description>
+  <displayname default="Results (JSON)">
+    <label description="Results (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Pdf.Info-out-ResultsJson</name>
+  <type>10</type>
+</customapiresponseproperty>

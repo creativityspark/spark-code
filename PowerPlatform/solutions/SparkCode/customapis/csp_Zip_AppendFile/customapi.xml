@@ -1,0 +1,18 @@
+<customapi uniquename="csp_Zip_AppendFile">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Adds a file to a zip file. If no zip file is provided, a new one is created.">
+    <label description="Adds a file to a zip file. If no zip file is provided, a new one is created." languagecode="1033" />
+  </description>
+  <displayname default="Append File To Zip">
+    <label description="Append File To Zip" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>Zip.AppendFile</name>
+  <plugintypeid>
+    <plugintypeexportkey>792A37EA92F2721F28F234C81B6798DFA5ACA8CDEA567DD69D0166A299152C67</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Output">
+  <description default="Base64 string of the resulting zip file.">
+    <label description="Base64 string of the resulting zip file." languagecode="1033" />
+  </description>
+  <displayname default="Output">
+    <label description="Output" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Zip.AppendFile-out-Output</name>
+  <type>10</type>
+</customapiresponseproperty>

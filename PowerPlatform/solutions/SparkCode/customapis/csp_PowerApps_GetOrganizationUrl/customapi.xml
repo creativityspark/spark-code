@@ -1,0 +1,18 @@
+<customapi uniquename="csp_PowerApps_GetOrganizationUrl">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="A plugin that returns the URL of the current environment for a given endpoint type.">
+    <label description="A plugin that returns the URL of the current environment for a given endpoint type." languagecode="1033" />
+  </description>
+  <displayname default="Get Organization Url">
+    <label description="Get Organization Url" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>PowerApps.GetOrganizationUrl</name>
+  <plugintypeid>
+    <plugintypeexportkey>5B2939E044ECD650B5F6CA8C9789FD09A0EEE4DD03F869472176125DC0A6A339</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

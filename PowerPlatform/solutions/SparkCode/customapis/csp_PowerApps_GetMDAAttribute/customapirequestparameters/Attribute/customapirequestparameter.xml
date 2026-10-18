@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="Attribute">
+  <description default="Name of the attribute that needs to be retrieved.">
+    <label description="Name of the attribute that needs to be retrieved." languagecode="1033" />
+  </description>
+  <displayname default="Attribute">
+    <label description="Attribute" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>PowerApps.GetMDAAttribute-in-Attribute</name>
+  <type>10</type>
+</customapirequestparameter>

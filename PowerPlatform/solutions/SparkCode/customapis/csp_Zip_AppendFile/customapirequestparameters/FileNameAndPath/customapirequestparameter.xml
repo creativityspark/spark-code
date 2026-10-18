@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="FileNameAndPath">
+  <description default="Name and relative path of the file inside the zip file.">
+    <label description="Name and relative path of the file inside the zip file." languagecode="1033" />
+  </description>
+  <displayname default="FileNameAndPath">
+    <label description="FileNameAndPath" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Zip.AppendFile-in-FileNameAndPath</name>
+  <type>10</type>
+</customapirequestparameter>

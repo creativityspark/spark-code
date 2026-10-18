@@ -1,0 +1,12 @@
+<customapirequestparameter uniquename="File">
+  <description default="Base64 string containing the file that will be added to the zip file.">
+    <label description="Base64 string containing the file that will be added to the zip file." languagecode="1033" />
+  </description>
+  <displayname default="File">
+    <label description="File" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isoptional>0</isoptional>
+  <name>Zip.AppendFile-in-File</name>
+  <type>10</type>
+</customapirequestparameter>

@@ -1,0 +1,18 @@
+<customapi uniquename="csp_PowerApps_GetOrganizationDetailsJson">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="A plugin that returns the details of the current organization.">
+    <label description="A plugin that returns the details of the current organization." languagecode="1033" />
+  </description>
+  <displayname default="Get Organization Details (JSON)">
+    <label description="Get Organization Details (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>PowerApps.GetOrganizationDetailsJson</name>
+  <plugintypeid>
+    <plugintypeexportkey>33075964A5D83DDF85EAB6419A92D5B49B4811C72AF428B857FF289AB71BA310</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

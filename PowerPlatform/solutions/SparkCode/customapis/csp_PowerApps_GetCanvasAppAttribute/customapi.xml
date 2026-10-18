@@ -1,0 +1,18 @@
+<customapi uniquename="csp_PowerApps_GetCanvasAppAttribute">
+  <allowedcustomprocessingsteptype>0</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="A plugin that returns the string value of an attribute of a canvas app.">
+    <label description="A plugin that returns the string value of an attribute of a canvas app." languagecode="1033" />
+  </description>
+  <displayname default="Get Canvas App Attribute">
+    <label description="Get Canvas App Attribute" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>PowerApps.GetCanvasAppAttribute</name>
+  <plugintypeid>
+    <plugintypeexportkey>0B403818BF7A6233FC13B295DDD46C8A09843FE26BE93734DBE99D8CA5011165</plugintypeexportkey>
+  </plugintypeid>
+  <workflowsdkstepenabled>1</workflowsdkstepenabled>
+</customapi>

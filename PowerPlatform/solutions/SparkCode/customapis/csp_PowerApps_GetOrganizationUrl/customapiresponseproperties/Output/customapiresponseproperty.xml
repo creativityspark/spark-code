@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="Output">
+  <description default="The url of the current environment for the specified endpoint type.">
+    <label description="The url of the current environment for the specified endpoint type." languagecode="1033" />
+  </description>
+  <displayname default="Output">
+    <label description="Output" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>PowerApps.GetOrganizationUrl-out-Output</name>
+  <type>10</type>
+</customapiresponseproperty>

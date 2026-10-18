@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="OutputJson">
+  <description default="Details of the current organization, including its endpoints.">
+    <label description="Details of the current organization, including its endpoints." languagecode="1033" />
+  </description>
+  <displayname default="Output (JSON)">
+    <label description="Output (JSON)" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>PowerApps.GetOrganizationDetails-out-OutputJson</name>
+  <type>10</type>
+</customapiresponseproperty>
