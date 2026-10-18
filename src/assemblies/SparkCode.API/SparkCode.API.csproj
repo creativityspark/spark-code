@@ -21,7 +21,7 @@
     <Company>Creativity Spark</Company>
     <Description>Custom APIs library for Dataverse</Description>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>C:\src\spark-code\src\assemblies\Key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Key.snk</AssemblyOriginatorKeyFile>
     <Copyright>2026 Creativity Spark Consulting SL</Copyright>
     <Title>SparkCode.API</Title>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
