@@ -45,6 +45,47 @@ namespace SparkCode.API.Tests.Other
         }
 
         [Fact]
+        public void RunCSharp_WithLog_Returns_Logs()
+        {
+            var service = new Context().Service;
+            var code = "output = \"Hello \" + input; Log(output); Log(\"done\");";
+
+            var output = service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+            {
+                Parameters = new ParameterCollection
+                {
+                    { "Code", code },
+                    { "InputParameters", "Cris" }
+                }
+            });
+
+            Assert.Equal("Hello Cris", (string)output["Outputs"]);
+            Assert.True(output.Results.Contains("Logs"), "Expected output parameter 'Logs' was not returned.");
+            Assert.Equal("Hello Cris\ndone", (string)output["Logs"]);
+        }
+
+        [Fact]
+        public void RunCSharp_RuntimeError_Includes_Logs_In_Exception()
+        {
+            var service = new Context().Service;
+            var code = "Log(\"before failure\"); throw new InvalidOperationException(\"boom\");";
+
+            var exception = Assert.ThrowsAny<Exception>(() =>
+            {
+                service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+                {
+                    Parameters = new ParameterCollection
+                    {
+                        { "Code", code }
+                    }
+                });
+            });
+
+            Assert.Contains("boom", exception.Message);
+            Assert.Contains("before failure", exception.Message);
+        }
+
+        [Fact]
         public void RunCSharp_WithUsingStatementsAndReferencedAssemblies_Returns_TransformedValue()
         {
             var service = new Context().Service;

@@ -4,7 +4,7 @@ using System;
 namespace SparkCode.API.Other
 {
     /// <displayName>Run CSharp</displayName>
-    /// <summary>Compiles and executes C# 4.0 code at runtime, passing optional typed input/output definitions, input JSON, and custom assembly/usings.</summary>
+    /// <summary>Compiles and executes C# 4.0 code at runtime, passing optional typed input/output definitions, input JSON, and custom assembly/usings. The code can call Log(string message) to collect log messages returned in Logs.</summary>
     /// <param name="Code" type="string">C# code to execute inside the generated Main method body.</param>
     /// <param name="InputParameters" type="string" optional="true">Optional serialized JSON string passed to the runtime code.</param>
     /// <param name="Types" type="string" optional="true">Optional C# type declarations available to the runtime code and conversion pipeline.</param>
@@ -13,8 +13,12 @@ namespace SparkCode.API.Other
     /// <param name="ReferencedAssemblies" type="string" optional="true">Optional comma-separated assembly list added as compiler references.</param>
     /// <param name="UsingStatements" type="string" optional="true">Optional raw C# using statements appended before compilation.</param>
     /// <param name="Outputs" type="string" direction="output">Execution result returned by the runtime Main method.</param>
+    /// <param name="Logs" type="string" direction="output">Messages written by the code via Log(message), one per line.</param>
     /// <example>
     /// Untyped mode: set Code to "output = \"hello\";" and optionally read input from variable input.
+    /// Logging: call Log(message) from Code (or CSharpRunner.Log(message) from classes declared in Types), e.g.
+    /// "output = \"Hello \" + input; Log(output);" returns each logged message on its own line in Logs.
+    /// If the code throws at runtime, the error message includes the messages logged before the failure.
     /// Typed mode: set Types to class declarations, InputTypeName to your input class, and OutputTypeName to your output class.
     /// InputParameters "{\"MyProperty\":123,\"MyValue\":\"abc\"}" with InputTypeName="InputType" will deserialize into InputType before code execution.
     /// OutputTypeName="OutputType" returns Outputs as serialized JSON for custom types.
@@ -43,17 +47,20 @@ namespace SparkCode.API.Other
             string usingStatements = ctx.GetInputParameter<string>("UsingStatements", false, null);
 
             // Run Logic
-                string outputs = SparkCode.Other.RunCSharp.Execute(
+            string logs;
+            string outputs = SparkCode.Other.RunCSharp.Execute(
                 code,
                 inputParameters,
                 types,
                 inputTypeName,
                 outputTypeName,
                 referencedAssemblies,
-                usingStatements);
+                usingStatements,
+                out logs);
 
             // API Outputs
             ctx.SetOutputParameter("Outputs", outputs);
+            ctx.SetOutputParameter("Logs", logs);
         }
     }
 }

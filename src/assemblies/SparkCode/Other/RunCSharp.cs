@@ -63,6 +63,35 @@ namespace SparkCode.Other
             string referencedAssemblies,
             string usingStatements)
         {
+            string logs;
+            return Execute(code, inputParameters, types, inputTypeName, outputTypeName, referencedAssemblies, usingStatements, out logs);
+        }
+
+        /// <summary>
+        /// Builds a temporary assembly for the provided code and executes the generated <c>Run</c> method.
+        /// The code can call <c>Log(string message)</c> (or <c>CSharpRunner.Log</c> from custom types) to collect log messages.
+        /// </summary>
+        /// <param name="code">Code block that assigns a value to <c>output</c>.</param>
+        /// <param name="inputParameters">Input value passed to the generated method.</param>
+        /// <param name="types">Optional custom type definitions used by input or output types.</param>
+        /// <param name="inputTypeName">Declared input type name for the generated method signature.</param>
+        /// <param name="outputTypeName">Declared output type name for the generated method signature.</param>
+        /// <param name="referencedAssemblies">Optional comma-separated additional assembly references.</param>
+        /// <param name="usingStatements">Optional using directives appended to the generated code.</param>
+        /// <param name="logs">Messages collected through <c>Log</c>, separated by new lines; <c>null</c> when nothing was logged.</param>
+        /// <returns>Output value serialized as string for API transport.</returns>
+        /// <exception cref="Exception">Thrown when compilation, type resolution, conversion, or execution fails. Runtime errors include the collected logs.</exception>
+        public static string Execute(
+            string code,
+            string inputParameters,
+            string types,
+            string inputTypeName,
+            string outputTypeName,
+            string referencedAssemblies,
+            string usingStatements,
+            out string logs)
+        {
+            logs = null;
             inputTypeName = string.IsNullOrWhiteSpace(inputTypeName) ? "string" : inputTypeName;
             outputTypeName = string.IsNullOrWhiteSpace(outputTypeName) ? "string" : outputTypeName;
 
@@ -71,6 +100,7 @@ namespace SparkCode.Other
 
             string[] codeToBuild = {
                 "using System;" + 
+                "using System.Collections.Generic;" +
                 "using System.Dynamic;" + 
                 "using Newtonsoft.Json;" + 
                 "using Newtonsoft.Json.Linq;" +
@@ -78,6 +108,9 @@ namespace SparkCode.Other
                 "namespace SparkCode {" +
                 (types ?? string.Empty) +
                 "   internal static class CSharpRunner {" +
+                "       private static readonly List<string> __logs = new List<string>();" +
+                "       public static void Log(string message) { __logs.Add(message); }" +
+                "       public static List<string> GetLogs() { return __logs; }" +
                 "       public static " + outputTypeName + " Run(" + inputTypeName + " input) {" +
                 "           " + outputTypeName + " output = default(" + outputTypeName + ");" +
                 code +
@@ -126,9 +159,44 @@ namespace SparkCode.Other
             Type inputType = ResolveRequestedType(inputTypeName, compilerResults.CompiledAssembly);
             Type outputType = ResolveRequestedType(outputTypeName, compilerResults.CompiledAssembly);
             object convertedInput = ConvertInputValue(inputParameters, inputType);
-            object objResult = methodInfo.Invoke(null, new object[] { convertedInput });
+            MethodInfo getLogsMethod = moduleType.GetMethod("GetLogs");
 
+            object objResult;
+            try
+            {
+                objResult = methodInfo.Invoke(null, new object[] { convertedInput });
+            }
+            catch (TargetInvocationException ex)
+            {
+                Exception inner = ex.InnerException ?? ex;
+                string collectedLogs = JoinLogs(getLogsMethod);
+                string message = "Runtime Error: " + inner.Message;
+                if (collectedLogs != null)
+                {
+                    message += Environment.NewLine + "Logs:" + Environment.NewLine + collectedLogs;
+                }
+
+                throw new Exception(message, inner);
+            }
+
+            logs = JoinLogs(getLogsMethod);
             return ConvertOutputValue(objResult, outputType);
+        }
+
+        /// <summary>
+        /// Reads the messages collected by the generated <c>Log</c> method.
+        /// </summary>
+        /// <param name="getLogsMethod">Generated <c>GetLogs</c> method.</param>
+        /// <returns>Messages separated by new lines, or <c>null</c> when nothing was logged.</returns>
+        private static string JoinLogs(MethodInfo getLogsMethod)
+        {
+            var collected = getLogsMethod.Invoke(null, null) as List<string>;
+            if (collected == null || collected.Count == 0)
+            {
+                return null;
+            }
+
+            return string.Join("\n", collected);
         }
 
         /// <summary>

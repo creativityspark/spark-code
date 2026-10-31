@@ -39,6 +39,15 @@ namespace SparkCode
 
     internal static class CSharpRunner
     {
+        private static readonly System.Collections.Generic.List<string> __logs = new System.Collections.Generic.List<string>();
+
+        // Available to your code (and to your types via CSharpRunner.Log); returned in the Logs output parameter
+        public static void Log(string message)
+        {
+            __logs.Add(message);
+            Console.WriteLine("[Log] " + message);
+        }
+
         static public outputType Run(inputType input)
         {
             outputType output = default(outputType);
@@ -46,6 +55,7 @@ namespace SparkCode
             // Step 4: add your code here
             // On the custom API, this goes in the Code parameter
             output = "Hello " + input;
+            Log(output);
 
             // End of custom code
             return output;
