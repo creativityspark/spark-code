@@ -6,7 +6,7 @@
       <LocalizedName description="Spark Code Tests" languagecode="1033" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0.0.1</Version>
+    <Version>1.0.0.2</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>CreativitySpark</UniqueName>
@@ -90,34 +90,8 @@
     </RootComponents>
     <MissingDependencies>
       <MissingDependency>
-        <Required type="2" schemaName="csp_aisummary" displayName="AI Summary" parentSchemaName="account" parentDisplayName="Account" solution="Active" />
-        <Dependent type="60" displayName="Account" parentDisplayName="Account" id="{8448b78f-8f42-454e-8e2a-f8196b0419af}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="60" displayName="account contact card" parentDisplayName="Contact" solution="msdynce_AppCommon (9.0.4.0066)" id="{29de27bc-a257-4f29-99cf-bab4a84e688f}">
-          <package appName="msdynce_AppCommon" version="9.0.26094.10001">msdynce_AppCommonAnchor (9.0.26094.10001)</package>
-        </Required>
-        <Dependent type="60" displayName="Account" parentDisplayName="Account" id="{8448b78f-8f42-454e-8e2a-f8196b0419af}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="60" displayName="Account" parentDisplayName="Account" solution="msdynce_AppCommon (9.0.4.0066)" id="{8448b78f-8f42-454e-8e2a-f8196b0419af}">
-          <package appName="msdynce_AppCommon" version="9.0.26094.10001">msdynce_AppCommonAnchor (9.0.26094.10001)</package>
-        </Required>
-        <Dependent type="60" displayName="Account" parentDisplayName="Account" id="{8448b78f-8f42-454e-8e2a-f8196b0419af}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="61" schemaName="csp_/js/tools.js" displayName="csp_/js/tools.js" solution="Active" />
-        <Dependent type="60" displayName="Account" parentDisplayName="Account" id="{8448b78f-8f42-454e-8e2a-f8196b0419af}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="61" schemaName="msdyn_/Images/AppModule_Default_Icon.png" displayName="msdyn_/Images/AppModule_Default_Icon.png" solution="AppModuleWebResources (2.5)" />
         <Dependent type="80" schemaName="csp_SparkCodeTests" displayName="Spark Code Tests" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="66" schemaName="MscrmControls.CardFeedContainer.CardFeedContainer" displayName="MscrmControls.CardFeedContainer.CardFeedContainer" solution="BaseCustomControlsCore (9.0.2609.4005)">
-          <package appName="Base Custom Controls" version="9.0.2609.4005">BaseCustomControlsCore (9.0.2609.4005)</package>
-        </Required>
-        <Dependent type="60" displayName="Account" parentDisplayName="Account" id="{8448b78f-8f42-454e-8e2a-f8196b0419af}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="connectionreference" displayName="csp_sharedcommondataserviceforapps_a3be6" solution="Active" id.connectionreferencelogicalname="csp_sharedcommondataserviceforapps_a3be6" />
