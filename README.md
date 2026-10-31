@@ -2,7 +2,11 @@
 Code components for the Power Platform and Dynamics 365.
 
 # Installation
-Install the managed solution from this repository's Releases page in your target Dataverse environment.
+Install the managed solution `SparkCode_managed.zip` from this repository's Releases page in your target Dataverse environment.
+
+The Releases page also includes `SparkCodeTest.zip`, an unmanaged solution containing example flows and apps that use the **SparkCode** APIs. Import it into a **development or test** environment after installing the managed **SparkCode** solution.
+
+> **Warning:** Do not deploy the unmanaged **SparkCodeTest** solution to a **production** environment.
 
 # Custom APIs
 Dataverse Custom APIs are server-side actions exposed through the Dataverse Web API and SDK. They accept named parameters, run server logic, and return JSON responses.

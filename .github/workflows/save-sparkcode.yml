@@ -1,4 +1,4 @@
-# Export solution from a DEV environment
+# Export solutions from a DEV environment
 # Extracts, commits, and pushes to source control with the changes
 # More info:
 # - https://www.azureguru.net/configuring-federated-credentials-in-microsoft-azure-using-github-actions
@@ -7,24 +7,22 @@
 # - https://github.com/marketplace/actions/powerplatform-actions
 
 name: Save SparkCode
-run-name: Save ${{ github.event.inputs.solution_name }}
+run-name: Save SparkCode
 
 on:
   workflow_dispatch:
     inputs:
-      solution_name:
-        description: Solution to save.
-        required: true
-        default: SparkCode
       commit_message:
         description: Commit Message. Include task IDs here.
         required: true
       create_release:
         type: boolean
-        description: Tick this box to tag the commit and create a draft GitHub release with the managed solution attached.
+        description: Tick this box to tag the commit and create a draft GitHub release with the managed solution and unmanaged examples attached.
         default: false
 
 env:
+  solution_name: SparkCode
+  test_solution_name: SparkCodeTest
   VERSION_UPDATE_STRATEGY: revision
   EXPORT_FOLDER: out/export/
   SOLUTIONS_FOLDER: PowerPlatform/solutions/
@@ -184,39 +182,55 @@ jobs:
         tenant-id: ${{vars.TENANT_ID}}
         run-asynchronously: true
 
-    # Determines the next solution version by incrementing the component specified
+    # Determines each solution's next version by incrementing the component specified
     # by VERSION_UPDATE_STRATEGY (major / minor / build / revision).
-    # Writes the new version to the VERSION environment variable.
+    # VERSION remains the main solution's release version; TESTS_VERSION is independent.
     - name: compute-next-version
       shell: pwsh
       run: |
+        $ErrorActionPreference = 'Stop'
         # Re-authenticate as pac auth state is not shared across script steps.
         pac auth create --githubFederated --applicationId ${{vars.CLIENT_ID}} --tenant ${{vars.TENANT_ID}} --environment ${{vars.ENVIRONMENT_URL}}
+        if ($LASTEXITCODE -ne 0) {
+          throw "PAC authentication failed with exit code $LASTEXITCODE."
+        }
         $outputLines = pac solution list --json
-
-        # Parse the JSON response and find the target solution.
-        $solutionList = ConvertFrom-Json -InputObject $outputLines
-        $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq "${{ github.event.inputs.solution_name }}" }
-        if (-not $solutionItem) {
-          throw "Solution not found: ${{ github.event.inputs.solution_name }}"
+        if ($LASTEXITCODE -ne 0) {
+          throw "PAC solution list failed with exit code $LASTEXITCODE."
         }
-        $version = $solutionItem.VersionNumber
-        Write-Output "Current version: $version"
 
-        # Split the version into its four numeric parts (major.minor.build.revision).
-        $versionParts = $version.Split('.')
+        $solutionList = ConvertFrom-Json -InputObject ($outputLines -join "`n")
+        $selectedSolution = $env:solution_name
+        $testSolution = $env:test_solution_name
+        $solutionNames = @($selectedSolution, $testSolution) | Select-Object -Unique
         $strategy = "${{ env.VERSION_UPDATE_STRATEGY }}"
-        switch ($strategy) {
-          "major"    { $versionParts[0] = [int]$versionParts[0] + 1 }
-          "minor"    { $versionParts[1] = [int]$versionParts[1] + 1 }
-          "build"    { $versionParts[2] = [int]$versionParts[2] + 1 }
-          "revision" { $versionParts[3] = [int]$versionParts[3] + 1 }
-          default    { throw "Invalid version strategy: $strategy" }
+        foreach ($solutionName in $solutionNames) {
+          $solutionItem = $solutionList | Where-Object { $_.SolutionUniqueName -eq $solutionName }
+          if (-not $solutionItem) {
+            throw "Solution not found: $solutionName"
+          }
+          $version = $solutionItem.VersionNumber
+          Write-Output "$solutionName current version: $version"
+
+          # Split the version into its four numeric parts (major.minor.build.revision).
+          $versionParts = $version.Split('.')
+          switch ($strategy) {
+            "major"    { $versionParts[0] = [int]$versionParts[0] + 1 }
+            "minor"    { $versionParts[1] = [int]$versionParts[1] + 1 }
+            "build"    { $versionParts[2] = [int]$versionParts[2] + 1 }
+            "revision" { $versionParts[3] = [int]$versionParts[3] + 1 }
+            default    { throw "Invalid version strategy: $strategy" }
+          }
+          $newVersion = "{0}.{1}.{2}.{3}" -f $versionParts[0], $versionParts[1], $versionParts[2], $versionParts[3]
+          Write-Output "$solutionName new version: $newVersion"
+
+          if ($solutionName -eq $selectedSolution) {
+            "VERSION=$newVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          }
+          if ($solutionName -eq $testSolution) {
+            "TESTS_VERSION=$newVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          }
         }
-        $newVersion = "{0}.{1}.{2}.{3}" -f $versionParts[0], $versionParts[1], $versionParts[2], $versionParts[3]
-        Write-Output "New version: $newVersion"
-        # Expose the computed version to subsequent steps.
-        echo "VERSION=$newVersion" >> $env:GITHUB_ENV
 
     # Updates the solution version in the online environment before exporting,
     # so the exported zip and unpacked files carry the new version number.
@@ -226,19 +240,30 @@ jobs:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
-        name: ${{ github.event.inputs.solution_name }}
+        name: ${{ env.solution_name }}
         version: ${{ env.VERSION }}
+
+    - name: set-online-tests-solution-version
+      if: ${{ env.solution_name != env.test_solution_name }}
+      uses: microsoft/powerplatform-actions/set-online-solution-version@v1
+      with:
+        environment-url: ${{vars.ENVIRONMENT_URL}}
+        app-id: ${{vars.CLIENT_ID}}
+        tenant-id: ${{vars.TENANT_ID}}
+        name: ${{ env.test_solution_name }}
+        version: ${{ env.TESTS_VERSION }}
 
     # Exports the unmanaged solution zip. This is the editable version used for
     # source control and local development.
     - name: export-solution-unmanaged
       uses: microsoft/powerplatform-actions/export-solution@v1
       with:
+        managed: false
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
-        solution-name: ${{ github.event.inputs.solution_name }}
-        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
+        solution-name: ${{ env.solution_name }}
+        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ env.solution_name }}.zip
 
     # Exports the managed solution zip. This is the deployable version intended
     # for non-development (test / production) environments.
@@ -249,27 +274,49 @@ jobs:
         environment-url: ${{vars.ENVIRONMENT_URL}}
         app-id: ${{vars.CLIENT_ID}}
         tenant-id: ${{vars.TENANT_ID}}
-        solution-name: ${{ github.event.inputs.solution_name }}
-        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
+        solution-name: ${{ env.solution_name }}
+        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ env.solution_name }}_managed.zip
+
+    # The test solution contains sample flows and apps for development, not production.
+    - name: export-tests-solution-unmanaged
+      if: ${{ env.solution_name != env.test_solution_name }}
+      uses: microsoft/powerplatform-actions/export-solution@v1
+      with:
+        managed: false
+        environment-url: ${{vars.ENVIRONMENT_URL}}
+        app-id: ${{vars.CLIENT_ID}}
+        tenant-id: ${{vars.TENANT_ID}}
+        solution-name: ${{ env.test_solution_name }}
+        solution-output-file: ${{ env.EXPORT_FOLDER}}/${{ env.test_solution_name }}.zip
 
     # Unpacks the unmanaged zip into individual source files under SOLUTIONS_FOLDER
     # so changes are diff-friendly in source control.
     - name: unpack-solution
       uses: microsoft/powerplatform-actions/unpack-solution@v1
       with:
-        solution-file: ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
-        solution-folder: ${{ env.SOLUTIONS_FOLDER}}/${{ github.event.inputs.solution_name }}
+        solution-file: ${{ env.EXPORT_FOLDER}}/${{ env.solution_name }}.zip
+        solution-folder: ${{ env.SOLUTIONS_FOLDER}}/${{ env.solution_name }}
         solution-type: 'Unmanaged'
         overwrite-files: true
 
-    # Uploads both solution zips as a workflow artifact for manual download or
+    - name: unpack-tests-solution
+      if: ${{ env.solution_name != env.test_solution_name }}
+      uses: microsoft/powerplatform-actions/unpack-solution@v1
+      with:
+        solution-file: ${{ env.EXPORT_FOLDER}}/${{ env.test_solution_name }}.zip
+        solution-folder: ${{ env.SOLUTIONS_FOLDER}}/${{ env.test_solution_name }}
+        solution-type: 'Unmanaged'
+        overwrite-files: true
+
+    # Uploads the main solution zips and unmanaged examples for manual download or
     # use by downstream workflows.
     - uses: actions/upload-artifact@v4
       with:
-        name: ${{ github.event.inputs.solution_name }}
+        name: ${{ env.solution_name }}
         path: |
-          ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}.zip
-          ${{ env.EXPORT_FOLDER}}/${{ github.event.inputs.solution_name }}_managed.zip
+          ${{ env.EXPORT_FOLDER}}/${{ env.solution_name }}.zip
+          ${{ env.EXPORT_FOLDER}}/${{ env.solution_name }}_managed.zip
+          ${{ env.EXPORT_FOLDER}}/${{ env.test_solution_name }}.zip
 
     # Stages the unpacked solution files, builds the commit message (supporting
     # %s and %v placeholders for solution name and version), and pushes to the
@@ -279,11 +326,11 @@ jobs:
       run: |
         git config --global user.name '${{github.actor}}'
         git config --global user.email '${{github.actor}}@users.noreply.github.com'
-        git add ${{ env.SOLUTIONS_FOLDER}}/\**
+        git add -- "${{ env.SOLUTIONS_FOLDER }}"
 
         # Replace placeholders: %s → solution name, %v → new version.
         $commitMsg = "${{ github.event.inputs.commit_message }}"
-        $commitMsg = $commitMsg -replace '%s', '${{ github.event.inputs.solution_name }}'
+        $commitMsg = $commitMsg -replace '%s', '${{ env.solution_name }}'
         $commitMsg = $commitMsg -replace '%v', '${{ env.VERSION }}'
 
         git commit -m "$commitMsg"
@@ -298,15 +345,15 @@ jobs:
         git tag v${{ env.VERSION }}
         git push origin v${{ env.VERSION }}
 
-    # Creates a draft GitHub release for the new tag and attaches the managed
-    # solution zip as a release asset. Draft mode lets you review and publish manually.
+    # Attaches the managed solution and unmanaged examples to the draft release.
+    # Draft mode lets you review and publish manually.
     - name: Create draft release
       if: ${{ github.event.inputs.create_release == 'true' }}
       shell: bash
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release create "v${{ env.VERSION }}" --draft --title "v${{ env.VERSION }}" --generate-notes "${{ env.EXPORT_FOLDER }}${{ github.event.inputs.solution_name }}_managed.zip"
+        gh release create "v${{ env.VERSION }}" --draft --title "v${{ env.VERSION }}" --generate-notes "${{ env.EXPORT_FOLDER }}${{ env.solution_name }}_managed.zip" "${{ env.EXPORT_FOLDER }}${{ env.test_solution_name }}.zip"
 
     # Always clears stored pac authentication profiles at the end of the job,
     # even if a previous step failed, to avoid leaving credentials on the runner.
