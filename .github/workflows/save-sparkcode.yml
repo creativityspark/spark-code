@@ -22,7 +22,7 @@ on:
 
 env:
   solution_name: SparkCode
-  test_solution_name: SparkCodeTest
+  test_solution_name: SparkCodeTests
   VERSION_UPDATE_STRATEGY: revision
   EXPORT_FOLDER: out/export/
   SOLUTIONS_FOLDER: PowerPlatform/solutions/
