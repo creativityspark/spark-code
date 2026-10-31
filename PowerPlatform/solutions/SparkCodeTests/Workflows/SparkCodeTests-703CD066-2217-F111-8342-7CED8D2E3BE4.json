@@ -1,0 +1,1146 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "csp_sharedcommondataserviceforapps_a3be6"
+        },
+        "runtimeSource": "embedded"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "9e31f38b-0251-4ebb-97cf-c054ecb056b0"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "properties": {},
+              "required": [],
+              "type": "object"
+            }
+          }
+        }
+      },
+      "actions": {
+        "Check_Results": {
+          "actions": {
+            "Terminate_Failed": {
+              "runAfter": {},
+              "type": "Terminate",
+              "inputs": {
+                "runError": {
+                  "code": "TestsFailed",
+                  "message": "One or more custom API tests failed. Check the scopes in the run history."
+                },
+                "runStatus": "Failed"
+              }
+            }
+          },
+          "runAfter": {
+            "Data": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ],
+            "Dataverse": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ],
+            "Other": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ],
+            "Pdf": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ],
+            "Templates": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ],
+            "Text": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "else": {
+            "actions": {
+              "Terminate_Succeeded": {
+                "runAfter": {},
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Succeeded"
+                }
+              }
+            }
+          },
+          "expression": {
+            "or": [
+              {
+                "contains": [
+                  "@string(result('Data'))",
+                  "\"status\":\"Failed\""
+                ]
+              },
+              {
+                "contains": [
+                  "@string(result('Dataverse'))",
+                  "\"status\":\"Failed\""
+                ]
+              },
+              {
+                "contains": [
+                  "@string(result('Other'))",
+                  "\"status\":\"Failed\""
+                ]
+              },
+              {
+                "contains": [
+                  "@string(result('Pdf'))",
+                  "\"status\":\"Failed\""
+                ]
+              },
+              {
+                "contains": [
+                  "@string(result('Templates'))",
+                  "\"status\":\"Failed\""
+                ]
+              },
+              {
+                "contains": [
+                  "@string(result('Text'))",
+                  "\"status\":\"Failed\""
+                ]
+              }
+            ]
+          },
+          "type": "If"
+        },
+        "Data": {
+          "actions": {
+            "Join": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Data_Join",
+                  "item/Field1": "id",
+                  "item/Field2": "id",
+                  "item/List1": "[{\"id\":1,\"a\":\"x\"}]",
+                  "item/List2": "[{\"id\":1,\"b\":\"y\"}]"
+                }
+              }
+            },
+            "JoinJson": {
+              "runAfter": {
+                "Join": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Data_JoinJson",
+                  "item/Field1": "id",
+                  "item/Field2": "id",
+                  "item/List1": "[{\"id\":1,\"a\":\"x\"}]",
+                  "item/List2": "[{\"id\":1,\"b\":\"y\"}]"
+                }
+              }
+            },
+            "ParseCsv": {
+              "runAfter": {
+                "JoinJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Data_ParseCsv",
+                  "item/Csv": "a,b\n1,2\n3,4",
+                  "item/Delimiter": ",",
+                  "item/FieldsEnclosedInQuotes": false
+                }
+              }
+            },
+            "ParseCsvJson": {
+              "runAfter": {
+                "ParseCsv": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Data_ParseCsvJson",
+                  "item/Csv": "a,b\n1,2\n3,4",
+                  "item/Delimiter": ",",
+                  "item/FieldsEnclosedInQuotes": false
+                }
+              }
+            },
+            "Select": {
+              "runAfter": {
+                "ParseCsvJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Data_Select",
+                  "item/Data": "[{\"id\":1,\"name\":\"a\"},{\"id\":2,\"name\":\"b\"}]",
+                  "item/Query": "$[*].name"
+                }
+              }
+            },
+            "XmlToJson": {
+              "runAfter": {
+                "Select": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Data_XmlToJson",
+                  "item/Xml": "<root><item>1</item></root>"
+                }
+              }
+            }
+          },
+          "runAfter": {},
+          "type": "Scope"
+        },
+        "Dataverse": {
+          "actions": {
+            "CalculateRollupField": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_CalculateRollupField",
+                  "item/FieldName": "csp_sparkcoderolluptest",
+                  "item/TargetId": "a7c3cfef-a7cf-f011-bbd2-7c1e5287b9dd",
+                  "item/TargetLogicalName": "account"
+                }
+              }
+            },
+            "CountFetchXml": {
+              "runAfter": {
+                "CalculateRollupField": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_CountFetchXml",
+                  "item/FetchXml": "<fetch><entity name=\"account\"><attribute name=\"name\" /></entity></fetch>"
+                }
+              }
+            },
+            "GetViewData": {
+              "runAfter": {
+                "CountFetchXml": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_GetViewData",
+                  "item/TableName": "account",
+                  "item/ViewName": "Active Accounts"
+                }
+              }
+            },
+            "GetViewDataJson": {
+              "runAfter": {
+                "GetViewData": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_GetViewDataJson",
+                  "item/TableName": "account",
+                  "item/ViewName": "Active Accounts"
+                }
+              }
+            },
+            "PublishWebResource": {
+              "runAfter": {
+                "GetViewDataJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_PublishWebResource",
+                  "item/WebResourceName": "csp_/Spark_Code_Test.html"
+                }
+              }
+            },
+            "RunFetchXml": {
+              "runAfter": {
+                "PublishWebResource": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_RunFetchXml",
+                  "item/FetchXml": "<fetch top=\"10\"><entity name=\"account\"><attribute name=\"name\" /></entity></fetch>"
+                }
+              }
+            },
+            "RunFetchXmlJson": {
+              "runAfter": {
+                "RunFetchXml": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_RunFetchXmlJson",
+                  "item/FetchXml": "<fetch top=\"10\"><entity name=\"account\"><attribute name=\"name\" /></entity></fetch>"
+                }
+              }
+            },
+            "RunSQL": {
+              "runAfter": {
+                "RunFetchXmlJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_RunSQL",
+                  "item/SQLQuery": "SELECT top 10 * FROM account"
+                }
+              }
+            },
+            "RunSQLJson": {
+              "runAfter": {
+                "RunSQL": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Dataverse_RunSQLJson",
+                  "item/SQLQuery": "SELECT top 10 * FROM account"
+                }
+              }
+            },
+            "GetCanvasAppAttribute": {
+              "runAfter": {
+                "RunSQLJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_PowerApps_GetCanvasAppAttribute",
+                  "item/App": "csp_sparkcodetests_b1ca4",
+                  "item/Attribute": "name"
+                }
+              }
+            },
+            "GetMDAAttribute": {
+              "runAfter": {
+                "GetCanvasAppAttribute": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_PowerApps_GetMDAAttribute",
+                  "item/App": "csp_SparkCodeTests",
+                  "item/Attribute": "name"
+                }
+              }
+            },
+            "GetOrganizationDetailsJson": {
+              "runAfter": {
+                "GetMDAAttribute": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_PowerApps_GetOrganizationDetailsJson"
+                }
+              }
+            },
+            "GetOrganizationUrl": {
+              "runAfter": {
+                "GetOrganizationDetailsJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_PowerApps_GetOrganizationUrl",
+                  "item/Type": "WebApplication"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Data": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "type": "Scope"
+        },
+        "Other": {
+          "actions": {
+            "HttpRequest": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Other_HttpRequest",
+                  "item/Method": "GET",
+                  "item/Url": "https://httpbin.org/get"
+                }
+              }
+            },
+            "RunCSharp": {
+              "runAfter": {
+                "HttpRequest": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Other_RunCSharp",
+                  "item/Code": "output = \"Hello \" + input;",
+                  "item/InputParameters": "Parvez"
+                }
+              }
+            },
+            "RunCSharp_with_Types": {
+              "runAfter": {
+                "RunCSharp": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Other_RunCSharp",
+                  "item/Code": "output = new OutputType(){ MyProperty = \"Hello \" + input.Name};",
+                  "item/InputParameters": "{\n\"Name\":\"Parvez\"\n}",
+                  "item/InputTypeName": "InputType",
+                  "item/OutputTypeName": "OutputType",
+                  "item/Types": "class InputType {\n    public int MyProperty { get; set; }\n    public string Name{ get; set; }\n};\npublic class OutputType\n{\n   public string MyProperty { get; set; }\n};"
+                }
+              }
+            },
+            "Zip_AppendFile": {
+              "runAfter": {
+                "RunCSharp_with_Types": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Zip_AppendFile",
+                  "item/File": "SGVsbG8gZnJvbSBTcGFyayBDb2RlIFRlc3Rz",
+                  "item/FileNameAndPath": "integration-test.txt"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Dataverse": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "type": "Scope"
+        },
+        "Pdf": {
+          "actions": {
+            "HTTP_Get_PDF": {
+              "runAfter": {},
+              "type": "Http",
+              "inputs": {
+                "method": "GET",
+                "uri": "https://sample-files.com/downloads/documents/pdf/image-doc.pdf"
+              },
+              "runtimeConfiguration": {
+                "contentTransfer": {
+                  "transferMode": "Chunked"
+                }
+              }
+            },
+            "PDF_Extract_Images_": {
+              "runAfter": {
+                "HTTP_Get_PDF": [
+                  "Succeeded"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Pdf_ExtractImages",
+                  "item/PdfBase64": "@body('HTTP_Get_PDF')?['$content']"
+                }
+              }
+            },
+            "PDF_Extract_Pages": {
+              "runAfter": {
+                "HTTP_Get_PDF": [
+                  "Succeeded"
+                ],
+                "PDF_Extract_Images_": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Pdf_ExtractPages",
+                  "item/InputPdf": "@body('HTTP_Get_PDF')?['$content']",
+                  "item/PageFrom": 1,
+                  "item/PageTo": 1
+                }
+              }
+            },
+            "PDF_Info_Json": {
+              "runAfter": {
+                "HTTP_Get_PDF": [
+                  "Succeeded"
+                ],
+                "PDF_Extract_Pages": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Pdf_InfoJson",
+                  "item/InputPdf": "@body('HTTP_Get_PDF')?['$content']"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Other": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "type": "Scope"
+        },
+        "Templates": {
+          "actions": {
+            "GetFrontMatter": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Templates_GetFrontMatter",
+                  "item/InputText": "---\ntitle: Test\n---\nBody"
+                }
+              }
+            },
+            "GetFrontMatterJson": {
+              "runAfter": {
+                "GetFrontMatter": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Templates_GetFrontMatterJson",
+                  "item/InputText": "---\ntitle: Test\n---\nBody"
+                }
+              }
+            },
+            "Render_Dataverse_Template": {
+              "runAfter": {
+                "GetFrontMatterJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Templates_RenderDataverseTemplate",
+                  "item/RecordId": "a7c3cfef-a7cf-f011-bbd2-7c1e5287b9dd",
+                  "item/RecordType": "account",
+                  "item/Template": "<p>Hello, {{ websiteurl }}!</p>"
+                }
+              }
+            },
+            "Render_Template": {
+              "runAfter": {
+                "Render_Dataverse_Template": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Templates_RenderTemplate",
+                  "item/Context": "{\n  \"name\": \"Parvez\"\n}\n",
+                  "item/Template": "<p>Hello, {{ name | capitalize }}!</p>"
+                }
+              }
+            },
+            "Render_WebResource_Template": {
+              "runAfter": {
+                "Render_Template": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Templates_RenderWebResourceTemplate",
+                  "item/RecordId": "a7c3cfef-a7cf-f011-bbd2-7c1e5287b9dd",
+                  "item/RecordType": "account",
+                  "item/WebResourceName": "csp_/Spark_Code_Test.html"
+                }
+              }
+            },
+            "Render_WebResource_TemplateJson": {
+              "runAfter": {
+                "Render_WebResource_Template": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Templates_RenderWebResourceTemplateJson",
+                  "item/RecordId": "a7c3cfef-a7cf-f011-bbd2-7c1e5287b9dd",
+                  "item/RecordType": "account",
+                  "item/WebResourceName": "csp_/Spark_Code_Test.html"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Pdf": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "type": "Scope"
+        },
+        "Text": {
+          "actions": {
+            "Base64Decode": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_Base64Decode",
+                  "item/Input": "SGVsbG8="
+                }
+              }
+            },
+            "Base64Encode": {
+              "runAfter": {
+                "Base64Decode": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_Base64Encode",
+                  "item/Input": "Hello"
+                }
+              }
+            },
+            "Parse": {
+              "runAfter": {
+                "Base64Encode": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_Parse",
+                  "item/Text": "123"
+                }
+              }
+            },
+            "ParseURL": {
+              "runAfter": {
+                "Parse": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_ParseURL",
+                  "item/Url": "https://example.crm.dynamics.com/main.aspx?etn=account&id=a7c3cfef-a7cf-f011-bbd2-7c1e5287b9dd"
+                }
+              }
+            },
+            "ParseURLJson": {
+              "runAfter": {
+                "ParseURL": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_ParseURLJson",
+                  "item/Url": "https://example.crm.dynamics.com/main.aspx?etn=account&id=a7c3cfef-a7cf-f011-bbd2-7c1e5287b9dd"
+                }
+              }
+            },
+            "RegexMatches": {
+              "runAfter": {
+                "ParseURLJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_RegexMatches",
+                  "item/Input": "abc 123 def 456",
+                  "item/Pattern": "\\d+"
+                }
+              }
+            },
+            "RegexMatchesJson": {
+              "runAfter": {
+                "RegexMatches": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_RegexMatchesJson",
+                  "item/Input": "abc 123 def 456",
+                  "item/Pattern": "\\d+"
+                }
+              }
+            },
+            "RegexReplace": {
+              "runAfter": {
+                "RegexMatchesJson": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_RegexReplace",
+                  "item/Input": "abc 123",
+                  "item/Pattern": "\\d+",
+                  "item/Replacement": "#"
+                }
+              }
+            },
+            "ReplaceParams": {
+              "runAfter": {
+                "RegexReplace": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "PerformUnboundAction"
+                },
+                "parameters": {
+                  "actionName": "csp_Text_ReplaceParams",
+                  "item/Param1": "A",
+                  "item/Param2": "B",
+                  "item/Text": "Hello {0} {1}"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Templates": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "type": "Scope"
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}
