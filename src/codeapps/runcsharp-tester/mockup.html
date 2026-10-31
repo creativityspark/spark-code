@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RunCSharp Tester – Mockup</title>
+<!--
+  Design mockup for the "RunCSharp Tester" Power Apps Code App.
+  Tests the unbound Dataverse custom API csp_Other_RunCSharp (src/assemblies/SparkCode.API/Other/RunCSharp.cs).
+  All executions are simulated with mock data; no Dataverse calls are made.
+-->
+<style>
+  :root {
+    --bg: #f5f6f8; --panel: #ffffff; --panel-2: #f0f2f5; --border: #dde1e6;
+    --text: #1f2328; --muted: #656d76; --accent: #0f6cbd; --accent-hover: #115ea3;
+    --ok: #107c10; --err: #c50f1f;
+    --key: #0550ae; --str: #0a3069; --num: #953800; --bool: #8250df; --tag: #116329;
+    --shadow: 0 4px 16px rgba(0,0,0,.12);
+  }
+  [data-theme="dark"] {
+    --bg: #1b1d21; --panel: #24272c; --panel-2: #2c3036; --border: #3a3f46;
+    --text: #e6e8eb; --muted: #9aa3ad; --accent: #4f9dea; --accent-hover: #6aaef0;
+    --ok: #54b054; --err: #f1707b;
+    --key: #79c0ff; --str: #a5d6ff; --num: #ffa657; --bool: #d2a8ff; --tag: #7ee787;
+    --shadow: 0 4px 16px rgba(0,0,0,.5);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font: 13px/1.4 "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text);
+    display: grid; grid-template-rows: 48px 1fr 26px;
+  }
+  button, select, input, textarea { font: inherit; color: inherit; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px;
+    border: 1px solid var(--border); background: var(--panel); border-radius: 4px; cursor: pointer;
+  }
+  .btn:hover { background: var(--panel-2); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .btn.primary:hover { background: var(--accent-hover); }
+  .btn.primary:disabled { opacity: .7; cursor: progress; }
+  .btn.icon { width: 30px; padding: 0; justify-content: center; }
+  .btn.small { height: 24px; padding: 0 8px; font-size: 12px; }
+  select { height: 30px; border: 1px solid var(--border); background: var(--panel); border-radius: 4px; padding: 0 8px; }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; gap: 10px; padding: 0 12px;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+  }
+  .logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+  .logo .mark { width: 26px; height: 26px; border-radius: 6px; background: linear-gradient(135deg,#7f3fbf,#0f6cbd); color:#fff; display:grid; place-items:center; font-size: 12px; font-weight: 700; }
+  .env { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); }
+  .spacer { flex: 1; }
+  .kbd { font-size: 11px; opacity: .8; font-weight: 400; }
+
+  /* Main layout */
+  main { display: grid; grid-template-columns: 230px 1fr 400px; min-height: 0; }
+  main.history-collapsed { grid-template-columns: 38px 1fr 400px; }
+  aside, section.center, section.outputs { min-height: 0; display: flex; flex-direction: column; }
+  aside { background: var(--panel); border-right: 1px solid var(--border); }
+  section.outputs { background: var(--panel); border-left: 1px solid var(--border); }
+  .panel-head {
+    display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 10px; flex-shrink: 0;
+    border-bottom: 1px solid var(--border); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+  }
+
+  /* History */
+  .history-list { overflow: auto; flex: 1; }
+  .h-item { padding: 8px 10px; border-bottom: 1px solid var(--border); cursor: pointer; display: grid; grid-template-columns: 12px 1fr; gap: 2px 8px; }
+  .h-item:hover { background: var(--panel-2); }
+  .h-item.active { background: var(--panel-2); box-shadow: inset 3px 0 0 var(--accent); }
+  .h-item .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; }
+  .h-item .title { font-family: Consolas, monospace; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .h-item .meta { grid-column: 2; color: var(--muted); font-size: 11px; }
+  main.history-collapsed .history-list, main.history-collapsed aside .panel-head .collapsible { display: none; }
+  main.history-collapsed aside .panel-head { padding: 0 3px; }
+
+  /* Editor area */
+  section.center { min-width: 0; }
+  .tabs { display: flex; align-items: flex-end; height: 36px; background: var(--panel-2); border-bottom: 1px solid var(--border); padding-left: 6px; flex-shrink: 0; }
+  .tab {
+    height: 32px; padding: 0 14px; display: flex; align-items: center; gap: 6px;
+    border: 1px solid transparent; border-bottom: none; border-radius: 6px 6px 0 0; cursor: pointer; color: var(--muted);
+  }
+  .tab.active { background: var(--panel); border-color: var(--border); color: var(--text); margin-bottom: -1px; height: 33px; }
+  .tab .lang { font-size: 10px; padding: 0 5px; border-radius: 3px; background: var(--border); color: var(--muted); }
+  .tab .dirty { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: none; }
+  .tab.is-dirty .dirty { display: inline-block; }
+  .tabs .tab-tools { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 0 8px 5px; color: var(--muted); font-size: 12px; }
+  .editor-wrap { flex: 1; min-height: 0; position: relative; background: var(--panel); }
+  #editor { position: absolute; inset: 0; }
+  .fallback { position: absolute; inset: 0; width: 100%; height: 100%; border: none; resize: none; padding: 10px; font: 13px/1.5 Consolas, "Cascadia Code", monospace; background: var(--panel); outline: none; }
+  .tab-hint { padding: 6px 12px; font-size: 12px; color: var(--muted); background: var(--panel); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .tab-hint code { background: var(--panel-2); padding: 0 4px; border-radius: 3px; }
+
+  /* Problems panel */
+  .problems { height: 170px; border-top: 1px solid var(--border); background: var(--panel); display: flex; flex-direction: column; flex-shrink: 0; }
+  .problems.collapsed { height: 37px; }
+  .problems.collapsed .bottom-tools { display: none; }
+  .bottom-tab { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 4px; margin-right: 10px; border: none; border-bottom: 2px solid transparent; background: none; cursor: pointer; font: inherit; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .bottom-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .bottom-tools { display: flex; align-items: center; gap: 6px; text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .bottom-tools input { height: 24px; width: 180px; border: 1px solid var(--border); border-radius: 4px; padding: 0 8px; background: var(--panel); font-size: 12px; }
+  #problemsChevron { cursor: pointer; padding: 0 4px; }
+  .badge.info { background: var(--accent); color: #fff; }
+  .log { padding: 2px 12px; display: grid; grid-template-columns: 34px 1fr; gap: 10px; border-bottom: 1px solid var(--panel-2); }
+  .log:hover { background: var(--panel-2); }
+  .log .idx { color: var(--muted); text-align: right; }
+  .log .msg { white-space: pre-wrap; word-break: break-word; }
+  .log mark { background: #ffd33d66; color: inherit; border-radius: 2px; }
+  .problem .kind { font-size: 10px; padding: 0 5px; border-radius: 3px; border: 1px solid var(--border); color: var(--muted); font-family: "Segoe UI", sans-serif; align-self: center; }
+  .problem .toggle { color: var(--accent); cursor: pointer; font-family: "Segoe UI", sans-serif; }
+  .stack { margin: 0 12px 6px 34px; padding: 6px 8px; background: var(--panel-2); border-radius: 4px; color: var(--muted); font-size: 11.5px; white-space: pre-wrap; }
+  .badge { min-width: 18px; height: 18px; border-radius: 9px; padding: 0 5px; font-size: 11px; display: inline-grid; place-items: center; background: var(--border); color: var(--text); text-transform: none; }
+  .badge.err { background: var(--err); color: #fff; }
+  .problem-list { overflow: auto; flex: 1; font-family: Consolas, "Cascadia Code", monospace; font-size: 12px; }
+  .problem { padding: 4px 12px; display: flex; gap: 10px; cursor: pointer; }
+  .problem:hover { background: var(--panel-2); }
+  .problem .sev { color: var(--err); font-weight: 700; }
+  .problem .loc { color: var(--muted); }
+  .empty { padding: 12px; color: var(--muted); font-style: italic; }
+
+  /* Outputs */
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .seg button { border: none; background: var(--panel); height: 24px; padding: 0 10px; cursor: pointer; font-size: 12px; }
+  .seg button + button { border-left: 1px solid var(--border); }
+  .seg button.active { background: var(--accent); color: #fff; }
+  .out-toolbar { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  .out-meta { padding: 6px 10px; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+  .out-body { flex: 1; overflow: auto; padding: 10px; font: 12.5px/1.55 Consolas, "Cascadia Code", monospace; }
+  .out-body pre { margin: 0; white-space: pre; }
+  .out-body.wrap pre { white-space: pre-wrap; word-break: break-all; }
+  .parse-error { color: var(--err); font-family: "Segoe UI", sans-serif; padding: 8px; border: 1px dashed var(--err); border-radius: 4px; }
+  .tree details { margin-left: 14px; }
+  .tree > details { margin-left: 0; }
+  .tree summary { cursor: pointer; list-style: none; }
+  .tree summary::-webkit-details-marker { display: none; }
+  .tree summary::before { content: "▸"; display: inline-block; width: 12px; color: var(--muted); transition: transform .1s; }
+  .tree details[open] > summary::before { transform: rotate(90deg); }
+  .tree .leaf { margin-left: 26px; }
+  .tree .k { color: var(--key); } .tree .s { color: var(--str); } .tree .n { color: var(--num); }
+  .tree .b { color: var(--bool); } .tree .z { color: var(--muted); } .tree .t { color: var(--tag); }
+  .tree .a { color: var(--num); } .tree .hint { color: var(--muted); font-size: 11px; }
+  .out-empty { display: grid; place-items: center; height: 100%; color: var(--muted); text-align: center; font-family: "Segoe UI", sans-serif; }
+
+  /* Status bar */
+  footer { display: flex; align-items: center; gap: 14px; padding: 0 12px; font-size: 12px; background: var(--accent); color: #fff; }
+  footer.failed { background: var(--err); }
+  footer.running { background: #8a6d00; }
+  footer .sep { opacity: .5; }
+
+  /* Options dialog */
+  dialog { border: 1px solid var(--border); border-radius: 8px; padding: 0; width: 580px; background: var(--panel); color: var(--text); box-shadow: var(--shadow); }
+  dialog::backdrop { background: rgba(0,0,0,.35); }
+  .dlg-head { padding: 14px 18px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 15px; display: flex; align-items: center; }
+  .dlg-body { padding: 14px 18px; display: grid; gap: 14px; }
+  .dlg-foot { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+  .field label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .field .help { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .field input[type=text], .field textarea { width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; background: var(--panel); }
+  .field textarea { font-family: Consolas, monospace; min-height: 70px; resize: vertical; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; border: 1px solid var(--border); border-radius: 4px; padding: 5px; min-height: 34px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 12px; padding: 1px 4px 1px 9px; font-size: 12px; font-family: Consolas, monospace; }
+  .chip button { border: none; background: none; cursor: pointer; color: var(--muted); padding: 0 3px; }
+  .chips input { border: none; outline: none; flex: 1; min-width: 160px; background: transparent; }
+  .opt-summary { font-size: 11px; color: var(--muted); background: var(--panel-2); border-radius: 4px; padding: 8px; font-family: Consolas, monospace; }
+  .opt-summary b { color: var(--text); }
+  .spinner { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+  .btn.running .spinner { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 6px 14px; border-radius: 4px; font-size: 12px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: .92; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><div class="mark">C#</div>RunCSharp Tester</div>
+  <span class="env" title="Mock environment">● sparktools-dev · csp_Other_RunCSharp</span>
+  <div class="spacer"></div>
+  <label for="templateSelect" style="color:var(--muted)">Samples</label>
+  <select id="templateSelect" title="Load a sample template">
+    <option value="">— Choose a sample —</option>
+  </select>
+  <button class="btn" id="optionsBtn" title="InputTypeName, OutputTypeName, ReferencedAssemblies, UsingStatements">⚙ Options <span class="badge" id="optCount">0</span></button>
+  <button class="btn icon" id="themeBtn" title="Toggle light/dark theme">🌙</button>
+  <button class="btn primary" id="runBtn" title="Run (Ctrl+Enter)"><span class="spinner"></span><span id="runLabel">▶ Run</span> <span class="kbd">Ctrl+↵</span></button>
+</header>
+
+<main id="main">
+  <!-- Run history -->
+  <aside>
+    <div class="panel-head">
+      <button class="btn icon small" id="historyToggle" title="Collapse/expand history">⟨</button>
+      <span class="collapsible">Run history</span>
+      <div class="spacer collapsible"></div>
+      <button class="btn small collapsible" id="clearHistory" title="Clear history">Clear</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </aside>
+
+  <!-- Editor -->
+  <section class="center">
+    <div class="tabs">
+      <div class="tab active" data-tab="code"><span class="dirty"></span>Code <span class="lang">C#</span></div>
+      <div class="tab" data-tab="input"><span class="dirty"></span>InputParameters <span class="lang">JSON</span></div>
+      <div class="tab" data-tab="types"><span class="dirty"></span>Types <span class="lang">C#</span></div>
+      <div class="tab-tools"><span id="cursorPos">Ln 1, Col 1</span><button class="btn small" id="formatBtn" title="Format document">Format</button></div>
+    </div>
+    <div class="tab-hint" id="tabHint"></div>
+    <div class="editor-wrap"><div id="editor"></div></div>
+    <div class="problems" id="problems">
+      <div class="panel-head" id="problemsHead" style="padding-top:0;padding-bottom:0">
+        <button class="bottom-tab active" data-bottom="problems" title="Compile and runtime errors (CompileErrors / RuntimeErrors outputs)">Problems <span class="badge" id="problemCount">0</span></button>
+        <button class="bottom-tab" data-bottom="logs" title="Messages written with Log(message) – returned in the Logs output">Logs <span class="badge" id="logCount">0</span></button>
+        <div class="spacer"></div>
+        <div class="bottom-tools" id="logTools" style="display:none">
+          <input type="search" id="logFilter" placeholder="Filter logs…" />
+          <button class="btn small" id="logCopyBtn" title="Copy raw Logs output">Copy</button>
+        </div>
+        <span id="problemsChevron" title="Collapse/expand panel">▾</span>
+      </div>
+      <div class="problem-list" id="problemList"></div>
+      <div class="problem-list" id="logList" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- Outputs explorer -->
+  <section class="outputs">
+    <div class="panel-head"><span>Outputs explorer</span></div>
+    <div class="out-toolbar">
+      <div class="seg" id="viewSeg">
+        <button data-view="string" class="active">String</button>
+        <button data-view="xml">XML</button>
+        <button data-view="json">JSON</button>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn small" id="expandAll" title="Expand all">⊞</button>
+      <button class="btn small" id="collapseAll" title="Collapse all">⊟</button>
+      <button class="btn small" id="wrapBtn" title="Toggle word wrap">Wrap</button>
+      <button class="btn small" id="copyBtn" title="Copy output">Copy</button>
+    </div>
+    <div class="out-meta" id="outMeta"><span>No output yet</span></div>
+    <div class="out-body" id="outBody"></div>
+  </section>
+</main>
+
+<footer id="status">
+  <span id="stState">● Ready</span><span class="sep">|</span>
+  <span id="stTime">Duration: –</span><span class="sep">|</span>
+  <span id="stSize">Output: –</span><span class="sep">|</span>
+  <span id="stTypes">string → string</span>
+  <div class="spacer"></div>
+  <span>Custom API: csp_Other_RunCSharp (unbound action)</span>
+</footer>
+
+<!-- Options dialog -->
+<dialog id="optionsDlg">
+  <form method="dialog">
+    <div class="dlg-head">⚙ Execution options<div class="spacer"></div><button class="btn icon small" value="cancel" title="Close">✕</button></div>
+    <div class="dlg-body">
+      <div class="row2">
+        <div class="field">
+          <label for="optInputType">InputTypeName</label>
+          <input type="text" id="optInputType" list="typeNames" placeholder="string" />
+          <div class="help">Type InputParameters is deserialized into. Default <code>string</code>.</div>
+        </div>
+        <div class="field">
+          <label for="optOutputType">OutputTypeName</label>
+          <input type="text" id="optOutputType" list="typeNames" placeholder="string" />
+          <div class="help">Native types → <code>Convert.ToString</code>; custom types → JSON.</div>
+        </div>
+      </div>
+      <datalist id="typeNames"></datalist>
+      <div class="field">
+        <label for="asmInput">ReferencedAssemblies</label>
+        <div class="chips" id="asmChips"><input type="text" id="asmInput" placeholder="e.g. System.Xml.Linq.dll + Enter" /></div>
+        <div class="help">Sent as a comma-separated list of compiler references.</div>
+      </div>
+      <div class="field">
+        <label for="optUsings">UsingStatements</label>
+        <textarea id="optUsings" placeholder="using System.Linq;&#10;using System.Xml.Linq;"></textarea>
+        <div class="help">Raw C# using statements appended before compilation.</div>
+      </div>
+      <div class="opt-summary" id="optSummary"></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" type="button" id="optReset">Reset to defaults</button>
+      <div class="spacer"></div>
+      <button class="btn" value="cancel">Cancel</button>
+      <button class="btn primary" value="save">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- Sample templates (mirror the RunCSharp.cs <example> docs) ---------------- */
+const TEMPLATES = {
+  untyped: {
+    label: "Untyped – hello",
+    code: `// Untyped mode: 'input' is a string, assign 'output'\nLog("Received input: " + input);\noutput = "Hello, " + (string.IsNullOrEmpty(input) ? "World" : input) + "!";\nLog("Output length: " + output.Length);\n`,
+    input: `"Dataverse"`,
+    types: `// No custom types needed in untyped mode\n`,
+    options: { inputType: "string", outputType: "string", assemblies: [], usings: "" },
+    logs: (req) => [`Received input: ${unquote(req.InputParameters)}`, `Output length: ${MOCK_OUTPUTS.untyped(req.InputParameters).length}`]
+  },
+  typed: {
+    label: "Typed input/output (JSON)",
+    code: `// Typed mode: 'input' is InputType, 'output' is OutputType\nLog("Start – MyProperty=" + input.MyProperty + ", MyValue=" + input.MyValue);\noutput = new OutputType();\noutput.Total = input.MyProperty * 2;\nLog("Total computed: " + output.Total);\noutput.Message = "Processed " + input.MyValue.ToUpper();\noutput.Items = OutputType.Split(input.MyValue);\noutput.Processed = true;\nLog("Done");\n`,
+    input: `{\n  "MyProperty": 123,\n  "MyValue": "abc"\n}\n`,
+    types: `public class InputType\n{\n    public int MyProperty { get; set; }\n    public string MyValue { get; set; }\n}\n\npublic class OutputType\n{\n    public int Total { get; set; }\n    public string Message { get; set; }\n    public List<string> Items { get; set; }\n    public bool Processed { get; set; }\n\n    public static List<string> Split(string value)\n    {\n        var items = value.Select(c => c.ToString()).ToList();\n        // Classes declared in Types log through CSharpRunner.Log\n        CSharpRunner.Log("Items generated: " + items.Count);\n        return items;\n    }\n}\n`,
+    options: { inputType: "InputType", outputType: "OutputType", assemblies: ["System.Core.dll"], usings: "using System.Linq;" },
+    logs: () => ["Start – MyProperty=123, MyValue=abc", "Total computed: 246", "Items generated: 3", "Done"]
+  },
+  xml: {
+    label: "XML output",
+    code: `// Build an XML document with LINQ to XML\nLog("Building accounts document");\nvar doc = new XElement("accounts",\n    new XAttribute("count", 2),\n    new XElement("account", new XAttribute("id", "A-001"), new XElement("name", "Contoso"), new XElement("revenue", 125000)),\n    new XElement("account", new XAttribute("id", "A-002"), new XElement("name", "Fabrikam"), new XElement("revenue", 98000)));\nLog("Added " + doc.Elements("account").Count() + " account element(s)");\noutput = doc.ToString();\nLog("Serialized XML (" + output.Length + " chars)");\n`,
+    input: ``,
+    types: ``,
+    options: { inputType: "string", outputType: "string", assemblies: ["System.Xml.dll", "System.Xml.Linq.dll"], usings: "using System.Linq;\nusing System.Xml.Linq;" },
+    logs: () => ["Building accounts document", "Added 2 account element(s)", `Serialized XML (${MOCK_OUTPUTS.xml().length} chars)`]
+  },
+  compileError: {
+    label: "Compile error example",
+    code: `// This sample intentionally fails to compile\nvar total = 40 + 2;\nouput = total.ToString();\nint count = "three";\n`,
+    input: ``,
+    types: `public class Totals\n{\n    public int Value { get; set }\n}\n`,
+    options: { inputType: "string", outputType: "string", assemblies: [], usings: "" }
+  },
+  runtimeError: {
+    label: "Runtime error example",
+    code: `// Compiles, logs, then fails at runtime\nLog("Looking up customer " + input);\nCustomer customer = CustomerRepository.Find(input);\nLog("Lookup finished");\noutput = customer.Name.ToUpper();\nLog("Never reached");\n`,
+    input: `"C-001"`,
+    types: `public class Customer\n{\n    public string Name { get; set; }\n}\n\npublic static class CustomerRepository\n{\n    public static Customer Find(string id)\n    {\n        CSharpRunner.Log("Repository: no customer found for " + id);\n        return null;\n    }\n}\n`,
+    options: { inputType: "string", outputType: "string", assemblies: [], usings: "" },
+    logs: (req) => [`Looking up customer ${unquote(req.InputParameters)}`, `Repository: no customer found for ${unquote(req.InputParameters)}`, "Lookup finished"],
+    runtimeErrors: () => [{
+      line: 5, message: "Object reference not set to an instance of an object.", exceptionType: "System.NullReferenceException",
+      stackTrace: "   at SparkCode.CSharpRunner.Run(String input)"
+    }]
+  }
+};
+
+const MOCK_OUTPUTS = {
+  untyped: (input) => `Hello, ${unquote(input) || "World"}!`,
+  typed: () => JSON.stringify({ Total: 246, Message: "Processed ABC", Items: ["a", "b", "c"], Processed: true }),
+  xml: () => `<accounts count="2">\n  <account id="A-001">\n    <name>Contoso</name>\n    <revenue>125000</revenue>\n  </account>\n  <account id="A-002">\n    <name>Fabrikam</name>\n    <revenue>98000</revenue>\n  </account>\n</accounts>`
+};
+
+const TAB_INFO = {
+  code:  { lang: "csharp", hint: "Body of the generated <code>Main</code> method. Read <code>input</code>, assign <code>output</code>, log with <code>Log(\"message\")</code> (returned in the <b>Logs</b> output). Sent as <b>Code</b> (required)." },
+  input: { lang: "json",   hint: "Serialized JSON deserialized into <code>InputTypeName</code> before execution. Sent as <b>InputParameters</b> (optional)." },
+  types: { lang: "csharp", hint: "C# type declarations available to your code and the conversion pipeline. Sent as <b>Types</b> (optional)." }
+};
+
+/* ---------------- State ---------------- */
+const fromTemplate = (t) => ({ code: t.code, input: t.input, types: t.types });
+const state = {
+  activeTab: "code",
+  values: fromTemplate(TEMPLATES.untyped),
+  saved: fromTemplate(TEMPLATES.untyped),
+  options: structuredClone(TEMPLATES.untyped.options),
+  view: "string", wrap: false,
+  output: null, history: [], activeHistory: null, running: false
+};
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1600); }
+function unquote(s) { try { const v = JSON.parse(s); return typeof v === "string" ? v : String(v); } catch { return (s || "").trim(); } }
+
+/* ---------------- Editor: Monaco with textarea fallback ---------------- */
+let editor = null, models = {}, fallback = null;
+
+function initFallback() {
+  if (editor || fallback) return;
+  fallback = document.createElement("textarea");
+  fallback.className = "fallback"; fallback.spellcheck = false;
+  fallback.value = state.values[state.activeTab];
+  fallback.addEventListener("input", () => { state.values[state.activeTab] = fallback.value; refreshDirty(); });
+  $("editor").appendChild(fallback);
+}
+
+function initMonaco() {
+  const base = "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs";
+  const loader = document.createElement("script");
+  loader.src = base + "/loader.js";
+  loader.onerror = initFallback;
+  loader.onload = () => {
+    require.config({ paths: { vs: base } });
+    require(["vs/editor/editor.main"], () => {
+      if (fallback) { state.values[state.activeTab] = fallback.value; fallback.remove(); fallback = null; }
+      for (const k of Object.keys(TAB_INFO)) {
+        models[k] = monaco.editor.createModel(state.values[k], TAB_INFO[k].lang);
+        models[k].onDidChangeContent(() => { state.values[k] = models[k].getValue(); refreshDirty(); });
+      }
+      editor = monaco.editor.create($("editor"), {
+        model: models[state.activeTab], automaticLayout: true, minimap: { enabled: false },
+        fontSize: 13, scrollBeyondLastLine: false, theme: isDark() ? "vs-dark" : "vs", tabSize: 4
+      });
+      editor.onDidChangeCursorPosition(e => $("cursorPos").textContent = `Ln ${e.position.lineNumber}, Col ${e.position.column}`);
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, run);
+    }, initFallback);
+  };
+  document.head.appendChild(loader);
+  setTimeout(() => { if (!editor) initFallback(); }, 6000);
+}
+
+function setEditorValues() {
+  for (const k of Object.keys(TAB_INFO)) if (models[k]) models[k].setValue(state.values[k]);
+  if (fallback) fallback.value = state.values[state.activeTab];
+  refreshDirty();
+}
+
+function switchTab(tab) {
+  state.activeTab = tab;
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+  $("tabHint").innerHTML = TAB_INFO[tab].hint;
+  if (editor) { editor.setModel(models[tab]); editor.focus(); }
+  if (fallback) fallback.value = state.values[tab];
+}
+
+function refreshDirty() {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("is-dirty", state.values[t.dataset.tab] !== state.saved[t.dataset.tab]));
+  refreshTypeNames();
+}
+
+// Suggest type names for the options dialog from the Types tab
+function refreshTypeNames() {
+  const names = ["string", "int", "decimal", "bool", "DateTime"];
+  for (const m of state.values.types.matchAll(/\b(?:class|struct|enum)\s+([A-Za-z_]\w*)/g)) names.push(m[1]);
+  $("typeNames").innerHTML = [...new Set(names)].map(n => `<option value="${esc(n)}">`).join("");
+}
+
+/* ---------------- Options dialog ---------------- */
+let draftAssemblies = [];
+function renderChips() {
+  const box = $("asmChips"), input = $("asmInput");
+  box.querySelectorAll(".chip").forEach(c => c.remove());
+  draftAssemblies.forEach((a, i) => {
+    const c = document.createElement("span"); c.className = "chip";
+    c.innerHTML = `${esc(a)}<button type="button" title="Remove">×</button>`;
+    c.querySelector("button").onclick = () => { draftAssemblies.splice(i, 1); renderChips(); };
+    box.insertBefore(c, input);
+  });
+  renderOptSummary();
+}
+function renderOptSummary() {
+  const it = $("optInputType").value || "string", ot = $("optOutputType").value || "string";
+  const usings = $("optUsings").value.split("\n").filter(l => l.trim()).length;
+  $("optSummary").innerHTML = `<b>InputTypeName</b>: ${esc(it)}<br><b>OutputTypeName</b>: ${esc(ot)}<br><b>ReferencedAssemblies</b>: "${esc(draftAssemblies.join(","))}"<br><b>UsingStatements</b>: ${usings} line(s)`;
+}
+function openOptions() {
+  $("optInputType").value = state.options.inputType;
+  $("optOutputType").value = state.options.outputType;
+  $("optUsings").value = state.options.usings;
+  draftAssemblies = [...state.options.assemblies];
+  renderChips();
+  $("optionsDlg").showModal();
+}
+function addAssemblyFromInput() {
+  $("asmInput").value.split(",").map(s => s.trim()).filter(Boolean)
+    .forEach(s => { if (!draftAssemblies.includes(s)) draftAssemblies.push(s); });
+  $("asmInput").value = ""; renderChips();
+}
+function refreshOptionsBadge() {
+  const o = state.options;
+  const n = (o.inputType !== "string") + (o.outputType !== "string") + (o.assemblies.length > 0) + (o.usings.trim() !== "");
+  $("optCount").textContent = n;
+  $("optCount").style.display = n ? "" : "none";
+  $("stTypes").textContent = `${o.inputType} → ${o.outputType}`;
+}
+
+/* ---------------- Run (simulated csp_Other_RunCSharp call) ---------------- */
+function buildRequest() {
+  const o = state.options;
+  const req = {
+    Code: state.values.code,
+    InputParameters: state.values.input,
+    Types: state.values.types,
+    InputTypeName: o.inputType,
+    OutputTypeName: o.outputType,
+    ReferencedAssemblies: o.assemblies.join(","),
+    UsingStatements: o.usings
+  };
+  // Omit empty optional parameters so the plugin defaults apply
+  for (const k of Object.keys(req)) if (k !== "Code" && !String(req[k] ?? "").trim()) delete req[k];
+  return req;
+}
+
+// Client-side checks done before calling the API
+function validateRequest(req) {
+  if (!req.Code || !req.Code.trim()) return [{ kind: "client", code: "INPUT", message: "Code is required.", section: "Code", line: 1, column: 1 }];
+  if (req.InputParameters && (req.InputTypeName || "string") !== "string") {
+    try { JSON.parse(req.InputParameters); }
+    catch (e) { return [{ kind: "client", code: "JSON", message: "InputParameters is not valid JSON: " + e.message, section: "InputParameters", line: 1, column: 1 }]; }
+  }
+  return [];
+}
+
+// Mock of the API response. Every property is a string or null, as returned by Dataverse.
+function simulateApi(req) {
+  const code = req.Code || "", types = req.Types || "", usings = req.UsingStatements || "";
+  const compileErrors = [];
+  const scan = (text, section, rules) => text.split("\n").forEach((l, i) => rules.forEach(([re, err]) => {
+    const c = l.search(re); if (c >= 0) compileErrors.push({ line: i + 1, column: c + 1, section, ...err(l) });
+  }));
+  scan(code, "Code", [
+    [/\bouput\b/, () => ({ code: "CS0103", message: "The name 'ouput' does not exist in the current context" })],
+    [/\bint\s+\w+\s*=\s*"/, () => ({ code: "CS0029", message: "Cannot implicitly convert type 'string' to 'int'" })]
+  ]);
+  scan(types, "Types", [[/get;\s*set\s*}/, () => ({ code: "CS1002", message: "; expected" })]]);
+  scan(usings, "UsingStatements", [[/^\s*using\s+[\w.]+\s*$/, () => ({ code: "CS1002", message: "; expected" })]]);
+  if (compileErrors.length) return { Outputs: null, Logs: null, CompileErrors: JSON.stringify(compileErrors), RuntimeErrors: null };
+
+  const tpl = Object.values(TEMPLATES).find(t => t.code === code && (t.types || "") === types);
+  let logs, runtimeErrors = null;
+  if (tpl) {
+    logs = tpl.logs ? tpl.logs(req) : [];
+    if (tpl.runtimeErrors) runtimeErrors = tpl.runtimeErrors(req);
+  } else {
+    // Generic simulation: string literals passed to Log(...) and the first 'throw new X("msg")'
+    logs = [];
+    const lines = code.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      const t = lines[i].match(/throw\s+new\s+([\w.]+)\(\s*"((?:[^"\\]|\\.)*)"/);
+      if (t) {
+        runtimeErrors = [{ line: i + 1, message: t[2], exceptionType: t[1].includes(".") ? t[1] : "System." + t[1], stackTrace: "   at SparkCode.CSharpRunner.Run(String input)" }];
+        break;
+      }
+      for (const m of lines[i].matchAll(/\bLog\(\s*"((?:[^"\\]|\\.)*)"(\s*\+)?/g)) logs.push(m[1] + (m[2] ? "…" : ""));
+    }
+  }
+  const Logs = logs.length ? logs.join("\n") : null;
+  if (runtimeErrors) return { Outputs: null, Logs, CompileErrors: null, RuntimeErrors: JSON.stringify(runtimeErrors) };
+
+  let output;
+  if (/XElement/.test(code)) output = MOCK_OUTPUTS.xml();
+  else if ((req.OutputTypeName || "string") !== "string") output = MOCK_OUTPUTS.typed();
+  else output = MOCK_OUTPUTS.untyped(req.InputParameters);
+  return { Outputs: output, Logs, CompileErrors: null, RuntimeErrors: null };
+}
+
+// Maps the raw API response to the UI result model
+function parseResponse(resp) {
+  const compile = resp.CompileErrors ? JSON.parse(resp.CompileErrors).map(e => ({ kind: "compile", ...e })) : [];
+  const runtime = resp.RuntimeErrors ? JSON.parse(resp.RuntimeErrors).map(e => ({ kind: "runtime", section: "Code", code: e.exceptionType.split(".").pop(), ...e })) : [];
+  const status = compile.length ? "compile" : runtime.length ? "runtime" : "ok";
+  return { status, ok: status === "ok", output: resp.Outputs, logs: resp.Logs, problems: [...compile, ...runtime], response: resp };
+}
+
+function makeEntry(values, options, res, ms, when) {
+  return {
+    id: when.getTime() + Math.random(), when, ms, ...res,
+    values: { ...values }, options: structuredClone(options),
+    title: (values.code.split("\n").find(l => l.trim() && !l.trim().startsWith("//") && !/^\s*(CSharpRunner\.)?Log\(/.test(l)) || "(empty)").trim()
+  };
+}
+
+function run() {
+  if (state.running) return;
+  const req = buildRequest();
+  const invalid = validateRequest(req);
+  if (invalid.length) {
+    renderProblems(invalid); showBottom("problems");
+    toast("Fix the problems before running"); return;
+  }
+  state.running = true;
+  setStatus("running");
+  $("runBtn").disabled = true; $("runLabel").textContent = "Running…";
+  const started = performance.now();
+  setTimeout(() => {
+    const res = parseResponse(simulateApi(req));
+    const ms = Math.round(performance.now() - started);
+    state.running = false;
+    $("runBtn").disabled = false; $("runLabel").textContent = "▶ Run";
+    state.saved = { ...state.values }; refreshDirty();
+    const entry = makeEntry(state.values, state.options, res, ms, new Date());
+    state.history.unshift(entry);
+    showResult(entry);
+  }, 600 + Math.random() * 700);
+}
+
+function showResult(entry) {
+  state.activeHistory = entry.id;
+  renderHistory();
+  renderProblems(entry.problems);
+  renderLogs(entry.logs, entry.status);
+  showBottom(!entry.ok ? "problems" : entry.logs ? "logs" : state.bottom);
+  setOutput(entry);
+  setStatus(entry.status, entry);
+}
+
+const STATUS_TEXT = { running: "⟳ Running…", ok: "✔ Succeeded", compile: "✖ Compile failed", runtime: "✖ Runtime error", ready: "● Ready" };
+function setStatus(kind, entry) {
+  $("status").className = kind === "compile" || kind === "runtime" ? "failed" : kind === "running" ? "running" : "";
+  $("runBtn").classList.toggle("running", kind === "running");
+  $("stState").textContent = STATUS_TEXT[kind];
+  $("stTime").textContent = entry ? `Duration: ${entry.ms} ms` : "Duration: –";
+  $("stSize").textContent = entry && entry.output != null ? `Output: ${new Blob([entry.output]).size} bytes` : "Output: –";
+}
+
+/* ---------------- Logs ---------------- */
+// raw: value of the Logs output (null when nothing was logged); status: run status or null before any run
+function renderLogs(raw, status) {
+  state.logs = raw ?? null;
+  state.logStatus = status ?? null;
+  const lines = raw ? raw.split("\n") : [];
+  $("logCount").textContent = lines.length;
+  $("logCount").classList.toggle("info", lines.length > 0);
+  const list = $("logList");
+  if (!lines.length) {
+    list.innerHTML = `<div class="empty">${
+      !status ? "No logs yet. Call Log(\"message\") in Code (or CSharpRunner.Log(\"message\") from Types) and press Run."
+      : status === "compile" ? "No logs – the code did not compile."
+      : "The run completed without writing any log messages."}</div>`;
+    return;
+  }
+  const f = $("logFilter").value.trim().toLowerCase();
+  const hl = (s) => f ? esc(s).replace(new RegExp(esc(f).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), m => `<mark>${m}</mark>`) : esc(s);
+  const rows = lines.map((l, i) => [i, l]).filter(([, l]) => !f || l.toLowerCase().includes(f));
+  const note = status === "runtime" ? `<div class="empty" style="font-style:normal">⚠ The run failed at runtime – these are all messages logged before the error.</div>` : "";
+  list.innerHTML = note + (rows.length
+    ? rows.map(([i, l]) => `<div class="log"><span class="idx">${i + 1}</span><span class="msg">${hl(l)}</span></div>`).join("")
+    : `<div class="empty">No log matches “${esc(f)}”.</div>`);
+}
+
+function showBottom(which) {
+  state.bottom = which;
+  document.querySelectorAll(".bottom-tab").forEach(b => b.classList.toggle("active", b.dataset.bottom === which));
+  $("problemList").style.display = which === "problems" ? "" : "none";
+  $("logList").style.display = which === "logs" ? "" : "none";
+  $("logTools").style.display = which === "logs" ? "" : "none";
+}
+
+/* ---------------- Problems ---------------- */
+const SECTION_TAB = { Code: "code", Types: "types", InputParameters: "input" };
+
+function setMarkers(problems) {
+  if (!editor) return;
+  for (const [section, tab] of Object.entries(SECTION_TAB)) {
+    monaco.editor.setModelMarkers(models[tab], "runcsharp", problems.filter(p => p.section === section && p.line).map(p => ({
+      startLineNumber: p.line, startColumn: p.column || 1, endLineNumber: p.line, endColumn: 1000,
+      message: `${p.code}: ${p.message}`, severity: monaco.MarkerSeverity.Error
+    })));
+  }
+}
+
+function goToProblem(p) {
+  if (p.section === "UsingStatements") { openOptions(); setTimeout(() => $("optUsings").focus(), 0); return; }
+  const tab = SECTION_TAB[p.section]; if (!tab) return;
+  switchTab(tab);
+  if (editor && p.line) { editor.revealLineInCenter(p.line); editor.setPosition({ lineNumber: p.line, column: p.column || 1 }); editor.focus(); }
+}
+
+// problems: [{ kind: "compile"|"runtime"|"client"|"http", code, message, section, line, column, exceptionType?, stackTrace? }]
+function renderProblems(problems, ran = true) {
+  $("problemCount").textContent = problems.length;
+  $("problemCount").classList.toggle("err", problems.length > 0);
+  setMarkers(problems);
+  if (!problems.length) {
+    $("problemList").innerHTML = `<div class="empty">${ran ? "No problems. Compilation and execution succeeded." : "No problems. Press Run to compile and execute."}</div>`;
+    return;
+  }
+  $("problems").classList.remove("collapsed");
+  const kindLabel = { compile: "compile", runtime: "runtime", client: "validation", http: "http" };
+  $("problemList").innerHTML = problems.map((p, i) => {
+    const loc = p.section ? `${p.section}${p.line ? ` (${p.line}${p.column ? "," + p.column : ""})` : ""}` : "";
+    const stack = p.stackTrace ? `<span class="toggle" data-stack="${i}">stack ▸</span>` : "";
+    return `<div class="problem" data-i="${i}" title="${p.exceptionType ? esc(p.exceptionType) : ""}">
+        <span class="sev">✖ ${esc(p.code)}</span><span class="kind">${kindLabel[p.kind]}</span><span>${esc(p.message)}</span>${stack}
+        <span class="spacer"></span><span class="loc">${esc(loc)}</span></div>` +
+      (p.stackTrace ? `<pre class="stack" id="stack-${i}" style="display:none">${esc(p.exceptionType)}: ${esc(p.message)}\n${esc(p.stackTrace)}</pre>` : "");
+  }).join("");
+  $("problemList").querySelectorAll(".problem").forEach(el => el.onclick = (ev) => {
+    const i = +el.dataset.i;
+    if (ev.target.dataset.stack != null) {
+      const s = $("stack-" + i), open = s.style.display === "none";
+      s.style.display = open ? "" : "none"; ev.target.textContent = open ? "stack ▾" : "stack ▸";
+      return;
+    }
+    goToProblem(problems[i]);
+  });
+}
+
+/* ---------------- Outputs explorer ---------------- */
+function detectView(out) {
+  const t = (out || "").trim();
+  if (t.startsWith("<")) return "xml";
+  if (t.startsWith("{") || t.startsWith("[")) { try { JSON.parse(t); return "json"; } catch {} }
+  return "string";
+}
+
+function setOutput(entry) {
+  state.output = entry ? entry.output : null;
+  const meta = $("outMeta");
+  if (!entry) { meta.innerHTML = "<span>No output yet</span>"; renderOutput(); return; }
+  meta.innerHTML = `<span>${entry.when.toLocaleTimeString()}</span><span>${entry.ms} ms</span>` +
+    (entry.output != null
+      ? `<span>${entry.output.length} chars</span><span>Detected: ${detectView(entry.output).toUpperCase()}</span>`
+      : `<span style="color:var(--err)">${entry.status === "runtime" ? "Runtime error" : "Compilation failed"} – no output</span>`);
+  if (entry.ok) setView(detectView(entry.output)); else renderOutput();
+}
+
+function setView(v) {
+  state.view = v;
+  document.querySelectorAll("#viewSeg button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
+  renderOutput();
+}
+
+function renderOutput() {
+  const body = $("outBody");
+  body.classList.toggle("wrap", state.wrap);
+  const out = state.output;
+  if (out == null) {
+    const active = state.history.find(h => h.id === state.activeHistory);
+    const failMsg = active && active.status === "compile" ? "✖ The code did not compile.<br/><span style=\"font-size:11px;color:var(--muted)\">See the Problems panel for details.</span>"
+      : active && active.status === "runtime" ? "✖ The code threw an exception at runtime.<br/><span style=\"font-size:11px;color:var(--muted)\">See the Problems panel for the error – logs written before it are in the Logs tab.</span>"
+      : null;
+    body.innerHTML = failMsg
+      ? `<div class="out-empty"><div style="color:var(--err)">${failMsg}</div></div>`
+      : `<div class="out-empty"><div>▶<br/>Run your code to see the <b>Outputs</b> value here.<br/><span style="font-size:11px">View it as raw string, XML tree or JSON tree.</span></div></div>`;
+    return;
+  }
+  if (state.view === "string") { body.innerHTML = `<pre>${esc(out)}</pre>`; return; }
+  if (state.view === "json") {
+    try { body.innerHTML = `<div class="tree">${jsonNode(null, JSON.parse(out))}</div>`; }
+    catch (e) { body.innerHTML = `<div class="parse-error">Output is not valid JSON: ${esc(e.message)}</div><pre style="margin-top:10px">${esc(out)}</pre>`; }
+    return;
+  }
+  const doc = new DOMParser().parseFromString(out, "application/xml");
+  const err = doc.querySelector("parsererror");
+  if (err) { body.innerHTML = `<div class="parse-error">Output is not valid XML: ${esc(err.textContent.split("\n")[0])}</div><pre style="margin-top:10px">${esc(out)}</pre>`; return; }
+  body.innerHTML = `<div class="tree">${xmlNode(doc.documentElement)}</div>`;
+}
+
+function jsonValue(v) {
+  if (v === null) return `<span class="z">null</span>`;
+  if (typeof v === "string") return `<span class="s">"${esc(v)}"</span>`;
+  if (typeof v === "number") return `<span class="n">${v}</span>`;
+  return `<span class="b">${v}</span>`;
+}
+function jsonNode(key, v) {
+  const k = key == null ? "" : `<span class="k">${esc(key)}</span>: `;
+  if (v === null || typeof v !== "object") return `<div class="leaf">${k}${jsonValue(v)}</div>`;
+  const isArr = Array.isArray(v), entries = isArr ? v.map((x, i) => [i, x]) : Object.entries(v);
+  const hint = isArr ? `Array[${entries.length}]` : `Object{${entries.length}}`;
+  return `<details open><summary>${k}<span class="hint">${hint}</span></summary>${entries.map(([ck, cv]) => jsonNode(ck, cv)).join("")}</details>`;
+}
+function xmlNode(el) {
+  const attrs = [...el.attributes].map(a => ` <span class="a">${esc(a.name)}</span>=<span class="s">"${esc(a.value)}"</span>`).join("");
+  const kids = [...el.children];
+  if (!kids.length) return `<div class="leaf"><span class="t">&lt;${esc(el.tagName)}</span>${attrs}<span class="t">&gt;</span>${esc(el.textContent.trim())}<span class="t">&lt;/${esc(el.tagName)}&gt;</span></div>`;
+  return `<details open><summary><span class="t">&lt;${esc(el.tagName)}</span>${attrs}<span class="t">&gt;</span> <span class="hint">${kids.length} child element(s)</span></summary>${kids.map(xmlNode).join("")}</details>`;
+}
+
+/* ---------------- Run history ---------------- */
+function renderHistory() {
+  const list = $("historyList");
+  if (!state.history.length) { list.innerHTML = `<div class="empty">No runs yet.</div>`; return; }
+  list.innerHTML = state.history.map(h => `
+    <div class="h-item ${h.id === state.activeHistory ? "active" : ""}" data-id="${h.id}" title="Click to restore inputs and output">
+      <span class="dot" style="background:${h.ok ? "var(--ok)" : "var(--err)"}"></span>
+      <span class="title">${esc(h.title)}</span>
+      <span class="meta">${h.when.toLocaleTimeString()} · ${h.ms} ms · ${esc(h.options.inputType)}→${esc(h.options.outputType)}</span>
+    </div>`).join("");
+  list.querySelectorAll(".h-item").forEach(el => el.onclick = () => {
+    const h = state.history.find(x => String(x.id) === el.dataset.id);
+    state.values = { ...h.values }; state.saved = { ...h.values }; state.options = structuredClone(h.options);
+    setEditorValues(); refreshOptionsBadge(); showResult(h);
+    toast("Restored run from " + h.when.toLocaleTimeString());
+  });
+}
+
+function seedHistory() {
+  const now = Date.now();
+  state.history = [["typed", 3], ["runtimeError", 6], ["compileError", 9], ["xml", 15], ["untyped", 22]].map(([key, minsAgo]) => {
+    const t = TEMPLATES[key];
+    const res = parseResponse(simulateApi({ Code: t.code, InputParameters: t.input, Types: t.types, UsingStatements: t.options.usings, InputTypeName: t.options.inputType, OutputTypeName: t.options.outputType }));
+    return makeEntry(fromTemplate(t), t.options, res, 300 + Math.round(Math.random() * 900), new Date(now - minsAgo * 60000));
+  });
+}
+
+/* ---------------- Theme ---------------- */
+function isDark() { return document.documentElement.dataset.theme === "dark"; }
+function toggleTheme() {
+  document.documentElement.dataset.theme = isDark() ? "light" : "dark";
+  $("themeBtn").textContent = isDark() ? "☀️" : "🌙";
+  if (editor) monaco.editor.setTheme(isDark() ? "vs-dark" : "vs");
+}
+
+/* ---------------- Wiring ---------------- */
+for (const [k, t] of Object.entries(TEMPLATES)) $("templateSelect").insertAdjacentHTML("beforeend", `<option value="${k}">${esc(t.label)}</option>`);
+$("templateSelect").onchange = (e) => {
+  const t = TEMPLATES[e.target.value]; if (!t) return;
+  state.values = fromTemplate(t); state.saved = fromTemplate(t);
+  state.options = structuredClone(t.options);
+  setEditorValues(); refreshOptionsBadge(); switchTab("code");
+  state.activeHistory = null; renderProblems([], false); renderLogs(null, null); setOutput(null); renderHistory(); setStatus("ready");
+  toast(`Loaded sample: ${t.label}`);
+  e.target.value = "";
+};
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => switchTab(t.dataset.tab));
+$("runBtn").onclick = run;
+document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); run(); } });
+$("themeBtn").onclick = toggleTheme;
+$("optionsBtn").onclick = openOptions;
+$("asmInput").addEventListener("keydown", e => {
+  if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addAssemblyFromInput(); }
+  else if (e.key === "Backspace" && !e.target.value && draftAssemblies.length) { draftAssemblies.pop(); renderChips(); }
+});
+["optInputType", "optOutputType", "optUsings"].forEach(id => $(id).addEventListener("input", renderOptSummary));
+$("optReset").onclick = () => { $("optInputType").value = "string"; $("optOutputType").value = "string"; $("optUsings").value = ""; draftAssemblies = []; renderChips(); };
+$("optionsDlg").addEventListener("close", () => {
+  if ($("optionsDlg").returnValue !== "save") return;
+  addAssemblyFromInput();
+  state.options = {
+    inputType: $("optInputType").value.trim() || "string",
+    outputType: $("optOutputType").value.trim() || "string",
+    assemblies: [...draftAssemblies],
+    usings: $("optUsings").value
+  };
+  refreshOptionsBadge(); toast("Options saved");
+});
+document.querySelectorAll("#viewSeg button").forEach(b => b.onclick = () => setView(b.dataset.view));
+$("wrapBtn").onclick = () => { state.wrap = !state.wrap; $("wrapBtn").classList.toggle("primary", state.wrap); renderOutput(); };
+$("copyBtn").onclick = () => { if (state.output != null) navigator.clipboard?.writeText(state.output).then(() => toast("Output copied"), () => toast("Copy not permitted")); };
+$("expandAll").onclick = () => $("outBody").querySelectorAll("details").forEach(d => d.open = true);
+$("collapseAll").onclick = () => $("outBody").querySelectorAll("details").forEach((d, i) => d.open = i === 0);
+$("problemsChevron").onclick = () => { const p = $("problems"); p.classList.toggle("collapsed"); $("problemsChevron").textContent = p.classList.contains("collapsed") ? "▴" : "▾"; };
+document.querySelectorAll(".bottom-tab").forEach(b => b.onclick = () => { $("problems").classList.remove("collapsed"); $("problemsChevron").textContent = "▾"; showBottom(b.dataset.bottom); });
+$("logFilter").addEventListener("input", () => renderLogs(state.logs, state.logStatus));
+$("logCopyBtn").onclick = () => { if (state.logs) navigator.clipboard?.writeText(state.logs).then(() => toast("Logs copied"), () => toast("Copy not permitted")); };
+$("historyToggle").onclick = () => { const m = $("main"); m.classList.toggle("history-collapsed"); $("historyToggle").textContent = m.classList.contains("history-collapsed") ? "⟩" : "⟨"; };
+$("clearHistory").onclick = () => { state.history = []; state.activeHistory = null; renderHistory(); };
+$("formatBtn").onclick = () => {
+  if (state.activeTab === "input") {
+    try {
+      const v = JSON.stringify(JSON.parse(state.values.input), null, 2);
+      state.values.input = v;
+      if (models.input) models.input.setValue(v); else if (fallback) fallback.value = v;
+      toast("JSON formatted");
+    } catch (e) { toast("Invalid JSON: " + e.message); }
+  } else if (editor) editor.getAction("editor.action.formatDocument")?.run();
+};
+
+/* ---------------- Init ---------------- */
+seedHistory();
+switchTab("code");
+refreshDirty();
+refreshOptionsBadge();
+renderHistory();
+renderProblems([], false);
+renderLogs(null, null);
+showBottom("problems");
+renderOutput();
+initMonaco();
+</script>
+</body>
+</html>
