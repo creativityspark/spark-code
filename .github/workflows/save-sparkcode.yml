@@ -6,8 +6,8 @@
 # - https://github.com/microsoft/powerplatform-build-tools/tree/main
 # - https://github.com/marketplace/actions/powerplatform-actions
 
-name: Save SparkCode
-run-name: Save SparkCode
+name: Save and Release SparkCode
+run-name: Save and Release SparkCode
 
 on:
   workflow_dispatch:
