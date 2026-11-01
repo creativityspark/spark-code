@@ -52,7 +52,7 @@ This repository includes several Dataverse Custom APIs. Each entry below shows t
 
 ## Other
 - **HttpRequest**: Performs an HTTP request with optional body and `{{paramN}}` placeholder replacement.
-- **RunCSharp**: Compiles and executes C# 4.0 code at runtime, supporting optional custom type definitions (`Types`), typed input/output conversion (`InputTypeName` / `OutputTypeName`), input payloads, and custom assembly/usings. The code can call `Log(message)` to write log messages, which are returned (one per line) in the `Logs` output parameter; runtime errors include the messages logged before the failure.
+- **RunCSharp**: Compiles and executes C# 4.0 code at runtime, supporting optional custom type definitions (`Types`), typed input/output conversion (`InputTypeName` / `OutputTypeName`), input payloads, and custom assembly/usings. `Log(message)` collects messages returned in `Logs`. 
 
 ## PDF
 - **ExtractImages**: Extracts embedded JPEG images from a Base64-encoded PDF and returns each unique image as Base64.
