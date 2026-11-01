@@ -50,9 +50,9 @@ the plugin defaults in `ctx.GetInputParameter(..., defaultValue)` apply.
 | Property | Type | Status | Description |
 |---|---|---|---|
 | `Outputs` | string | Existing | Result of the script. Native output types use `Convert.ToString`; custom types are serialized to JSON. |
-| `Logs` | string \| null | Existing in code (response property not yet registered in the solution) | Messages written with `Log(message)`, joined with `\n` in the order they were written. `null` when nothing was logged. |
-| `CompileErrors` | string (JSON array) \| null | **Planned API change** | Compiler errors, or `null` when compilation succeeded. Schema below. |
-| `RuntimeErrors` | string (JSON array) \| null | **Planned API change** | Script execution or input-conversion errors, or `null` when neither occurred. Schema below. |
+| `Logs` | string \| null | Implemented | Messages written with `Log(message)`, joined with `\n` in the order they were written. `null` when nothing was logged. |
+| `CompileErrors` | string (JSON array) \| null | Implemented | Compiler errors, or `null` when compilation succeeded. Schema below. |
+| `RuntimeErrors` | string (JSON array) \| null | Implemented | Script execution, input-conversion or output-serialization errors, or `null` when none occurred. Schema below. |
 
 ```jsonc
 // CompileErrors
@@ -66,18 +66,19 @@ the plugin defaults in `ctx.GetInputParameter(..., defaultValue)` apply.
 
 - `line` (and `column`) are **relative to the section** the user typed them in (Code, Types or UsingStatements). The API
   maps generated-source positions back to sections, so the client does no offset mapping.
+- Compiler diagnostics on generated closing code (for example an unmatched user brace) have null `section`, `line`
+  and `column` when they cannot be attributed reliably. Show these as general compiler problems without editor navigation.
+  Runtime `line` may likewise be null when symbols are unavailable; focus its section without inventing a position.
 - Input-conversion failures when deserializing `InputParameters` into `InputTypeName` are **runtime errors** with
   `section: "InputParameters"`, not HTTP faults. Return exception details in `RuntimeErrors`, with `Outputs = null`;
   script execution does not start. Use `line = null` when no reliable input location is available.
-- With the planned change, the API **doesn't throw** for script errors (compile errors, runtime exceptions or input-conversion failures). It returns a
+- Output-serialization failures are runtime errors with a null line and section Code. Preserve execution logs and return
+  null Outputs. Invalid type configuration and infrastructure failures remain faults.
+- The API **doesn't throw** for script errors (compile errors, runtime exceptions or conversion failures). It returns a
   normal response in which `Outputs` is `null` and `CompileErrors` or `RuntimeErrors` is populated. `Logs` is always
   complete, including the messages written before a runtime exception.
 - Faults that aren't script errors (HTTP 403, timeout, invalid request, an older API version that still throws) still
   arrive as an HTTP error; see FR-P4.
-
-> **Current API behavior** (until the planned change ships): compile errors throw `Compiler Errors:` followed by one
-> line per error, and runtime errors throw `Runtime Error: <message>` followed by the logs collected so far. The tester
-> shows these as a single `HTTP <status>` problem with the full message (FR-P4).
 
 ### 3.3 Logging
 The generated code exposes a static `Log(string message)` function on `SparkCode.CSharpRunner`:
@@ -313,7 +314,7 @@ interface RunResponse {
   RuntimeErrors: string | null;   // JSON: RuntimeError[]
 }
 type Section = "Code" | "Types" | "UsingStatements" | "InputParameters";
-interface CompileError { line: number; column: number; code: string; message: string; section: "Code" | "Types" | "UsingStatements"; }
+interface CompileError { line: number | null; column: number | null; code: string; message: string; section: "Code" | "Types" | "UsingStatements" | null; }
 interface RuntimeError { line: number | null; section: "Code" | "Types" | "InputParameters"; message: string; exceptionType: string; stackTrace: string; }
 
 interface RunResult {
@@ -337,7 +338,8 @@ interface Problem {
 4. Running the **Compile error** sample shows "✖ Compile failed" and 3 problems: two in Code and one in Types. Clicking the Types
    problem switches to the Types tab at line 3. Logs shows "No logs – the code did not compile."
 5. Running the **Runtime error** sample shows "✖ Runtime error", selects Problems, and shows one `NullReferenceException` problem at
-   Code line 5 with an expandable stack trace. The Logs tab shows all 3 messages written before the exception.
+   Code line 5 when symbols are available (otherwise no line), with an expandable stack trace.
+   The Logs tab shows all 3 messages written before the exception.
 6. A compile error with section UsingStatements opens the Options dialog when clicked.
 7. Saving the Options dialog sends the configured values in the request, and the badge count matches the number of non-default options.
 8. A history entry restores the exact editor content, options, output, problems and logs of that run, including after a page reload.
@@ -352,7 +354,7 @@ interface Problem {
    - Redeploy with the `sparkcode-api-package-deploy` skill.
 2. **Scaffold** the Code App in `src/codeapps/runcsharp-tester/` and add the Dataverse data source.
 3. **Build functionality incrementally.** Each substep extends the previous working version; verify its checkpoint before
-   moving on. Until step 1 ships, script errors surface as `HTTP` problems (FR-P4), not parsed message strings.
+   moving on. Older deployments without step 1 surface script errors as `HTTP` problems (FR-P4), not parsed message strings.
    1. **Minimal end-to-end run:** show a plain-text Code editor, Run button and read-only string output. Send only
       `Code` through `runCSharpService`; block empty code, prevent overlapping requests and show HTTP failures.
       **Checkpoint:** `output = "hello";` calls the real API and displays `hello`; a failed call shows its error.

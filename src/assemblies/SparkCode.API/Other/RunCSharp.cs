@@ -1,5 +1,6 @@
 using Microsoft.Xrm.Sdk;
 using System;
+using Newtonsoft.Json;
 
 namespace SparkCode.API.Other
 {
@@ -14,11 +15,13 @@ namespace SparkCode.API.Other
     /// <param name="UsingStatements" type="string" optional="true">Optional raw C# using statements appended before compilation.</param>
     /// <param name="Outputs" type="string" direction="output">Execution result returned by the runtime Main method.</param>
     /// <param name="Logs" type="string" direction="output">Messages written by the code via Log(message), one per line.</param>
+    /// <param name="CompileErrors" type="string" direction="output">JSON array of section-relative compiler diagnostics; null when compilation succeeds.</param>
+    /// <param name="RuntimeErrors" type="string" direction="output">JSON runtime/conversion diagnostics; null when absent. Source lines may be null.</param>
     /// <example>
     /// Untyped mode: set Code to "output = \"hello\";" and optionally read input from variable input.
     /// Logging: call Log(message) from Code (or CSharpRunner.Log(message) from classes declared in Types), e.g.
     /// "output = \"Hello \" + input; Log(output);" returns each logged message on its own line in Logs.
-    /// If the code throws at runtime, the error message includes the messages logged before the failure.
+    /// Script failures return diagnostics instead of throwing; Logs includes messages written before a runtime failure.
     /// Typed mode: set Types to class declarations, InputTypeName to your input class, and OutputTypeName to your output class.
     /// InputParameters "{\"MyProperty\":123,\"MyValue\":\"abc\"}" with InputTypeName="InputType" will deserialize into InputType before code execution.
     /// OutputTypeName="OutputType" returns Outputs as serialized JSON for custom types.
@@ -31,6 +34,17 @@ namespace SparkCode.API.Other
     /// Step 4: write your runtime logic inside CSharpRunner.Run and assign output; copy that logic to Code.
     /// InputParameters provides the runtime input value for input.
     /// </example>
+    /// <remarks>
+    /// Script compile/runtime and input/output conversion errors return structured diagnostics with complete pre-error logs instead of throwing; 
+    /// invalid type configuration and infrastructure failures still fault.
+    /// The API returns `Outputs`, `Logs`, `CompileErrors`, and `RuntimeErrors`. 
+    /// Diagnostic properties contain JSON arrays or null; callers must check them before treating a successful  response as successful script execution.
+    /// Outputs is null on script failure. 
+    /// Input-conversion errors use section `InputParameters`; output-serialization errors use section `Code` with a null line. 
+    /// Compiler diagnostics use section-relative one-based line/column positions.
+    /// An error reported on generated closing code can have null section/line/column; runtime lines can be null when symbols
+    /// are unavailable. Never interpret generated offsets as user-source positions.
+    /// </remarks>
     public class RunCSharp : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
@@ -47,20 +61,20 @@ namespace SparkCode.API.Other
             string usingStatements = ctx.GetInputParameter<string>("UsingStatements", false, null);
 
             // Run Logic
-            string logs;
-            string outputs = SparkCode.Other.RunCSharp.Execute(
+            var result = SparkCode.Other.RunCSharp.Execute(
                 code,
                 inputParameters,
                 types,
                 inputTypeName,
                 outputTypeName,
                 referencedAssemblies,
-                usingStatements,
-                out logs);
+                usingStatements);
 
             // API Outputs
-            ctx.SetOutputParameter("Outputs", outputs);
-            ctx.SetOutputParameter("Logs", logs);
+            ctx.SetOutputParameter("Outputs", result.Outputs);
+            ctx.SetOutputParameter("Logs", result.Logs);
+            ctx.SetOutputParameter("CompileErrors", result.CompileErrors.Count == 0 ? null : JsonConvert.SerializeObject(result.CompileErrors));
+            ctx.SetOutputParameter("RuntimeErrors", result.RuntimeErrors.Count == 0 ? null : JsonConvert.SerializeObject(result.RuntimeErrors));
         }
     }
 }

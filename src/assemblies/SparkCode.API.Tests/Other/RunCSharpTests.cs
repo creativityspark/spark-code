@@ -7,6 +7,62 @@ namespace SparkCode.API.Tests.Other
 {
     public class RunCSharpTests
     {
+        [Theory]
+        [InlineData("output = \"ok\";", "ok", null)]
+        [InlineData("output = missing;", null, "CompileErrors")]
+        [InlineData("Log(\"before\"); throw new InvalidOperationException(\"boom\");", null, "RuntimeErrors")]
+        public void RunCSharp_ReturnsOutputsAndExpectedDiagnostics(string code, string output, string diagnosticProperty)
+        {
+            var response = new Context().Service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+            {
+                Parameters = new ParameterCollection { { "Code", code } }
+            });
+
+            Assert.Equal(output, (string)response["Outputs"]);
+            foreach (var property in new[] { "CompileErrors", "RuntimeErrors" })
+            {
+                if (property == diagnosticProperty)
+                {
+                    Assert.NotEmpty(JArray.Parse(Assert.IsType<string>(response[property])));
+                }
+                else
+                {
+                    Assert.True(!response.Results.Contains(property) || response[property] == null,
+                        $"Expected no diagnostics in '{property}'.");
+                }
+            }
+        }
+
+        [Fact]
+        public void RunCSharp_CompilerLocations_AreSectionRelativeInDataverse()
+        {
+            var response = new Context().Service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+            {
+                Parameters = new ParameterCollection { { "Code", "// first\r\noutput = missing;" } }
+            });
+            var error = (JObject)Assert.Single(JArray.Parse((string)response["CompileErrors"]));
+            Assert.Equal("Code", (string)error["section"]);
+            Assert.Equal(2, (int)error["line"]);
+            Assert.Equal(10, (int)error["column"]);
+            Assert.Equal("CS0103", (string)error["code"]);
+        }
+
+        [Fact]
+        public void RunCSharp_RuntimeLocations_AreNullOrUserRelativeInDataverse()
+        {
+            var response = new Context().Service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+            {
+                Parameters = new ParameterCollection
+                {
+                    { "Code", "Log(\"before\");\nthrow new InvalidOperationException(\"boom\");" }
+                }
+            });
+            var error = (JObject)Assert.Single(JArray.Parse((string)response["RuntimeErrors"]));
+            Assert.Equal("Code", (string)error["section"]);
+            Assert.True(error["line"].Type == JTokenType.Null || (int)error["line"] == 2);
+            Assert.NotNull(error.Property("stackTrace"));
+        }
+
         [Fact]
         public void RunCSharp_ValidCode_Returns_Outputs()
         {
@@ -65,24 +121,26 @@ namespace SparkCode.API.Tests.Other
         }
 
         [Fact]
-        public void RunCSharp_RuntimeError_Includes_Logs_In_Exception()
+        public void RunCSharp_RuntimeError_Returns_DiagnosticsAndLogs()
         {
             var service = new Context().Service;
             var code = "Log(\"before failure\"); throw new InvalidOperationException(\"boom\");";
 
-            var exception = Assert.ThrowsAny<Exception>(() =>
-            {
-                service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+            var response = service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
                 {
                     Parameters = new ParameterCollection
                     {
                         { "Code", code }
                     }
                 });
-            });
 
-            Assert.Contains("boom", exception.Message);
-            Assert.Contains("before failure", exception.Message);
+            var error = (JObject)Assert.Single(JArray.Parse((string)response["RuntimeErrors"]));
+            Assert.Equal("boom", (string)error["message"]);
+            Assert.Equal("Code", (string)error["section"]);
+            Assert.Equal("System.InvalidOperationException", (string)error["exceptionType"]);
+            Assert.Equal("before failure", (string)response["Logs"]);
+            Assert.True(!response.Results.Contains("Outputs") || response["Outputs"] == null);
+            Assert.True(!response.Results.Contains("CompileErrors") || response["CompileErrors"] == null);
         }
 
         [Fact]
@@ -106,23 +164,30 @@ namespace SparkCode.API.Tests.Other
         }
 
         [Fact]
-        public void RunCSharp_InvalidCode_Throws_Exception()
+        public void RunCSharp_InvalidCode_Returns_CompileDiagnostics()
         {
             var service = new Context().Service;
             var code = "output = ;";
 
-            var exception = Assert.ThrowsAny<Exception>(() =>
-            {
-                service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+            var response = service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
                 {
                     Parameters = new ParameterCollection
                     {
                         { "Code", code }
                     }
                 });
-            });
 
-            Assert.Contains("Compiler Errors:", exception.Message);
+            var errors = JArray.Parse((string)response["CompileErrors"]);
+            Assert.NotEmpty(errors);
+            Assert.All(errors, error =>
+            {
+                Assert.Equal("Code", (string)error["section"]);
+                Assert.True((int)error["line"] > 0);
+                Assert.True((int)error["column"] > 0);
+                Assert.StartsWith("CS", (string)error["code"]);
+            });
+            Assert.True(!response.Results.Contains("Outputs") || response["Outputs"] == null);
+            Assert.True(!response.Results.Contains("RuntimeErrors") || response["RuntimeErrors"] == null);
         }
 
         [Fact]
@@ -193,15 +258,13 @@ class OutputType { public int MyProperty { get; set; } }";
         }
 
         [Fact]
-        public void RunCSharp_MalformedJsonForCustomInput_Throws_ClearError()
+        public void RunCSharp_MalformedJsonForCustomInput_Returns_RuntimeDiagnostics()
         {
             var service = new Context().Service;
             var types = "class InputType { public int MyProperty { get; set; } }";
             var code = "output = \"ok\";";
 
-            var exception = Assert.ThrowsAny<Exception>(() =>
-            {
-                service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+            var response = service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
                 {
                     Parameters = new ParameterCollection
                     {
@@ -211,9 +274,31 @@ class OutputType { public int MyProperty { get; set; } }";
                         { "InputTypeName", "InputType" }
                     }
                 });
-            });
 
-            Assert.Contains("Input conversion failed for type 'InputType'", exception.Message);
+            var error = (JObject)Assert.Single(JArray.Parse((string)response["RuntimeErrors"]));
+            Assert.Equal("InputParameters", (string)error["section"]);
+            Assert.Contains("Json", (string)error["exceptionType"]);
+            Assert.True(!response.Results.Contains("Outputs") || response["Outputs"] == null);
+            Assert.True(!response.Results.Contains("Logs") || response["Logs"] == null);
+        }
+
+        [Fact]
+        public void RunCSharp_OutputSerializationError_PreservesLogs()
+        {
+            var response = new Context().Service.Execute(new OrganizationRequest("csp_Other_RunCSharp")
+            {
+                Parameters = new ParameterCollection
+                {
+                    { "Code", "output = new Model(); output.Self = output; Log(\"complete\");" },
+                    { "Types", "class Model { public Model Self { get; set; } }" },
+                    { "OutputTypeName", "Model" }
+                }
+            });
+            var error = (JObject)Assert.Single(JArray.Parse((string)response["RuntimeErrors"]));
+            Assert.Equal(JTokenType.Null, error["line"].Type);
+            Assert.Equal("Code", (string)error["section"]);
+            Assert.Equal("complete", (string)response["Logs"]);
+            Assert.True(!response.Results.Contains("Outputs") || response["Outputs"] == null);
         }
     }
 }
