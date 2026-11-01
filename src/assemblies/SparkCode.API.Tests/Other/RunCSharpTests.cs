@@ -9,7 +9,7 @@ namespace SparkCode.API.Tests.Other
     {
         [Theory]
         [InlineData("output = \"ok\";", "ok", null)]
-        [InlineData("output = missing;", null, "CompileErrors")]
+        [InlineData("output = missing;", null, "CompilerErrors")]
         [InlineData("Log(\"before\"); throw new InvalidOperationException(\"boom\");", null, "RuntimeErrors")]
         public void RunCSharp_ReturnsOutputsAndExpectedDiagnostics(string code, string output, string diagnosticProperty)
         {
@@ -19,7 +19,8 @@ namespace SparkCode.API.Tests.Other
             });
 
             Assert.Equal(output, (string)response["Outputs"]);
-            foreach (var property in new[] { "CompileErrors", "RuntimeErrors" })
+            Assert.False(response.Results.Contains("CompileErrors"));
+            foreach (var property in new[] { "CompilerErrors", "RuntimeErrors" })
             {
                 if (property == diagnosticProperty)
                 {
@@ -40,7 +41,7 @@ namespace SparkCode.API.Tests.Other
             {
                 Parameters = new ParameterCollection { { "Code", "// first\r\noutput = missing;" } }
             });
-            var error = (JObject)Assert.Single(JArray.Parse((string)response["CompileErrors"]));
+            var error = (JObject)Assert.Single(JArray.Parse((string)response["CompilerErrors"]));
             Assert.Equal("Code", (string)error["section"]);
             Assert.Equal(2, (int)error["line"]);
             Assert.Equal(10, (int)error["column"]);
@@ -140,7 +141,7 @@ namespace SparkCode.API.Tests.Other
             Assert.Equal("System.InvalidOperationException", (string)error["exceptionType"]);
             Assert.Equal("before failure", (string)response["Logs"]);
             Assert.True(!response.Results.Contains("Outputs") || response["Outputs"] == null);
-            Assert.True(!response.Results.Contains("CompileErrors") || response["CompileErrors"] == null);
+            Assert.True(!response.Results.Contains("CompilerErrors") || response["CompilerErrors"] == null);
         }
 
         [Fact]
@@ -177,7 +178,7 @@ namespace SparkCode.API.Tests.Other
                     }
                 });
 
-            var errors = JArray.Parse((string)response["CompileErrors"]);
+            var errors = JArray.Parse((string)response["CompilerErrors"]);
             Assert.NotEmpty(errors);
             Assert.All(errors, error =>
             {

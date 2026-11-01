@@ -20,7 +20,7 @@ namespace SparkCode.Tests.Other
             var result = Run("output = \"hello world\";", inputType: inputType, outputType: outputType);
             Assert.Equal("hello world", result.Outputs);
             Assert.Null(result.Logs);
-            Assert.Empty(result.CompileErrors);
+            Assert.Empty(result.CompilerErrors);
             Assert.Empty(result.RuntimeErrors);
         }
 
@@ -47,7 +47,7 @@ namespace SparkCode.Tests.Other
         public void Execute_CompilerErrors_MapCodeLineAndColumn(string newline)
         {
             var result = Run("// first line" + newline + "output = missing;");
-            var error = Assert.Single(result.CompileErrors);
+            var error = Assert.Single(result.CompilerErrors);
             Assert.Equal("Code", error.Section);
             Assert.Equal(2, error.Line);
             Assert.Equal(10, error.Column);
@@ -63,8 +63,8 @@ namespace SparkCode.Tests.Other
             var result = Run("output = missing;",
                 types: "// first\nclass Model { public Missing Value; }",
                 usings: "// first\nusing MissingNamespace;");
-            Assert.Contains(result.CompileErrors, error => error.Section == "Types" && error.Line == 2 && error.Code == "CS0246");
-            Assert.Contains(result.CompileErrors, error => error.Section == "UsingStatements" && error.Line == 2 && error.Code == "CS0246");
+            Assert.Contains(result.CompilerErrors, error => error.Section == "Types" && error.Line == 2 && error.Code == "CS0246");
+            Assert.Contains(result.CompilerErrors, error => error.Section == "UsingStatements" && error.Line == 2 && error.Code == "CS0246");
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace SparkCode.Tests.Other
         {
             var result = Run("int unused; output = \"ok\";");
             Assert.Equal("ok", result.Outputs);
-            Assert.Empty(result.CompileErrors);
+            Assert.Empty(result.CompilerErrors);
         }
 
         [Theory]
@@ -81,7 +81,7 @@ namespace SparkCode.Tests.Other
         public void Execute_IncompleteCode_ReturnsCompilerDiagnostics(string code)
         {
             var result = Run(code);
-            Assert.NotEmpty(result.CompileErrors);
+            Assert.NotEmpty(result.CompilerErrors);
             Assert.Null(result.Outputs);
         }
 
@@ -89,7 +89,7 @@ namespace SparkCode.Tests.Other
         public void Execute_MissingBrace_DoesNotInventGeneratedLocation()
         {
             var result = Run("if (true) { output = \"ok\";");
-            Assert.Contains(result.CompileErrors, error =>
+            Assert.Contains(result.CompilerErrors, error =>
                 error.Code == "CS1513" && error.Section == null && error.Line == null && error.Column == null);
         }
 
@@ -99,7 +99,7 @@ namespace SparkCode.Tests.Other
             var result = Run("output = new Model { Value = input.Value * 2 };", "{\"Value\":21}",
                 "class Model { public int Value { get; set; } }", "Model", "Model");
             Assert.Equal("{\"Value\":42}", result.Outputs);
-            Assert.Empty(result.CompileErrors);
+            Assert.Empty(result.CompilerErrors);
             Assert.Empty(result.RuntimeErrors);
         }
 
@@ -128,7 +128,7 @@ namespace SparkCode.Tests.Other
             Assert.Contains("Run", error.StackTrace);
             Assert.Equal("one\ntwo", result.Logs);
             Assert.Null(result.Outputs);
-            Assert.Empty(result.CompileErrors);
+            Assert.Empty(result.CompilerErrors);
         }
 
         [Fact]
@@ -154,7 +154,7 @@ namespace SparkCode.Tests.Other
             Assert.NotEmpty(error.ExceptionType);
             Assert.Null(result.Logs);
             Assert.Null(result.Outputs);
-            Assert.Empty(result.CompileErrors);
+            Assert.Empty(result.CompilerErrors);
         }
 
         [Theory]

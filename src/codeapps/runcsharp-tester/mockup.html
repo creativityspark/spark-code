@@ -213,7 +213,7 @@
     <div class="editor-wrap"><div id="editor"></div></div>
     <div class="problems" id="problems">
       <div class="panel-head" id="problemsHead" style="padding-top:0;padding-bottom:0">
-        <button class="bottom-tab active" data-bottom="problems" title="Compile and runtime errors (CompileErrors / RuntimeErrors outputs)">Problems <span class="badge" id="problemCount">0</span></button>
+        <button class="bottom-tab active" data-bottom="problems" title="Compile and runtime errors (CompilerErrors / RuntimeErrors outputs)">Problems <span class="badge" id="problemCount">0</span></button>
         <button class="bottom-tab" data-bottom="logs" title="Messages written with Log(message) – returned in the Logs output">Logs <span class="badge" id="logCount">0</span></button>
         <div class="spacer"></div>
         <div class="bottom-tools" id="logTools" style="display:none">
@@ -515,7 +515,7 @@ function simulateApi(req) {
   ]);
   scan(types, "Types", [[/get;\s*set\s*}/, () => ({ code: "CS1002", message: "; expected" })]]);
   scan(usings, "UsingStatements", [[/^\s*using\s+[\w.]+\s*$/, () => ({ code: "CS1002", message: "; expected" })]]);
-  if (compileErrors.length) return { Outputs: null, Logs: null, CompileErrors: JSON.stringify(compileErrors), RuntimeErrors: null };
+  if (compileErrors.length) return { Outputs: null, Logs: null, CompilerErrors: JSON.stringify(compileErrors), RuntimeErrors: null };
 
   const tpl = Object.values(TEMPLATES).find(t => t.code === code && (t.types || "") === types);
   let logs, runtimeErrors = null;
@@ -536,18 +536,18 @@ function simulateApi(req) {
     }
   }
   const Logs = logs.length ? logs.join("\n") : null;
-  if (runtimeErrors) return { Outputs: null, Logs, CompileErrors: null, RuntimeErrors: JSON.stringify(runtimeErrors) };
+  if (runtimeErrors) return { Outputs: null, Logs, CompilerErrors: null, RuntimeErrors: JSON.stringify(runtimeErrors) };
 
   let output;
   if (/XElement/.test(code)) output = MOCK_OUTPUTS.xml();
   else if ((req.OutputTypeName || "string") !== "string") output = MOCK_OUTPUTS.typed();
   else output = MOCK_OUTPUTS.untyped(req.InputParameters);
-  return { Outputs: output, Logs, CompileErrors: null, RuntimeErrors: null };
+  return { Outputs: output, Logs, CompilerErrors: null, RuntimeErrors: null };
 }
 
 // Maps the raw API response to the UI result model
 function parseResponse(resp) {
-  const compile = resp.CompileErrors ? JSON.parse(resp.CompileErrors).map(e => ({ kind: "compile", ...e })) : [];
+  const compile = resp.CompilerErrors ? JSON.parse(resp.CompilerErrors).map(e => ({ kind: "compile", ...e })) : [];
   const runtime = resp.RuntimeErrors ? JSON.parse(resp.RuntimeErrors).map(e => ({ kind: "runtime", section: "Code", code: e.exceptionType.split(".").pop(), ...e })) : [];
   const status = compile.length ? "compile" : runtime.length ? "runtime" : "ok";
   return { status, ok: status === "ok", output: resp.Outputs, logs: resp.Logs, problems: [...compile, ...runtime], response: resp };

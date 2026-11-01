@@ -133,7 +133,7 @@ namespace SparkCode.Other
                             throw new InvalidOperationException("Compiler configuration or generated-source failure: " + error);
                         }
 
-                        result.CompileErrors.Add(new CompileDiagnostic
+                        result.CompilerErrors.Add(new CompileDiagnostic
                         {
                             // Incomplete user blocks can be diagnosed at a generated closing brace.
                             Line = section == null ? null : (int?)error.Line,
@@ -440,7 +440,7 @@ namespace SparkCode.Other
     {
         public string Outputs { get; set; }
         public string Logs { get; set; }
-        public List<CompileDiagnostic> CompileErrors { get; } = new List<CompileDiagnostic>();
+        public List<CompileDiagnostic> CompilerErrors { get; } = new List<CompileDiagnostic>();
         public List<RuntimeDiagnostic> RuntimeErrors { get; } = new List<RuntimeDiagnostic>();
     }
 

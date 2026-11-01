@@ -15,7 +15,7 @@ namespace SparkCode.API.Other
     /// <param name="UsingStatements" type="string" optional="true">Optional raw C# using statements appended before compilation.</param>
     /// <param name="Outputs" type="string" direction="output">Execution result returned by the runtime Main method.</param>
     /// <param name="Logs" type="string" direction="output">Messages written by the code via Log(message), one per line.</param>
-    /// <param name="CompileErrors" type="string" direction="output">JSON array of section-relative compiler diagnostics; null when compilation succeeds.</param>
+    /// <param name="CompilerErrors" type="string" direction="output">JSON array of section-relative compiler diagnostics; null when compilation succeeds.</param>
     /// <param name="RuntimeErrors" type="string" direction="output">JSON runtime/conversion diagnostics; null when absent. Source lines may be null.</param>
     /// <example>
     /// Untyped mode: set Code to "output = \"hello\";" and optionally read input from variable input.
@@ -37,7 +37,7 @@ namespace SparkCode.API.Other
     /// <remarks>
     /// Script compile/runtime and input/output conversion errors return structured diagnostics with complete pre-error logs instead of throwing; 
     /// invalid type configuration and infrastructure failures still fault.
-    /// The API returns `Outputs`, `Logs`, `CompileErrors`, and `RuntimeErrors`. 
+    /// The API returns `Outputs`, `Logs`, `CompilerErrors`, and `RuntimeErrors`.
     /// Diagnostic properties contain JSON arrays or null; callers must check them before treating a successful  response as successful script execution.
     /// Outputs is null on script failure. 
     /// Input-conversion errors use section `InputParameters`; output-serialization errors use section `Code` with a null line. 
@@ -73,7 +73,7 @@ namespace SparkCode.API.Other
             // API Outputs
             ctx.SetOutputParameter("Outputs", result.Outputs);
             ctx.SetOutputParameter("Logs", result.Logs);
-            ctx.SetOutputParameter("CompileErrors", result.CompileErrors.Count == 0 ? null : JsonConvert.SerializeObject(result.CompileErrors));
+            ctx.SetOutputParameter("CompilerErrors", result.CompilerErrors.Count == 0 ? null : JsonConvert.SerializeObject(result.CompilerErrors));
             ctx.SetOutputParameter("RuntimeErrors", result.RuntimeErrors.Count == 0 ? null : JsonConvert.SerializeObject(result.RuntimeErrors));
         }
     }

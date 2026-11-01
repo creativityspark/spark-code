@@ -51,11 +51,11 @@ the plugin defaults in `ctx.GetInputParameter(..., defaultValue)` apply.
 |---|---|---|---|
 | `Outputs` | string | Existing | Result of the script. Native output types use `Convert.ToString`; custom types are serialized to JSON. |
 | `Logs` | string \| null | Implemented | Messages written with `Log(message)`, joined with `\n` in the order they were written. `null` when nothing was logged. |
-| `CompileErrors` | string (JSON array) \| null | Implemented | Compiler errors, or `null` when compilation succeeded. Schema below. |
+| `CompilerErrors` | string (JSON array) \| null | Implemented | Compiler errors, or `null` when compilation succeeded. Schema below. |
 | `RuntimeErrors` | string (JSON array) \| null | Implemented | Script execution, input-conversion or output-serialization errors, or `null` when none occurred. Schema below. |
 
 ```jsonc
-// CompileErrors
+// CompilerErrors
 [{ "line": 3, "column": 1, "code": "CS0103", "message": "The name 'ouput' does not exist in the current context",
    "section": "Code" }]                    // section: "Code" | "Types" | "UsingStatements"
 // RuntimeErrors
@@ -75,7 +75,7 @@ the plugin defaults in `ctx.GetInputParameter(..., defaultValue)` apply.
 - Output-serialization failures are runtime errors with a null line and section Code. Preserve execution logs and return
   null Outputs. Invalid type configuration and infrastructure failures remain faults.
 - The API **doesn't throw** for script errors (compile errors, runtime exceptions or conversion failures). It returns a
-  normal response in which `Outputs` is `null` and `CompileErrors` or `RuntimeErrors` is populated. `Logs` is always
+  normal response in which `Outputs` is `null` and `CompilerErrors` or `RuntimeErrors` is populated. `Logs` is always
   complete, including the messages written before a runtime exception.
 - Faults that aren't script errors (HTTP 403, timeout, invalid request, an older API version that still throws) still
   arrive as an HTTP error; see FR-P4.
@@ -168,7 +168,7 @@ CSharpRunner.Log("Items generated: " + items.Count); // from classes declared in
 - **FR-R4:** On completion, the app records the duration (client round-trip), updates the status bar, adds a history entry,
   and resets every tab's dirty state.
 - **FR-R5:** The run result is derived from the response (§3.2):
-  - `CompileErrors` present → **compile failed**.
+  - `CompilerErrors` present → **compile failed**.
   - Otherwise `RuntimeErrors` present → **runtime error**.
   - Otherwise → **succeeded**.
 - **FR-R6:** On success, the app populates Outputs (§5.5) and Logs (§5.7) and clears Problems.
@@ -202,7 +202,7 @@ CSharpRunner.Log("Items generated: " + items.Count); // from classes declared in
   - Code, Types or InputParameters → switch to that tab, reveal the line and move the cursor there.
   - UsingStatements → open the Options dialog with the UsingStatements field focused.
 - **FR-P4:** Problem sources (no regex parsing of messages):
-  - **compile:** one entry per `CompileErrors` item. Code = the `CS` code; section, line and column come from the item.
+  - **compile:** one entry per `CompilerErrors` item. Code = the `CS` code; section, line and column come from the item.
   - **runtime:** one entry per `RuntimeErrors` item. Code = the short exception type name (for example
     `NullReferenceException`); section and line come from the item. Input-conversion errors point to InputParameters,
     while script execution errors point to Code or Types as mapped by the API. When line is null, focus the section
@@ -293,7 +293,7 @@ src/
     StatusBar.tsx
   services/
     runCSharpService.ts      builds request, calls csp_Other_RunCSharp, maps HTTP faults
-    responseParser.ts        Outputs/Logs/CompileErrors/RuntimeErrors → RunResult
+    responseParser.ts        Outputs/Logs/CompilerErrors/RuntimeErrors → RunResult
   state/
     store.ts                 editor values, options, runs, ui prefs (React context / Zustand)
     historyStorage.ts        localStorage persistence (per environment)
@@ -310,7 +310,7 @@ interface RunRequest {
 // Raw response: every property is a string or null
 interface RunResponse {
   Outputs: string | null; Logs: string | null;
-  CompileErrors: string | null;   // JSON: CompileError[]
+  CompilerErrors: string | null;   // JSON: CompileError[]
   RuntimeErrors: string | null;   // JSON: RuntimeError[]
 }
 type Section = "Code" | "Types" | "UsingStatements" | "InputParameters";
@@ -349,7 +349,7 @@ interface Problem {
 ## 9. Delivery plan
 1. **API changes** (owned by the API work, not by this app):
    - Register the `Logs` response property in the solution (`customapiresponseproperties/Logs`); the plugin already sets it.
-   - Return `CompileErrors` and `RuntimeErrors` (§3.2) instead of throwing for script errors, with lines mapped to sections,
+   - Return `CompilerErrors` and `RuntimeErrors` (§3.2) instead of throwing for script errors, with lines mapped to sections,
      and register both response properties.
    - Redeploy with the `sparkcode-api-package-deploy` skill.
 2. **Scaffold** the Code App in `src/codeapps/runcsharp-tester/` and add the Dataverse data source.
