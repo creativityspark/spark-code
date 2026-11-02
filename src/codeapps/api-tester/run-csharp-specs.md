@@ -355,14 +355,16 @@ interface Problem {
     history and footer status. An in-flight completion updates this tool only, even while hidden.
 
 ## 9. Delivery plan
-1. **API changes** (owned by the API work, not by this app; implemented and deployed):
+1. **API changes - complete**:
    - Register the `Logs` response property in the solution (`customapiresponseproperties/Logs`); the plugin already sets it.
    - Return `CompilerErrors` and `RuntimeErrors` (§3.2) instead of throwing for script errors, with lines mapped to sections,
      and register both response properties.
    - Redeploy with the `sparkcode-api-package-deploy` skill.
-2. **Scaffold this tool** within the shared Code App in `src/codeapps/api-tester/` and use its Dataverse connection.
+2. **Scaffold this tool - partially complete:** the shared Code App and an empty, registered `RunCSharpTool` component
+   exist in `src/codeapps/api-tester/`. Environment configuration is initialized; tool-specific services and authenticated
+   API invocation remain pending. The workspace is intentionally blank, with no toolbar, editors or footer.
    The [general delivery plan](./specs.md#8-delivery-plan) owns application scaffolding and tool navigation.
-3. **Build functionality incrementally.** Each substep extends the previous working version; verify its checkpoint before
+3. **Build functionality incrementally - all 12 substeps pending.** Each substep extends the previous working version; verify its checkpoint before
    moving on. Older deployments without step 1 surface script errors as `HTTP` problems (FR-P4), not parsed message strings.
    1. **Minimal end-to-end run:** show a plain-text Code editor, Run button and read-only string output. Send only
       `Code` through `runCSharpService`; block empty code, prevent overlapping requests and show HTTP failures.
@@ -403,7 +405,8 @@ interface Problem {
        collapsible panels, responsive defaults, keyboard navigation, ARIA semantics and focus/contrast behavior.
        **Checkpoint:** verify the complete workflow in both themes and supported viewport sizes, including switching
        tools during a run without losing state or updating another tool's footer.
-4. Check the app against §8 in a dev environment, then deploy.
+4. **Pending:** check the app against §8 in a dev environment, then deploy. Shared-shell checks do not constitute
+   tool acceptance or API execution verification.
 
 ## 10. Decisions and open questions
 

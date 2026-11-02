@@ -15,6 +15,18 @@ Design reference: [mockup.html](./mockup.html).
 | RunCSharp | `csp_Other_RunCSharp` | [RunCSharp tool](./run-csharp-specs.md) | Interactive mockup; executions are simulated |
 | RenderTemplate | `csp_Templates_RenderTemplate` | [RenderTemplate tool](./render-template-specs.md) | Layout-only placeholder; execution disabled |
 
+### Current implementation
+
+Delivery step 8.2 is complete for the local-only shell increment: the React/TypeScript/Vite Code App has a shared
+header, accessible tool menu, separate typed registry, persistent global theme and two entirely empty tool screens.
+Neither tool has a toolbar, workspace controls, footer or execution functionality yet. The mockup remains a richer
+design reference, not a description of implemented tool functionality.
+
+The official SDK/Vite plugin is retained; no app is deployed and no data source/action binding or hosted SDK call
+has been verified. See [local setup and validation](./README.md).
+The public source includes only an environment-neutral example configuration. Contributors initialize their own
+ignored local `power.config.json`; no private environment identity is hardcoded in source or documentation.
+
 ### Goals
 
 - Provide one consistent entry point for testing different SparkCode APIs.
@@ -120,12 +132,12 @@ src/
     ToolSelector.tsx           accessible collapsible dropdown
   tools/
     registry.ts                stable tool IDs, labels and components
-    run-csharp/                 RunCSharpTool, toolbar, workspace, footer and state
-    render-template/            RenderTemplateTool layout-only placeholder
+    run-csharp/                 empty RunCSharpTool; toolbar/workspace/footer/state are future work
+    render-template/            empty RenderTemplateTool; design-only layout is in mockup.html
   state/
     appPreferences.ts          shared selection/theme, not API results
   services/
-    dataverseConnection.ts     signed-in connection boundary
+    dataverseConnection.ts     optional local environment identity; signed-in invocation is future work
 ```
 
 Keep the registry small: ID, label and component are sufficient. Do not introduce a generic API execution
@@ -146,17 +158,26 @@ framework or require all tools to share the RunCSharp response type. See each to
 
 ## 8. Delivery plan
 
-1. **Design update (this scope):** split specifications, update the shared mockup header and RunCSharp ownership,
+1. **Design update - complete:** split specifications, update the shared mockup header and RunCSharp ownership,
    add the RenderTemplate layout-only example and verify switching/state isolation.
-2. **Scaffold shared application:** create the Code App under `src/codeapps/api-tester/`, connect Dataverse,
-   add a minimal tool registry/header/host and theme.
-3. **Implement RunCSharp incrementally:** follow [RunCSharp delivery plan, section 9](./run-csharp-specs.md#9-delivery-plan).
-   Its API prerequisite work is already deployed; preserve the incremental frontend checkpoints.
-4. **Complete shared lifecycle/storage/accessibility:** verify isolation during navigation/in-flight calls and
-   tool-scoped browser storage. Do not merge tool histories.
-5. **RenderTemplate implementation:** not authorized by the layout-only example. Define and approve detailed
+2. **Scaffold shared application - complete (local-only shell scope):**
+   - **Complete:** official React/TypeScript/Vite Power Apps template under `src/codeapps/api-tester/`.
+   - **Complete:** environment-neutral example and ignored local Power Apps configuration, retaining the official SDK/Vite
+     connection boundary. Each contributor selects their own environment. No deployment, data source binding or
+     authenticated tool call is included.
+   - **Complete:** separate minimal `tools/registry.ts`, shared header, accessible dropdown and retained tool host.
+   - **Complete:** shared light/dark theme, OS default, browser-stored explicit preference and visible storage warnings.
+   - **Complete:** entirely empty RunCSharp and RenderTemplate components; no functionality from either tool.
+   - **Verified:** production build/type-check, lint and Edge shell checks at 1024/1280 px in both themes, including
+     menu/focus behavior, persistence, invalid/blocked storage and no custom API calls.
+
+3. **Complete shared lifecycle/storage/accessibility - pending tool integration:** shell navigation/theme accessibility.
+   is verified; in-flight isolation, editor/dialog lifecycle and tool-scoped browser storage remain pending.
+   Do not merge tool histories.
+4. **RenderTemplate implementation - pending:** not authorized by the layout-only example. Define and approve detailed
    execution behavior before implementing it.
-6. Validate shared acceptance criteria and each implemented tool's criteria before deployment.
+5. **Full application validation/deployment - pending:** validate shared acceptance criteria and each implemented
+   tool's criteria before deployment. This increment validates only the shared shell and makes no deployment.
 
 ## 9. Decisions and open questions
 

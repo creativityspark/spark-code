@@ -54,7 +54,10 @@ Tool footer: Layout preview - execution not implemented | csp_Templates_RenderTe
 
 ## 5. Delivery boundary
 
-Deliver the layout example and this specification only. Actual execution, validation, sample loading, output
+**Complete:** the mockup layout example and this specification. The production shell now registers an empty
+`RenderTemplateTool` component; its screen is entirely blank, without the mockup's toolbar, layout or footer.
+
+**Pending and not authorized:** actual execution, validation, sample loading, output
 inspection, failure UX and any history/storage schema need a subsequent approved functional specification.
 Use the shared Dataverse connection and verified action contract when that work is authorized; never reuse the
 RunCSharp response parser for RenderTemplate.

@@ -1,0 +1,111 @@
+.app-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+}
+
+.app-header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  z-index: 1;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 8px 12px;
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.app-mark {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #7f3fbf, #0f6cbd);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.api-title { color: var(--muted); font-weight: 400; }
+.version { color: var(--muted); font-size: 11px; }
+.environment {
+  margin-left: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-hover);
+  color: var(--muted);
+  padding: 2px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.button:hover { background: var(--panel-hover); }
+.theme-toggle[aria-pressed="true"] { background: var(--panel-hover); }
+.tool-selector { position: relative; }
+.chevron {
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+}
+.tool-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 230px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+.tool-menu button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.tool-menu button:hover,
+.tool-menu button[aria-checked="true"] { background: var(--panel-hover); }
+.tool-menu button[aria-checked="true"] { font-weight: 600; }
+.storage-warning { margin: 0; padding: 4px 12px 8px; color: var(--warning); }
+.tool-host, .tool-host > section { min-height: 0; }
+.tool-host > section { height: 100%; }
+
+@media (max-width: 1279px) {
+  .header-row { gap: 8px; }
+  .api-title { font-size: 13px; }
+}
