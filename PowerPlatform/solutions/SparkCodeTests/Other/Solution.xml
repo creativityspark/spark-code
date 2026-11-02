@@ -6,7 +6,7 @@
       <LocalizedName description="Spark Code Tests" languagecode="1033" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0.0.3</Version>
+    <Version>1.0.0.4</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>CreativitySpark</UniqueName>
@@ -93,10 +93,6 @@
       <MissingDependency>
         <Required type="61" schemaName="msdyn_/Images/AppModule_Default_Icon.png" displayName="msdyn_/Images/AppModule_Default_Icon.png" solution="AppModuleWebResources (2.5)" />
         <Dependent type="80" schemaName="csp_SparkCodeTests" displayName="Spark Code Tests" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="connectionreference" displayName="csp_sharedcommondataserviceforapps_a3be6" solution="Active" id.connectionreferencelogicalname="csp_sharedcommondataserviceforapps_a3be6" />
-        <Dependent type="29" displayName="Spark Code Tests" id="{703cd066-2217-f111-8342-7ced8d2e3be4}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.27)" id.uniquename="AppChannel">
