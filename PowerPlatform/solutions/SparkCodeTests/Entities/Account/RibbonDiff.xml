@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RibbonDiffXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CustomActions>
+    <CustomAction Id="csp.account.Button.AddToCalendar.CustomAction" Location="Mscrm.Form.account.MainTab.Save.Controls._children" Sequence="38">
+      <CommandUIDefinition>
+        <Button Alt="$LocLabels:csp.account.Button.AddToCalendar.Alt" Command="csp.account.Command.AddToCalendar" Id="csp.account.Button.AddToCalendar" Image16by16="" LabelText="$LocLabels:csp.account.Button.AddToCalendar.LabelText" Sequence="38" TemplateAlias="o1" ToolTipTitle="$LocLabels:csp.account.Button.AddToCalendar.ToolTipTitle" />
+      </CommandUIDefinition>
+    </CustomAction>
+  </CustomActions>
+  <Templates>
+    <RibbonTemplates Id="Mscrm.Templates"></RibbonTemplates>
+  </Templates>
+  <CommandDefinitions>
+    <CommandDefinition Id="csp.account.Command.AddToCalendar">
+      <EnableRules>
+        <EnableRule Id="csp.account.EnableRule.AddToCalendar" />
+      </EnableRules>
+      <DisplayRules>
+        <DisplayRule Id="csp.account.DisplayRule.AddToCalendar" />
+      </DisplayRules>
+      <Actions>
+        <JavaScriptFunction FunctionName="openCustomPageDialog" Library="$webresource:csp_/js/tools.js">
+          <CrmParameter Value="FirstPrimaryItemId" />
+          <CrmParameter Value="PrimaryEntityTypeName" />
+          <StringParameter Value="csp_addtocalendar_115f3" />
+          <IntParameter Value="400" />
+          <IntParameter Value="350" />
+          <CrmParameter Value="PrimaryControl" />
+        </JavaScriptFunction>
+      </Actions>
+    </CommandDefinition>
+  </CommandDefinitions>
+  <RuleDefinitions>
+    <TabDisplayRules />
+    <DisplayRules>
+      <DisplayRule Id="csp.account.DisplayRule.AddToCalendar">
+        <ValueRule Value="" Default="true" InvertResult="false" />
+      </DisplayRule>
+    </DisplayRules>
+    <EnableRules>
+      <EnableRule Id="csp.account.EnableRule.AddToCalendar">
+        <ValueRule Value="" Default="true" InvertResult="false" />
+      </EnableRule>
+    </EnableRules>
+  </RuleDefinitions>
+  <LocLabels>
+    <LocLabel Id="csp.account.Button.AddToCalendar.Alt">
+      <Titles>
+        <Title description="Add to Calendar" languagecode="1033" />
+      </Titles>
+    </LocLabel>
+    <LocLabel Id="csp.account.Button.AddToCalendar.LabelText">
+      <Titles>
+        <Title description="Add to Calendar" languagecode="1033" />
+      </Titles>
+    </LocLabel>
+    <LocLabel Id="csp.account.Button.AddToCalendar.ToolTipTitle">
+      <Titles>
+        <Title description="Add to Calendar" languagecode="1033" />
+      </Titles>
+    </LocLabel>
+  </LocLabels>
+</RibbonDiffXml>

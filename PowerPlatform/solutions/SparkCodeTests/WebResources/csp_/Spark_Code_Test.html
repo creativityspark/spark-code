@@ -1,0 +1,25 @@
+---
+subject: Spark Code Test - {{ name }}
+envVar: {% _envVar csp_templates_editor_base_path %}
+org: {% _orgDetails FriendlyName %}
+---
+<h1>Spark Code Test</h1>
+<p>Account: {{ name }} ({{ websiteurl }})</p>
+<p>Environment variable: {% _envVar csp_templates_editor_base_path %}</p>
+<p>Organization: {% _orgDetails FriendlyName %} ({% _orgDetails OrganizationId %})</p>
+<p>Organization URL: {% _orgUrl %}</p>
+<p>App name: {% _appName csp_sparkcodetests_b1ca4 %}</p>
+<p>App URL: {% _appUrl csp_sparkcodetests_b1ca4 %}</p>
+<div>{% _webResource 'csp_/notifications/sample2.html' %}</div>
+{%- fetchxml accounts -%}
+<fetch top="5">
+  <entity name="account">
+    <attribute name="name" />
+  </entity>
+</fetch>
+{%- endfetchxml -%}
+<ul>
+{% for account in accounts.results.entities %}
+  <li>{{ account.name }}</li>
+{% endfor %}
+</ul>
