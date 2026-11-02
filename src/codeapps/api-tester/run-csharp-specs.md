@@ -1,9 +1,11 @@
-# RunCSharp Tester – Specifications
+# RunCSharp Testing Tool – Specifications
 
 ## 1. Overview
 
-**RunCSharp Tester** is a Power Apps Code App that lets makers and developers write, run and debug C# scripts
-against the `csp_Other_RunCSharp` Dataverse custom API without leaving the browser.
+**RunCSharp** is the first testing tool within **Spark Code Tester**. It lets makers and developers write, run
+and debug C# scripts against `csp_Other_RunCSharp` without leaving the browser.
+The [general specification](./specs.md) owns the shared header, navigation, environment, theme and tool lifecycle.
+This file owns RunCSharp's action row, workspace, dialogs, status and API behavior.
 
 - **Custom API:** `csp_Other_RunCSharp` (unbound action, `isfunction = 0`)
 - **Plugin:** [RunCSharp.cs](../../assemblies/SparkCode.API/Other/RunCSharp.cs)
@@ -18,7 +20,7 @@ against the `csp_Other_RunCSharp` Dataverse custom API without leaving the brows
 ### Non-goals
 - Local C# compilation or IntelliSense backed by a real compiler; all compilation happens in Dataverse.
 - Managing, sharing or storing scripts in Dataverse tables. Script persistence uses browser storage only.
-- Calling custom APIs other than `csp_Other_RunCSharp`.
+- Calling other custom APIs from this tool; they have separate tools in the shared application.
 
 ## 2. Users
 
@@ -102,7 +104,9 @@ CSharpRunner.Log("Items generated: " + items.Count); // from classes declared in
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────┐
-│ Logo · Env badge                 Samples ▾ │ ⚙ Options (n) │ ☾ │ ▶ Run Ctrl+↵  │  Header
+│ Tools ▾ · Spark Code Tester · RunCSharp             Env badge │ ☾ Dark Mode     │  Shared header
+├──────────────────────────────────────────────────────────────────────────────────┤
+│ Samples ▾                       ⚙ Options (n) │ ▶ Run Ctrl+↵                    │  Tool action row
 ├────────────┬───────────────────────────────────────────────┬─────────────────────┤
 │ Run        │ [Code C#] [InputParameters JSON] [Types C#]   │ Outputs explorer    │
 │ history    │ tab hint                                      │ [String|XML|JSON]   │
@@ -119,12 +123,13 @@ CSharpRunner.Log("Items generated: " + items.Count); // from classes declared in
 
 ## 5. Functional requirements
 
-### 5.1 Header
-- **FR-H1:** Show the app name and a badge with the current environment name and the custom API name.
+### 5.1 Tool action row
+- **FR-H1:** Render this action row below the shared header, inside the RunCSharp tool. The shared header owns
+  app/selected API titles, environment and theme; this tool owns its technical API name in the footer.
 - **FR-H2:** A **Samples** dropdown loads a sample template; see §5.9.
 - **FR-H3:** An **⚙ Options** button opens the Options dialog (§5.3). A badge shows how many options differ from
   their defaults; the badge is hidden when the count is 0.
-- **FR-H4:** A theme toggle switches between light and dark themes (§5.10).
+- **FR-H4:** Follow the shared header's theme toggle (§5.10); do not add a tool-specific theme button.
 - **FR-H5:** A primary **▶ Run** button executes the request (§5.4). **Ctrl+Enter** (⌘+Enter on macOS) also triggers Run,
   including when focus is inside the editor.
 
@@ -236,7 +241,7 @@ CSharpRunner.Log("Items generated: " + items.Count); // from classes declared in
   - **FR-HI2:** Clicking an entry restores the editor tabs, options, outputs, problems and logs for that run, and highlights it.
 - **FR-HI3:** **Clear** removes every history entry after a confirmation.
 - **FR-HI4:** The panel can collapse to a narrow rail.
-- **FR-HI5:** History is saved in `localStorage` for each environment, keeping at most 50 entries (oldest removed first).
+- **FR-HI5:** History is saved in `localStorage` for each environment and tool ID `run-csharp`, keeping at most 50 entries (oldest removed first).
   Outputs larger than 256 KB are cut off in saved entries, and the entry is marked as truncated.
 - **FR-HI6:** Scripts and history use browser storage only. Do not create a Dataverse table or server-side
   persistence/sharing feature; stored entries are local to the browser and are not shared across users or devices.
@@ -254,8 +259,9 @@ Each sample sets all three tabs and all options, then resets problems, logs and 
 
 If any tab has unsaved edits, loading a sample asks for confirmation first.
 
-### 5.10 Theme and status bar
-- **FR-S1:** The theme is light or dark. Its initial value follows `prefers-color-scheme`, and the user's choice is saved in `localStorage`.
+### 5.10 Theme and tool status bar
+- **FR-S1:** Follow the app-wide light/dark theme defined in the [general specification](./specs.md).
+  Keep editor models, applied options, results, history and status intact when this tool is hidden and shown.
 - **FR-S2:** The status bar shows:
   - Status: Ready, Running…, ✔ Succeeded, ✖ Compile failed, ✖ Runtime error or ✖ Failed (HTTP fault). The bar is accent-colored normally, amber while running and red on failure.
   - Duration.
@@ -265,24 +271,24 @@ If any tab has unsaved edits, loading a sample asks for confirmation first.
 
 ## 6. Non-functional requirements
 
+The [shared platform, safety, accessibility and browser requirements](./specs.md#5-non-functional-requirements)
+apply to this tool. Additional RunCSharp-specific requirements:
+
 | ID | Requirement |
 |---|---|
-| NFR-1 | **Platform:** Power Apps Code App (React + TypeScript + Vite), deployed with `pac code push`. |
 | NFR-2 | **Security:** all calls run under the signed-in user; no secrets in the client. Running arbitrary code is gated by the API's privileges and security roles. The app shows a clear message on HTTP 403. |
 | NFR-3 | **Timeouts:** the client stops waiting after 130 s and reports `TIMEOUT`. The UI stays responsive while a run is in progress. |
 | NFR-4 | **Performance:** first meaningful paint under 2 s on broadband. Monaco is loaded lazily; until it is ready, a plain-text fallback is shown and its content is carried over. |
-| NFR-5 | **Accessibility:** WCAG 2.1 AA contrast in both themes, all actions reachable by keyboard, ARIA roles for tabs, tree views and the dialog, and a visible focus indicator. |
+| NFR-5 | **Accessibility:** tabs, tree views and Options dialog have appropriate ARIA semantics; Ctrl/Cmd+Enter only executes while RunCSharp is selected. |
 | NFR-6 | **Responsiveness:** minimum supported width 1024 px. Below 1280 px the history panel starts collapsed. |
-| NFR-7 | **Safety:** output, log and error text is always HTML-escaped before rendering, and XML/JSON are parsed without executing anything. |
-| NFR-8 | **Browsers:** current Edge, Chrome and Firefox. |
 
 ## 7. Proposed architecture
 
 ```
-src/
-  App.tsx                    layout shell
+src/tools/run-csharp/
+  RunCSharpTool.tsx           tool action row, workspace, dialogs and footer
   components/
-    Header.tsx               samples, options, theme, run
+    RunCSharpToolbar.tsx     samples, options, run (not shared theme/navigation)
     HistoryPanel.tsx
     EditorTabs.tsx           Monaco + 3 models
     OptionsDialog.tsx
@@ -296,7 +302,7 @@ src/
     responseParser.ts        Outputs/Logs/CompilerErrors/RuntimeErrors → RunResult
   state/
     store.ts                 editor values, options, runs, ui prefs (React context / Zustand)
-    historyStorage.ts        localStorage persistence (per environment)
+    historyStorage.ts        localStorage persistence (per environment and tool)
   samples/templates.ts
   types.ts                   RunRequest, RunResult, Problem, HistoryEntry
 ```
@@ -345,14 +351,17 @@ interface Problem {
 8. A history entry restores the exact editor content, options, output, problems and logs of that run, including after a page reload.
 9. Theme switching updates the app and the editor, and the choice persists across reloads.
 10. No HTML injection: an output or log message of `<img src=x onerror=alert(1)>` is shown as text.
+11. Switching to another tool and back preserves editor models/undo, options, panel state, output, logs, problems,
+    history and footer status. An in-flight completion updates this tool only, even while hidden.
 
 ## 9. Delivery plan
-1. **API changes** (owned by the API work, not by this app):
+1. **API changes** (owned by the API work, not by this app; implemented and deployed):
    - Register the `Logs` response property in the solution (`customapiresponseproperties/Logs`); the plugin already sets it.
    - Return `CompilerErrors` and `RuntimeErrors` (§3.2) instead of throwing for script errors, with lines mapped to sections,
      and register both response properties.
    - Redeploy with the `sparkcode-api-package-deploy` skill.
-2. **Scaffold** the Code App in `src/codeapps/runcsharp-tester/` and add the Dataverse data source.
+2. **Scaffold this tool** within the shared Code App in `src/codeapps/api-tester/` and use its Dataverse connection.
+   The [general delivery plan](./specs.md#8-delivery-plan) owns application scaffolding and tool navigation.
 3. **Build functionality incrementally.** Each substep extends the previous working version; verify its checkpoint before
    moving on. Older deployments without step 1 surface script errors as `HTTP` problems (FR-P4), not parsed message strings.
    1. **Minimal end-to-end run:** show a plain-text Code editor, Run button and read-only string output. Send only
@@ -384,15 +393,16 @@ interface Problem {
    9. **In-session history:** record completed runs with editor values, options, results, problems, logs and timing.
       Add selection/restoration, current-entry highlighting, collapse and confirmed Clear.
       **Checkpoint:** selecting an earlier run restores its exact request and result without invoking the API again.
-   10. **Browser persistence:** persist history per environment in `localStorage`, enforce the 50-entry limit and
+   10. **Browser persistence:** persist history per environment and tool ID in `localStorage`, enforce the 50-entry limit and
        256 KB saved-output truncation marker, and report storage failures visibly. No Dataverse persistence or sharing.
-       **Checkpoint:** reload restores history, environments stay isolated, and truncated entries are identified.
+       **Checkpoint:** reload restores history, tools/environments stay isolated, and truncated entries are identified.
    11. **Samples:** add the sample dropdown and templates from §5.9, replacing all editor/options values together and
        resetting prior results. Confirm before replacing unsaved edits.
        **Checkpoint:** each sample loads a complete reproducible request; cancelling replacement preserves current edits.
-   12. **Complete the shell and accessibility:** finish header/environment metadata, theme persistence, resizable and
+   12. **Complete tool integration and accessibility:** integrate the tool action row and shared theme, resizable and
        collapsible panels, responsive defaults, keyboard navigation, ARIA semantics and focus/contrast behavior.
-       **Checkpoint:** verify the complete workflow in both themes and supported viewport sizes without losing state.
+       **Checkpoint:** verify the complete workflow in both themes and supported viewport sizes, including switching
+       tools during a run without losing state or updating another tool's footer.
 4. Check the app against §8 in a dev environment, then deploy.
 
 ## 10. Decisions and open questions
@@ -402,4 +412,4 @@ interface Problem {
 - Scripts and history use browser storage only, not Dataverse tables or server-side sharing.
 
 ### Open questions
-- Can Code Apps call an unbound custom API directly through the generated Dataverse client, or is a raw Web API call needed?
+- Invocation transport is a shared application decision; see the [general specification](./specs.md#9-decisions-and-open-questions).

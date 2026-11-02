@@ -3,11 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RunCSharp Tester – Mockup</title>
+<title>Spark Code Tester · RunCSharp – Mockup</title>
 <!--
-  Design mockup for the "RunCSharp Tester" Power Apps Code App.
-  Tests the unbound Dataverse custom API csp_Other_RunCSharp (src/assemblies/SparkCode.API/Other/RunCSharp.cs).
-  All executions are simulated with mock data; no Dataverse calls are made.
+  Spark Code Tester shared shell with a RunCSharp tool and a layout-only RenderTemplate tool.
+  RunCSharp executions use mock data; RenderTemplate execution is disabled. No Dataverse calls are made.
 -->
 <style>
   :root {
@@ -29,7 +28,7 @@
   body {
     font: 13px/1.4 "Segoe UI", system-ui, -apple-system, sans-serif;
     background: var(--bg); color: var(--text);
-    display: grid; grid-template-rows: 48px 1fr 26px;
+    display: grid; grid-template-rows: 48px minmax(0, 1fr);
   }
   button, select, input, textarea { font: inherit; color: inherit; }
   .btn {
@@ -39,13 +38,16 @@
   .btn:hover { background: var(--panel-2); }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
   .btn.primary:hover { background: var(--accent-hover); }
-  .btn.primary:disabled { opacity: .7; cursor: progress; }
+  .btn.primary:disabled { opacity: .7; cursor: not-allowed; }
+  .btn.primary.running:disabled { cursor: progress; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .btn.icon { width: 30px; padding: 0; justify-content: center; }
   .btn.small { height: 24px; padding: 0 8px; font-size: 12px; }
   select { height: 30px; border: 1px solid var(--border); background: var(--panel); border-radius: 4px; padding: 0 8px; }
 
   /* Header */
-  header {
+  .app-header, .tool-toolbar {
     display: flex; align-items: center; gap: 10px; padding: 0 12px;
     background: var(--panel); border-bottom: 1px solid var(--border);
   }
@@ -54,6 +56,29 @@
   .env { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); }
   .spacer { flex: 1; }
   .kbd { font-size: 11px; opacity: .8; font-weight: 400; }
+  .tool-host { min-height: 0; }
+  .testing-tool { height: 100%; min-height: 0; display: grid; grid-template-rows: 44px minmax(0, 1fr) 26px; }
+  .tool-toolbar { font-weight: 400; }
+  .tool-menu-wrap { position: relative; }
+  .tool-menu { position: absolute; top: 36px; left: 0; width: 230px; padding: 4px; z-index: 10; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow); }
+  .tool-menu button { display: flex; justify-content: space-between; width: 100%; padding: 9px 10px; border: none; border-radius: 4px; background: transparent; cursor: pointer; text-align: left; }
+  .tool-menu button:hover, .tool-menu button[aria-checked="true"] { background: var(--panel-2); }
+  .tool-menu button[aria-checked="true"] { font-weight: 600; }
+  .tool-menu button[aria-checked="true"]::after { content: "✓"; color: var(--accent); }
+  .api-title { color: var(--muted); font-weight: 400; }
+  .preview-label { color: var(--muted); font-size: 12px; }
+  .template-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 12px; min-height: 0; overflow: auto; }
+  .template-inputs { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; min-height: 0; }
+  .template-panel { display: flex; flex-direction: column; min-height: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .template-panel label { display: block; padding: 10px 12px; font-weight: 600; border-bottom: 1px solid var(--border); }
+  .template-panel textarea { flex: 1; min-height: 100px; width: 100%; border: none; resize: none; padding: 12px; background: var(--panel); font: 13px/1.5 Consolas, monospace; }
+  .template-empty { padding: 24px; color: var(--muted); }
+  @media (max-width: 1279px) {
+    .app-header { gap: 8px; }
+    .env { font-size: 10px; }
+    .api-title { font-size: 13px; }
+    footer { gap: 8px; font-size: 11px; }
+  }
 
   /* Main layout */
   main { display: grid; grid-template-columns: 230px 1fr 400px; min-height: 0; }
@@ -176,18 +201,31 @@
 </style>
 </head>
 <body>
-<header>
-  <div class="logo"><div class="mark">C#</div>RunCSharp Tester</div>
-  <span class="env" title="Mock environment">● sparktools-dev · csp_Other_RunCSharp</span>
+<header class="app-header">
+  <div class="tool-menu-wrap">
+    <button class="btn" id="toolMenuBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="toolMenu">Tools ▾</button>
+    <div class="tool-menu" id="toolMenu" role="menu" aria-label="Testing tools" hidden>
+      <button type="button" role="menuitemradio" aria-checked="true" data-tool="run-csharp" tabindex="-1">RunCSharp</button>
+      <button type="button" role="menuitemradio" aria-checked="false" data-tool="render-template" tabindex="-1">RenderTemplate</button>
+    </div>
+  </div>
+  <div class="logo"><div class="mark">SC</div>Spark Code Tester <span class="api-title" id="selectedApi">· RunCSharp</span></div>
   <div class="spacer"></div>
+  <span class="env" title="Mock environment">● sparktools-dev</span>
+  <button class="btn" id="themeBtn" title="Toggle light/dark theme" aria-label="Dark Mode" aria-pressed="false">🌙 Dark Mode</button>
+</header>
+
+<div class="tool-host">
+<div class="testing-tool" id="run-csharp-tool" role="region" aria-label="RunCSharp testing tool">
+<div class="tool-toolbar" role="toolbar" aria-label="RunCSharp actions">
   <label for="templateSelect" style="color:var(--muted)">Samples</label>
   <select id="templateSelect" title="Load a sample template">
     <option value="">— Choose a sample —</option>
   </select>
   <button class="btn" id="optionsBtn" title="InputTypeName, OutputTypeName, ReferencedAssemblies, UsingStatements">⚙ Options <span class="badge" id="optCount">0</span></button>
-  <button class="btn icon" id="themeBtn" title="Toggle light/dark theme">🌙</button>
+  <div class="spacer"></div>
   <button class="btn primary" id="runBtn" title="Run (Ctrl+Enter)"><span class="spinner"></span><span id="runLabel">▶ Run</span> <span class="kbd">Ctrl+↵</span></button>
-</header>
+</div>
 
 <main id="main">
   <!-- Run history -->
@@ -296,6 +334,43 @@
 </dialog>
 
 <div class="toast" id="toast"></div>
+</div>
+
+<div class="testing-tool" id="render-template-tool" role="region" aria-label="RenderTemplate testing tool" hidden>
+  <div class="tool-toolbar" role="toolbar" aria-label="RenderTemplate actions">
+    <strong>Render a Liquid template</strong>
+    <span class="preview-label">Layout preview only · execution not implemented</span>
+    <div class="spacer"></div>
+    <button class="btn primary" type="button" disabled title="RenderTemplate execution is not implemented">▶ Run</button>
+  </div>
+  <div class="template-workspace">
+    <div class="template-inputs">
+      <div class="template-panel">
+        <label for="renderTemplateSource">Template <span class="preview-label">Liquid · required</span></label>
+        <textarea id="renderTemplateSource" readonly spellcheck="false" aria-describedby="renderPreviewNotice">Hello {{name}}</textarea>
+      </div>
+      <div class="template-panel">
+        <label for="renderTemplateContext">Context <span class="preview-label">JSON · required</span></label>
+        <textarea id="renderTemplateContext" readonly spellcheck="false" aria-describedby="renderPreviewNotice">{
+  "name": "Cris"
+}</textarea>
+      </div>
+    </div>
+    <div class="template-panel" role="region" aria-label="Results">
+      <div class="panel-head">Results <span class="preview-label">Rendered text</span></div>
+      <div class="template-empty">
+        <strong>Not executed</strong>
+        <p id="renderPreviewNotice">This is a layout-only preview of the RenderTemplate testing tool. Rendering and API execution are not implemented.</p>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <span>● Layout preview – execution not implemented</span>
+    <div class="spacer"></div>
+    <span>Custom API: csp_Templates_RenderTemplate (unbound action)</span>
+  </footer>
+</div>
+</div>
 
 <script>
 /* ---------------- Sample templates (mirror the RunCSharp.cs <example> docs) ---------------- */
@@ -369,6 +444,60 @@ const state = {
 };
 
 const $ = (id) => document.getElementById(id);
+let activeTool = "run-csharp";
+const toolLabels = { "run-csharp": "RunCSharp", "render-template": "RenderTemplate" };
+const toolItems = Array.from(document.querySelectorAll("#toolMenu [data-tool]"));
+function closeToolMenu(restoreFocus = false) {
+  $("toolMenu").hidden = true;
+  $("toolMenuBtn").setAttribute("aria-expanded", "false");
+  if (restoreFocus) $("toolMenuBtn").focus();
+}
+function openToolMenu(index = toolItems.findIndex(item => item.dataset.tool === activeTool)) {
+  $("toolMenu").hidden = false;
+  $("toolMenuBtn").setAttribute("aria-expanded", "true");
+  toolItems[index].focus();
+}
+function selectTool(tool) {
+  if (!Object.hasOwn(toolLabels, tool)) return;
+  if (tool !== activeTool && $("optionsDlg").open) $("optionsDlg").close("cancel");
+  if (tool !== activeTool) $("toast").classList.remove("show");
+  activeTool = tool;
+  for (const id of Object.keys(toolLabels)) {
+    $(id + "-tool").hidden = id !== tool;
+  }
+  toolItems.forEach(item => item.setAttribute("aria-checked", String(item.dataset.tool === tool)));
+  $("selectedApi").textContent = "· " + toolLabels[tool];
+  document.title = "Spark Code Tester · " + toolLabels[tool] + " – Mockup";
+  closeToolMenu(true);
+  if (tool === "run-csharp" && editor) requestAnimationFrame(() => editor.layout());
+}
+$("toolMenuBtn").onclick = () => $("toolMenu").hidden ? openToolMenu() : closeToolMenu();
+$("toolMenuBtn").addEventListener("keydown", e => {
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    openToolMenu(e.key === "ArrowDown" ? 0 : toolItems.length - 1);
+  }
+});
+toolItems.forEach((item, index) => {
+  item.onclick = () => selectTool(item.dataset.tool);
+  item.addEventListener("keydown", e => {
+    let next;
+    if (e.key === "ArrowDown") next = (index + 1) % toolItems.length;
+    if (e.key === "ArrowUp") next = (index + toolItems.length - 1) % toolItems.length;
+    if (e.key === "Home") next = 0;
+    if (e.key === "End") next = toolItems.length - 1;
+    if (next !== undefined) { e.preventDefault(); toolItems[next].focus(); }
+  });
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !$("toolMenu").hidden) { e.preventDefault(); closeToolMenu(true); }
+});
+document.addEventListener("click", e => {
+  if (!e.target.closest(".tool-menu-wrap")) closeToolMenu();
+});
+document.addEventListener("focusin", e => {
+  if (!e.target.closest(".tool-menu-wrap")) closeToolMenu();
+});
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1600); }
 function unquote(s) { try { const v = JSON.parse(s); return typeof v === "string" ? v : String(v); } catch { return (s || "").trim(); } }
@@ -455,6 +584,7 @@ function renderOptSummary() {
   $("optSummary").innerHTML = `<b>InputTypeName</b>: ${esc(it)}<br><b>OutputTypeName</b>: ${esc(ot)}<br><b>ReferencedAssemblies</b>: "${esc(draftAssemblies.join(","))}"<br><b>UsingStatements</b>: ${usings} line(s)`;
 }
 function openOptions() {
+  if (activeTool !== "run-csharp") return;
   $("optInputType").value = state.options.inputType;
   $("optOutputType").value = state.options.outputType;
   $("optUsings").value = state.options.usings;
@@ -562,7 +692,7 @@ function makeEntry(values, options, res, ms, when) {
 }
 
 function run() {
-  if (state.running) return;
+  if (activeTool !== "run-csharp" || state.running || $("optionsDlg").open || !$("toolMenu").hidden) return;
   const req = buildRequest();
   const invalid = validateRequest(req);
   if (invalid.length) {
@@ -789,7 +919,9 @@ function seedHistory() {
 function isDark() { return document.documentElement.dataset.theme === "dark"; }
 function toggleTheme() {
   document.documentElement.dataset.theme = isDark() ? "light" : "dark";
-  $("themeBtn").textContent = isDark() ? "☀️" : "🌙";
+  $("themeBtn").textContent = isDark() ? "☀️ Dark Mode" : "🌙 Dark Mode";
+  $("themeBtn").title = isDark() ? "Switch to light mode" : "Switch to dark mode";
+  $("themeBtn").setAttribute("aria-pressed", String(isDark()));
   if (editor) monaco.editor.setTheme(isDark() ? "vs-dark" : "vs");
 }
 
@@ -806,7 +938,7 @@ $("templateSelect").onchange = (e) => {
 };
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => switchTab(t.dataset.tab));
 $("runBtn").onclick = run;
-document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); run(); } });
+document.addEventListener("keydown", e => { if (activeTool === "run-csharp" && (e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); run(); } });
 $("themeBtn").onclick = toggleTheme;
 $("optionsBtn").onclick = openOptions;
 $("asmInput").addEventListener("keydown", e => {
@@ -849,6 +981,7 @@ $("formatBtn").onclick = () => {
 };
 
 /* ---------------- Init ---------------- */
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) toggleTheme();
 seedHistory();
 switchTab("code");
 refreshDirty();
@@ -859,6 +992,10 @@ renderLogs(null, null);
 showBottom("problems");
 renderOutput();
 initMonaco();
+if (window.innerWidth < 1280) {
+  $("main").classList.add("history-collapsed");
+  $("historyToggle").textContent = "⟩";
+}
 </script>
 </body>
 </html>
