@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="CompilerErrors">
+  <description default="JSON array of section-relative compiler diagnostics; null when compilation succeeds.">
+    <label description="JSON array of section-relative compiler diagnostics; null when compilation succeeds." languagecode="1033" />
+  </description>
+  <displayname default="CompilerErrors">
+    <label description="CompilerErrors" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Other.RunCSharp-out-CompilerErrors</name>
+  <type>10</type>
+</customapiresponseproperty>

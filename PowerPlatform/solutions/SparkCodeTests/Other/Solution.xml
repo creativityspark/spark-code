@@ -6,7 +6,7 @@
       <LocalizedName description="Spark Code Tests" languagecode="1033" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0.0.2</Version>
+    <Version>1.0.0.3</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>CreativitySpark</UniqueName>
@@ -83,6 +83,7 @@
       <RootComponent type="1" schemaName="account" behavior="2" />
       <RootComponent type="29" id="{703cd066-2217-f111-8342-7ced8d2e3be4}" behavior="0" />
       <RootComponent type="29" id="{b5d1af0d-2f17-f111-8342-7ced8d2e3be4}" behavior="0" />
+      <RootComponent type="300" schemaName="csp_sparkcodetester_9bc82" behavior="0" />
       <RootComponent type="300" schemaName="csp_sparkcodetests_b1ca4" behavior="0" />
       <RootComponent type="61" schemaName="csp_/Spark_Code_Test.html" behavior="0" />
       <RootComponent type="62" schemaName="csp_SparkCodeTests" behavior="0" />

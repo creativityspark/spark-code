@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="RuntimeErrors">
+  <description default="JSON runtime/conversion diagnostics; null when absent. Source lines may be null.">
+    <label description="JSON runtime/conversion diagnostics; null when absent. Source lines may be null." languagecode="1033" />
+  </description>
+  <displayname default="RuntimeErrors">
+    <label description="RuntimeErrors" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Other.RunCSharp-out-RuntimeErrors</name>
+  <type>10</type>
+</customapiresponseproperty>
