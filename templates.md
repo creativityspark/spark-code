@@ -209,12 +209,20 @@ or unique name.
 
 ### `_webResource`
 
-Inlines the (decoded) content of another Dataverse web resource, given its
-name as a string expression. Useful for shared partials (headers, footers,
-styles).
+Outputs the Base64-encoded content of another Dataverse web resource, given
+its name as a string expression. For text resources such as shared headers,
+footers, or styles, capture the output and decode it to UTF-8 text:
 
 ```liquid
-{% _webResource 'csp_/templates/header.liquid' %}
+{% capture header %}{% _webResource 'csp_/templates/header.liquid' %}{% endcapture %}
+{{ header | base64_decode }}
+```
+
+For images, use the tag without decoding when you need the Base64 content,
+for example in a data URI (with the appropriate image MIME type):
+
+```liquid
+<img src="data:image/png;base64,{% _webResource 'csp_/images/logo.png' %}" alt="Logo">
 ```
 
 ### `fetchxml` ... `endfetchxml`
