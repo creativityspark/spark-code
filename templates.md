@@ -141,6 +141,20 @@ The supported filters are:
 The ISO 8601 and RFC 822 output examples match the formats shown in the
 [Microsoft Learn date-filter reference](https://learn.microsoft.com/en-us/power-pages/configure/liquid/liquid-filters#date-filters).
 
+## Base64 filters
+
+All three rendering APIs support `base64_encode` and `base64_decode` for
+standard Base64 and UTF-8 text:
+
+```liquid
+{{ 'Hello' | base64_encode }}  <!-- SGVsbG8= -->
+{{ 'SGVsbG8=' | base64_decode }}  <!-- Hello -->
+```
+
+Empty strings remain empty. Invalid Base64 causes rendering to fail; decoded
+bytes that are not valid UTF-8 use the UTF-8 replacement character, as in the
+Base64 text APIs.
+
 ## Special tags
 
 `RenderDataverseTemplate` and `RenderWebResourceTemplate` register a set of

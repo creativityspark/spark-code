@@ -2,19 +2,20 @@ using Fluid;
 using Fluid.Values;
 using System;
 using System.Globalization;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SparkCode.Templates
 {
     /// <summary>
-    /// Implements the Liquid date filters supported by the template renderer.
+    /// Implements the custom Liquid filters supported by the template renderer.
     /// </summary>
     internal static class Filters
     {
         /// <summary>
-        /// Creates Fluid options with the supported Power Pages date filters registered.
+        /// Creates Fluid options with the supported custom filters registered.
         /// </summary>
-        /// <returns>Template options configured with date formatting and arithmetic filters.</returns>
+        /// <returns>Template options configured with the custom filters.</returns>
         internal static TemplateOptions CreateTemplateOptions()
         {
             var options = new TemplateOptions();
@@ -27,7 +28,27 @@ namespace SparkCode.Templates
             options.Filters.AddFilter("date_add_years", AddYears);
             options.Filters.AddFilter("date_to_iso8601", FormatIso8601);
             options.Filters.AddFilter("date_to_rfc822", FormatRfc822);
+            options.Filters.AddFilter("base64_encode", Base64Encode);
+            options.Filters.AddFilter("base64_decode", Base64Decode);
             return options;
+        }
+
+        private static ValueTask<FluidValue> Base64Encode(
+            FluidValue input,
+            FilterArguments arguments,
+            TemplateContext context)
+        {
+            var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(input.ToStringValue()));
+            return new ValueTask<FluidValue>(new StringValue(encoded));
+        }
+
+        private static ValueTask<FluidValue> Base64Decode(
+            FluidValue input,
+            FilterArguments arguments,
+            TemplateContext context)
+        {
+            var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(input.ToStringValue()));
+            return new ValueTask<FluidValue>(new StringValue(decoded));
         }
 
         private static ValueTask<FluidValue> FormatDate(

@@ -247,6 +247,42 @@ namespace SparkCode.Tests.Templates
             Assert.Equal("Hello Cris", result);
         }
 
+        [Theory]
+        [InlineData("Hello", "SGVsbG8=")]
+        [InlineData("caf\u00e9", "Y2Fmw6k=")]
+        [InlineData("", "")]
+        public void Render_WithBase64Filters_EncodesAndDecodesUtf8(string text, string encoded)
+        {
+            var model = new ExpandoObject();
+            var values = (IDictionary<string, object>)model;
+            values["text"] = text;
+            values["encoded"] = encoded;
+
+            var result = TemplateRenderer.Render(
+                "{{ text | base64_encode }}|{{ encoded | base64_decode }}|{{ text | base64_encode | base64_decode }}",
+                model);
+
+            Assert.Equal($"{encoded}|{text}|{text}", result);
+        }
+
+        [Fact]
+        public void Render_WithBase64DecodeAndInvalidInput_ThrowsFormatException()
+        {
+            Assert.Throws<FormatException>(() => TemplateRenderer.Render(
+                "{{ value | base64_decode }}",
+                "{\"value\":\"not base64!\"}"));
+        }
+
+        [Fact]
+        public void Render_WithBase64DecodeAndInvalidUtf8_UsesReplacementCharacter()
+        {
+            var result = TemplateRenderer.Render(
+                "{{ value | base64_decode }}",
+                "{\"value\":\"/w==\"}");
+
+            Assert.Equal("\uFFFD", result);
+        }
+
         [Fact]
         public void Render_WithDateFilter_UsesDotNetFormatString()
         {
