@@ -366,14 +366,20 @@ interface Problem {
    Focused adapter tests, build/type-check and lint pass. The user confirmed the live browser connection check succeeds:
    `Code: output = "hello";` returns `Outputs: hello` without script diagnostics.
    This verifies the connection prerequisite only, not the user-facing workflow in 9.3.1.
-   A minimal **Check API connection** button now sends only the fixed hello script and shows an explicit
-   checking/success/error message for manual Local Play verification. It never runs automatically.
-   No editor, full Run toolbar or footer is implemented; 9.3.1 remains pending.
+   The original fixed **Check API connection** button has now been replaced by the minimal editable workflow in 9.3.1.
+   Its new authenticated editor-to-output checkpoint remains unverified; the 9.2 connection check is prior evidence only.
    The [general delivery plan](./specs.md#8-delivery-plan) owns application scaffolding and tool navigation.
-3. **Build functionality incrementally - all 12 substeps pending.** Each substep extends the previous working version; verify its checkpoint before
+3. **Build functionality incrementally - 9.3.1 implemented locally; live checkpoint pending. Steps 9.3.2-9.3.12 pending.**
+   Each substep extends the previous working version; verify its checkpoint before
    moving on. Older deployments without step 1 surface script errors as `HTTP` problems (FR-P4), not parsed message strings.
-   1. **Minimal end-to-end run:** show a plain-text Code editor, Run button and read-only string output. Send only
+   1. **Minimal end-to-end run - implemented; local validation complete, live verification pending:** show a plain-text Code editor, Run button and read-only string output. Send only
       `Code` through `runCSharpService`; block empty code, prevent overlapping requests and show HTTP failures.
+      The editor starts with `output = "hello";`. Run and Code are disabled during execution; state survives navigation.
+      New submissions clear old output/errors. Null and empty string outputs are explicitly distinguished.
+      Compiler/runtime diagnostic strings are shown as escaped error text, without the structured Problems UI from 9.3.5.
+      Build/type-check, lint, six service tests and isolated Edge UI checks pass, including failure/stale-output behavior,
+      safe text rendering, in-flight tool isolation and both themes at 1024/1280 px.
+      Version 0.1.1 is prepared; publication and a live authenticated run of this editable workflow remain unverified.
       **Checkpoint:** `output = "hello";` calls the real API and displays `hello`; a failed call shows its error.
    2. **Run lifecycle and status:** add ready/running/success/failure state, client timeout, round-trip duration and
       output byte size. Clear stale output when starting a run and keep the UI responsive.

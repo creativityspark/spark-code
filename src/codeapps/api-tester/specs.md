@@ -18,15 +18,16 @@ Design reference: [mockup.html](./mockup.html).
 ### Current implementation
 
 Delivery step 8.2 is complete for the local-only shell increment: the React/TypeScript/Vite Code App has a shared
-header, accessible tool menu, separate typed registry and persistent global theme. RunCSharp now has a minimal
-fixed hello connection-check button/status for manual verification; RenderTemplate remains empty.
-Neither tool has a full toolbar, editor or footer yet. The mockup remains a richer
+header, accessible tool menu, separate typed registry and persistent global theme. RunCSharp now has a plain-text
+Code editor, Run action, read-only string output and minimal busy/error messages; RenderTemplate remains empty.
+Later RunCSharp functionality and the detailed footer remain pending. The mockup remains a richer
 design reference, not a description of implemented tool functionality.
 
 The official SDK/Vite plugin is retained. The official Code App CLI has discovered the RunCSharp action and generated
 its service/schema; a Code-only typed adapter is available. The user confirmed the live browser hello connection check
-succeeds, completing RunCSharp delivery step 9.2. The full editor/run workflow remains pending in 9.3.
-No deployment was performed for this work.
+succeeds, completing RunCSharp delivery step 9.2. Step 9.3.1 is implemented and locally validated;
+its authenticated editor-to-output checkpoint and version 0.1.1 deployment remain unverified.
+Steps 9.3.2-9.3.12 remain pending.
 See [local setup and validation](./README.md).
 The public source includes only an environment-neutral example configuration. Contributors initialize their own
 ignored local `power.config.json`; no private environment identity is hardcoded in source or documentation.
@@ -118,7 +119,7 @@ is shown in that tool's workspace/footer rather than being hard-coded in the env
 
 | ID | Requirement |
 |---|---|
-| APP-N1 | Power Apps Code App: React + TypeScript + Vite, deployed using `pac code push`. |
+| APP-N1 | Power Apps Code App: React + TypeScript + Vite, deployed using `npx --no-install pa app push`. |
 | APP-N2 | Calls use the signed-in user's Dataverse connection; no client secrets. Tool specs define request/fault handling. |
 | APP-N3 | First meaningful paint under 2 s on broadband; load heavyweight editors lazily with a lossless fallback. |
 | APP-N4 | WCAG 2.1 AA contrast, keyboard access, visible focus and appropriate ARIA semantics in both themes. |
@@ -136,12 +137,12 @@ src/
     ToolSelector.tsx           accessible collapsible dropdown
   tools/
     registry.ts                stable tool IDs, labels and components
-    run-csharp/                 empty RunCSharpTool; toolbar/workspace/footer/state are future work
+    run-csharp/                 minimal Code editor, Run action, string output and Code-only service adapter
     render-template/            empty RenderTemplateTool; design-only layout is in mockup.html
   state/
     appPreferences.ts          shared selection/theme, not API results
   services/
-    dataverseConnection.ts     optional local environment identity; signed-in invocation is future work
+    dataverseConnection.ts     optional local environment identity; invocation uses each tool's generated service
 ```
 
 Keep the registry small: ID, label and component are sufficient. Do not introduce a generic API execution
@@ -171,17 +172,20 @@ framework or require all tools to share the RunCSharp response type. See each to
      authenticated tool call is included.
    - **Complete:** separate minimal `tools/registry.ts`, shared header, accessible dropdown and retained tool host.
    - **Complete:** shared light/dark theme, OS default, browser-stored explicit preference and visible storage warnings.
-   - **Complete:** entirely empty RunCSharp and RenderTemplate components; no functionality from either tool.
+   - **Complete at scaffold delivery:** entirely empty RunCSharp and RenderTemplate components.
+     Subsequent RunCSharp work is tracked in its own delivery plan; RenderTemplate is still empty.
    - **Verified:** production build/type-check, lint and Edge shell checks at 1024/1280 px in both themes, including
      menu/focus behavior, persistence, invalid/blocked storage and no custom API calls.
 
 3. **Complete shared lifecycle/storage/accessibility - pending tool integration:** shell navigation/theme accessibility.
-   is verified; in-flight isolation, editor/dialog lifecycle and tool-scoped browser storage remain pending.
+   is verified; RunCSharp's minimal editor/result retention and in-flight isolation are locally browser-verified.
+   Full editor/dialog lifecycle and tool-scoped browser storage remain pending.
    Do not merge tool histories.
 4. **RenderTemplate implementation - pending:** not authorized by the layout-only example. Define and approve detailed
    execution behavior before implementing it.
 5. **Full application validation/deployment - pending:** validate shared acceptance criteria and each implemented
-   tool's criteria before deployment. This increment validates only the shared shell and makes no deployment.
+   tool's criteria before deployment. The minimal RunCSharp workflow passes local tests/build/lint and isolated
+   browser checks; its live hello checkpoint and version 0.1.1 deployment await verification.
 
 ## 9. Decisions and open questions
 
