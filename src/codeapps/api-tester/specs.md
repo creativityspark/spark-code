@@ -18,12 +18,16 @@ Design reference: [mockup.html](./mockup.html).
 ### Current implementation
 
 Delivery step 8.2 is complete for the local-only shell increment: the React/TypeScript/Vite Code App has a shared
-header, accessible tool menu, separate typed registry, persistent global theme and two entirely empty tool screens.
-Neither tool has a toolbar, workspace controls, footer or execution functionality yet. The mockup remains a richer
+header, accessible tool menu, separate typed registry and persistent global theme. RunCSharp now has a minimal
+fixed hello connection-check button/status for manual verification; RenderTemplate remains empty.
+Neither tool has a full toolbar, editor or footer yet. The mockup remains a richer
 design reference, not a description of implemented tool functionality.
 
-The official SDK/Vite plugin is retained; no app is deployed and no data source/action binding or hosted SDK call
-has been verified. See [local setup and validation](./README.md).
+The official SDK/Vite plugin is retained. The official Code App CLI has discovered the RunCSharp action and generated
+its service/schema; a Code-only typed adapter is available. The user confirmed the live browser hello connection check
+succeeds, completing RunCSharp delivery step 9.2. The full editor/run workflow remains pending in 9.3.
+No deployment was performed for this work.
+See [local setup and validation](./README.md).
 The public source includes only an environment-neutral example configuration. Contributors initialize their own
 ignored local `power.config.json`; no private environment identity is hardcoded in source or documentation.
 
@@ -188,7 +192,8 @@ framework or require all tools to share the RunCSharp response type. See each to
 - Navigation preserves in-memory state; browser storage is tool/environment-scoped.
 - Browser storage only; no Dataverse test-history storage or sharing.
 
-### Open
+### Invocation decision
 
-- Verify whether the Code Apps generated Dataverse client supports the unbound actions directly, or whether the
-  shared connection boundary must support authenticated Web API calls. Do not guess a connector method signature.
+- The official `pa app add dataverse-api` command successfully generated the unbound RunCSharp action service.
+  The user confirmed its authenticated browser smoke check succeeds.
+  Use the generated service rather than a custom HTTP/authentication layer.

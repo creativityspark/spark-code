@@ -360,9 +360,15 @@ interface Problem {
    - Return `CompilerErrors` and `RuntimeErrors` (§3.2) instead of throwing for script errors, with lines mapped to sections,
      and register both response properties.
    - Redeploy with the `sparkcode-api-package-deploy` skill.
-2. **Scaffold this tool - partially complete:** the shared Code App and an empty, registered `RunCSharpTool` component
-   exist in `src/codeapps/api-tester/`. Environment configuration is initialized; tool-specific services and authenticated
-   API invocation remain pending. The workspace is intentionally blank, with no toolbar, editors or footer.
+2. **Scaffold this tool - complete:** the shared Code App and a registered `RunCSharpTool` component
+   exist in `src/codeapps/api-tester/`. The official CLI has discovered the unbound action and generated its service/schema.
+   The typed `runCSharpService` adapter sends Code, validates the four response properties and propagates SDK faults.
+   Focused adapter tests, build/type-check and lint pass. The user confirmed the live browser connection check succeeds:
+   `Code: output = "hello";` returns `Outputs: hello` without script diagnostics.
+   This verifies the connection prerequisite only, not the user-facing workflow in 9.3.1.
+   A minimal **Check API connection** button now sends only the fixed hello script and shows an explicit
+   checking/success/error message for manual Local Play verification. It never runs automatically.
+   No editor, full Run toolbar or footer is implemented; 9.3.1 remains pending.
    The [general delivery plan](./specs.md#8-delivery-plan) owns application scaffolding and tool navigation.
 3. **Build functionality incrementally - all 12 substeps pending.** Each substep extends the previous working version; verify its checkpoint before
    moving on. Older deployments without step 1 surface script errors as `HTTP` problems (FR-P4), not parsed message strings.

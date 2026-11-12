@@ -104,6 +104,9 @@
 .storage-warning { margin: 0; padding: 4px 12px 8px; color: var(--warning); }
 .tool-host, .tool-host > section { min-height: 0; }
 .tool-host > section { height: 100%; }
+.connection-check { max-width: 720px; padding: 24px; overflow-wrap: anywhere; }
+.connection-check h2 { margin-top: 0; font-size: 18px; }
+.connection-check .button:disabled { opacity: .7; cursor: progress; }
 
 @media (max-width: 1279px) {
   .header-row { gap: 8px; }
