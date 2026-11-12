@@ -106,14 +106,17 @@ This API also registers all the [special tags](#special-tags) below.
 
 ## Date filters
 
-All three rendering APIs support the Power Pages date filters. The `date`
-filter formats a date/time value with a .NET date and time format string.
+All three rendering APIs provide `now` as the current UTC date/time and
+support the Power Pages date filters. The `date` filter formats a date/time
+value with a .NET date and time format string.
 Date-add filters accept positive or negative values; days, hours, minutes,
 and seconds also accept fractional values. Months and years require whole
 numbers. The date format uses the template culture, which defaults to the
 invariant culture.
 
 ```liquid
+{{ now }}
+{{ now | date: 'g' }}
 {{ createdon | date: 'MMMM dd, yyyy' }}
 {{ createdon | date_add_days: -2.5 | date: 'g' }}
 {{ createdon | date_add_months: 1 }}

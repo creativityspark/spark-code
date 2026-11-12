@@ -6,6 +6,7 @@ using SparkCode.TestSupport;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Xunit;
@@ -254,6 +255,25 @@ namespace SparkCode.Tests.Templates
                 "{\"started\":\"2024-01-15T12:30:00Z\"}");
 
             Assert.Equal("January 15, 2024", result);
+        }
+
+        [Fact]
+        public void Render_WithNowVariable_ReturnsCurrentDateTime()
+        {
+            var before = DateTime.UtcNow;
+            var result = TemplateRenderer.Render(
+                "{{ now }}|{{ now | date_to_iso8601 }}",
+                "{}");
+            var after = DateTime.UtcNow;
+            var values = result.Split('|');
+            var now = DateTimeOffset.ParseExact(
+                values[1],
+                "yyyy-MM-dd'T'HH:mm:ss'Z'",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal);
+
+            Assert.False(string.IsNullOrWhiteSpace(values[0]));
+            Assert.InRange(now.UtcDateTime, before.AddSeconds(-1), after.AddSeconds(1));
         }
 
         [Theory]
