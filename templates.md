@@ -104,6 +104,40 @@ This API also registers all the [special tags](#special-tags) below.
 - `Results` (output): `"Hello Jane Doe!"`
 - `FrontMatter` / `FrontMatterJson` (output): `{ "subject": "Welcome Jane" }`
 
+## Date filters
+
+All three rendering APIs support the Power Pages date filters. The `date`
+filter formats a date/time value with a .NET date and time format string.
+Date-add filters accept positive or negative values; days, hours, minutes,
+and seconds also accept fractional values. Months and years require whole
+numbers. The date format uses the template culture, which defaults to the
+invariant culture.
+
+```liquid
+{{ createdon | date: 'MMMM dd, yyyy' }}
+{{ createdon | date_add_days: -2.5 | date: 'g' }}
+{{ createdon | date_add_months: 1 }}
+{{ createdon | date_to_iso8601 }}
+{{ createdon | date_to_rfc822 }}
+```
+
+The supported filters are:
+
+| Filter | Behavior |
+|---|---|
+| `date` | Formats a date/time value using a .NET date/time format string. |
+| `date_add_days` | Adds whole or fractional days. |
+| `date_add_hours` | Adds whole or fractional hours. |
+| `date_add_minutes` | Adds whole or fractional minutes. |
+| `date_add_months` | Adds a whole number of months. |
+| `date_add_seconds` | Adds whole or fractional seconds. |
+| `date_add_years` | Adds a whole number of years. |
+| `date_to_iso8601` | Formats the value as ISO 8601 in UTC, for example `2024-01-15T12:30:00Z`. |
+| `date_to_rfc822` | Formats the value as RFC 822 in UTC, for example `Mon, 07 May 2018 07:20:46 Z`. |
+
+The ISO 8601 and RFC 822 output examples match the formats shown in the
+[Microsoft Learn date-filter reference](https://learn.microsoft.com/en-us/power-pages/configure/liquid/liquid-filters#date-filters).
+
 ## Special tags
 
 `RenderDataverseTemplate` and `RenderWebResourceTemplate` register a set of

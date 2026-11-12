@@ -247,6 +247,57 @@ namespace SparkCode.Tests.Templates
         }
 
         [Fact]
+        public void Render_WithDateFilter_UsesDotNetFormatString()
+        {
+            var result = TemplateRenderer.Render(
+                "{{ started | date: 'MMMM dd, yyyy' }}",
+                "{\"started\":\"2024-01-15T12:30:00Z\"}");
+
+            Assert.Equal("January 15, 2024", result);
+        }
+
+        [Theory]
+        [InlineData("date_add_days", "1.5", "yyyy-MM-dd HH:mm:ss.fff", "2024-01-17 00:30:00.000")]
+        [InlineData("date_add_hours", "-2.5", "yyyy-MM-dd HH:mm:ss.fff", "2024-01-15 10:00:00.000")]
+        [InlineData("date_add_minutes", "-2.5", "yyyy-MM-dd HH:mm:ss.fff", "2024-01-15 12:27:30.000")]
+        [InlineData("date_add_months", "-2", "yyyy-MM-dd HH:mm:ss.fff", "2023-11-15 12:30:00.000")]
+        [InlineData("date_add_seconds", "-1.25", "yyyy-MM-dd HH:mm:ss.fff", "2024-01-15 12:29:58.750")]
+        [InlineData("date_add_years", "1", "yyyy-MM-dd HH:mm:ss.fff", "2025-01-15 12:30:00.000")]
+        public void Render_WithDateArithmeticFilter_AppliesAmount(
+            string filter,
+            string amount,
+            string format,
+            string expected)
+        {
+            var template = $"{{{{ started | {filter}: {amount} | date: '{format}' }}}}";
+            var result = TemplateRenderer.Render(
+                template,
+                "{\"started\":\"2024-01-15T12:30:00Z\"}");
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void Render_WithStandardDateFilters_UsesUtcStandardFormats()
+        {
+            var result = TemplateRenderer.Render(
+                "{{ started | date_to_iso8601 }}|{{ started | date_to_rfc822 }}",
+                "{\"started\":\"2018-05-07T09:20:46+02:00\"}");
+
+            Assert.Equal(
+                "2018-05-07T07:20:46Z|Mon, 07 May 2018 07:20:46 Z",
+                result);
+        }
+
+        [Fact]
+        public void Render_WithInvalidDateValue_ThrowsFormatException()
+        {
+            Assert.Throws<FormatException>(() => TemplateRenderer.Render(
+                "{{ started | date_to_iso8601 }}",
+                "{\"started\":\"not-a-date\"}"));
+        }
+
+        [Fact]
         public void Render_WithParsedTemplateAndExpandoModel_RendersTemplate()
         {
             var parser = new FluidParser();
