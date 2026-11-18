@@ -173,12 +173,35 @@ name.
 
 ### `_orgDetails`
 
-Outputs an attribute of the current organization's details (e.g.
-`FriendlyName`, `OrganizationId`).
+Outputs the requested attribute of the current organization's details. The
+following attributes are available:
+
+| Attribute | What it returns |
+|---|---|
+| `OrganizationId` | The globally unique identifier (GUID) of the organization. |
+| `FriendlyName` | The organization's friendly display name. |
+| `OrganizationVersion` | The version of the organization. |
+| `EnvironmentId` | The unique identifier of the environment that contains the organization. |
+| `DatacenterId` | The GUID identifying the datacenter associated with the organization. |
+| `Geo` | The geographic region where the tenant is located. |
+| `TenantId` | The unique identifier of the Power Platform tenant containing the environment and organization. |
+| `UrlName` | The organization name used in the URL for its web service. |
+| `UniqueName` | The organization's unique name. |
+| `State` | The organization's state, such as enabled or disabled. |
+| `SchemaType` | The schema type reported for the organization. |
+| `OrganizationType` | The organization type, such as a customer, sandbox, trial, or developer organization. |
 
 ```liquid
-{% _orgDetails FriendlyName %}
+{% capture organizationName %}{% _orgDetails FriendlyName %}{% endcapture %}
+Organization: {{ organizationName }}
+Organization ID: {% _orgDetails OrganizationId %}
+Region: {% _orgDetails Geo %}
 ```
+
+For the underlying property definitions, see Microsoft's
+[OrganizationDetail class reference](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.discovery.organizationdetail?view=dataverse-sdk-latest),
+[OrganizationType values](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.organization.organizationtype?view=dataverse-sdk-latest),
+and [OrganizationState values](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.discovery.organizationstate?view=dataverse-sdk-latest).
 
 ### `_orgUrl`
 
